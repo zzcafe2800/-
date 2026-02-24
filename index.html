@@ -3,8 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>習慣さがし｜つづく（Web版）</title>
-  <meta name="color-scheme" content="light dark" />
+  <title>習慣さがし</title>
   <style>
     :root{
       --bg1:#071a2b;
@@ -12,15 +11,18 @@
       --text:#eaf6ff;
       --muted:#b7d4e8;
       --line:#24465f;
+
       --accent:#57c7ff;
-      --accent2:#7cffa6;
+      --ok:#7cffa6;
       --danger:#ff4d5e;
       --warn:#ffc94d;
 
       --radius:16px;
       --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", "Meiryo", sans-serif;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+
+      --gap:10px;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -34,19 +36,14 @@
                   linear-gradient(160deg, var(--bg1), var(--bg2));
     }
 
-    .bg-fish{
-      position:fixed; inset:0;
-      pointer-events:none;
-      opacity:.35;
-      mix-blend-mode:screen;
-    }
+    /* 背景の魚（ぼかし） */
+    .bg-fish{ position:fixed; inset:0; pointer-events:none; opacity:.35; mix-blend-mode:screen; }
     .fish{
       position:absolute;
       width:240px; height:90px;
       background: radial-gradient(closest-side, rgba(120,220,255,.5), transparent 70%),
                   radial-gradient(closest-side, rgba(90,255,180,.35), transparent 72%);
       border-radius: 999px;
-      transform: translateX(-30vw);
       animation: swim 16s linear infinite;
       filter: blur(10px);
     }
@@ -60,9 +57,9 @@
       transform: rotate(20deg);
       filter: blur(6px);
     }
-    .fish.f2{ top:18%; animation-duration: 22s; opacity:.25; transform: translateX(-40vw) scale(1.1);}
-    .fish.f3{ top:62%; animation-duration: 19s; opacity:.2; transform: translateX(-45vw) scale(.95);}
-    .fish.f1{ top:38%; animation-duration: 17s; opacity:.22; transform: translateX(-35vw) scale(1.2);}
+    .fish.f2{ top:18%; animation-duration: 22s; opacity:.25;}
+    .fish.f3{ top:62%; animation-duration: 19s; opacity:.2;}
+    .fish.f1{ top:38%; animation-duration: 17s; opacity:.22;}
     @keyframes swim{
       0%{ left:-35vw; transform: translateY(0) scale(1) }
       30%{ transform: translateY(-10px) scale(1.02)}
@@ -79,13 +76,14 @@
     @media (max-width: 980px){
       body{overflow:auto}
       .app{grid-template-columns: 88px 1fr; height:auto; min-height:100%}
-      .nav .label{display:none}
       .nav{padding:10px 8px}
+      .nav .label{display:none}
       .nav .navBtn{justify-content:center}
       .content{padding:14px}
-      .tagGrid{grid-template-columns: 1fr;}
       .topbar{grid-template-columns: 1fr; }
       .select{width:100%}
+      .composerGrid{grid-template-columns: 1fr}
+      .feedGrid{grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));}
     }
 
     .nav{
@@ -103,10 +101,7 @@
       background: radial-gradient(circle at 30% 30%, #7fe3ff, #1a6f9b 55%, #07314d);
       box-shadow: 0 12px 26px rgba(0,0,0,.35);
     }
-    .brand h1{
-      font-size:16px; margin:0; line-height:1.1;
-      letter-spacing:.06em;
-    }
+    .brand h1{ font-size:16px; margin:0; letter-spacing:.06em; }
 
     .navSection{margin-top:10px}
     .navBtn{
@@ -128,7 +123,7 @@
       box-shadow: 0 14px 30px rgba(0,0,0,.22);
     }
     .navBtn .ico{font-size:20px; width:26px; text-align:center}
-    .navBtn .label{font-weight:700; letter-spacing:.04em}
+    .navBtn .label{font-weight:800; letter-spacing:.04em}
 
     .navFooter{
       position:sticky; bottom:16px;
@@ -153,7 +148,7 @@
     }
     .avatar img{width:100%; height:100%; object-fit:cover}
     .userMeta{min-width:0}
-    .userName{font-size:13px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+    .userName{font-size:13px; font-weight:900; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
     .userSmall{font-size:11px; color:var(--muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 
     .authRow{display:flex; gap:10px; margin-top:10px}
@@ -164,7 +159,7 @@
       border-radius:12px;
       padding:10px 12px;
       cursor:pointer;
-      font-weight:800;
+      font-weight:900;
       letter-spacing:.03em;
       transition:.15s transform, .15s background, .15s border-color;
       user-select:none;
@@ -182,7 +177,7 @@
     .btn:disabled{opacity:.55; cursor:not-allowed; transform:none}
 
     .content{
-      padding:18px 18px 12px;
+      padding:18px;
       overflow:auto;
       height:100%;
     }
@@ -198,7 +193,7 @@
     .topbar{
       display:grid;
       grid-template-columns: 1fr auto auto;
-      gap:12px;
+      gap:var(--gap);
       padding:14px;
       align-items:center;
     }
@@ -224,7 +219,7 @@
       background: rgba(0,0,0,.16);
       color:var(--text);
       padding:10px 12px;
-      font-weight:700;
+      font-weight:800;
       outline:none;
     }
 
@@ -232,7 +227,7 @@
     .tagGrid{
       display:grid;
       grid-template-columns: 1fr 1fr;
-      gap:12px;
+      gap:var(--gap);
     }
     .tagBlock{
       padding:12px;
@@ -249,7 +244,7 @@
       padding:7px 10px;
       border-radius: 999px;
       cursor:pointer;
-      font-weight:800;
+      font-weight:900;
       font-size:12px;
       transition:.12s transform, .12s background;
       user-select:none;
@@ -262,8 +257,9 @@
 
     .feedHeader{
       display:flex; align-items:center; justify-content:space-between;
-      gap:12px;
+      gap:10px;
       padding: 10px 14px 0;
+      flex-wrap:wrap;
     }
     .pill{
       display:inline-flex; align-items:center; gap:8px;
@@ -273,28 +269,42 @@
       background: rgba(0,0,0,.14);
       font-size:12px;
       color: rgba(255,255,255,.85);
-      font-weight:800;
+      font-weight:900;
+    }
+    .pill b{font-weight:1000}
+
+    /* ★ 余白最小の正方形グリッド */
+    .feedGrid{
+      padding: 12px 14px 14px;
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: var(--gap);
+      align-items:stretch;
     }
 
-    .feed{
-      padding: 12px 14px 14px;
-      display:flex; flex-direction:column; gap:12px;
-    }
     .habitCard{
       position:relative;
-      padding:12px;
+      padding:10px;
       border-radius: 16px;
       border:1px solid rgba(255,255,255,.10);
       background: linear-gradient(180deg, rgba(0,0,0,.16), rgba(255,255,255,.03));
       overflow:hidden;
+      aspect-ratio: 1 / 1; /* ★ 正方形 */
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      min-height: 0;
     }
+
     .habitTop{
       display:flex; align-items:center; justify-content:space-between;
       gap:10px;
-      margin-bottom:10px;
+      margin-bottom:8px;
+      min-width:0;
     }
     .miniUser{
-      display:flex; align-items:center; gap:8px; min-width:0;
+      display:flex; align-items:center; gap:8px;
+      min-width:0;
       opacity:.95;
     }
     .miniUser .miniAva{
@@ -302,14 +312,16 @@
       background: rgba(255,255,255,.08);
       overflow:hidden;
       border:1px solid rgba(255,255,255,.12);
+      flex:0 0 auto;
     }
     .miniUser .miniAva img{width:100%; height:100%; object-fit:cover}
     .miniUser .miniName{
-      font-size:12px; font-weight:800;
+      font-size:12px; font-weight:900;
       white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-      max-width: 210px;
+      max-width: 140px;
     }
-    .badgeRow{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
+
+    .badgeRow{display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end}
     .badge{
       font-size:11px;
       padding:5px 8px;
@@ -317,33 +329,40 @@
       border:1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.14);
       color: rgba(255,255,255,.85);
-      font-weight:800;
+      font-weight:900;
       cursor:pointer;
     }
     .badge.cat{border-color: rgba(255,201,77,.28); background: rgba(255,201,77,.12)}
     .badge.tag{border-color: rgba(87,199,255,.28); background: rgba(87,199,255,.10)}
+
     .habitTitle{
-      font-size:16px;
-      font-weight:900;
+      font-size:15px;
+      font-weight:1000;
       letter-spacing:.03em;
       margin:2px 0 6px;
+      line-height:1.25;
+      display:-webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow:hidden;
     }
     .habitDesc{
       color: rgba(234,246,255,.92);
       font-size:13px;
-      line-height:1.55;
+      line-height:1.45;
       margin:0 0 10px;
       white-space:pre-wrap;
+      display:-webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow:hidden;
+      opacity:.95;
     }
-    .habitBottom{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:12px; flex-wrap:wrap;
-    }
+
     .stats{
-      display:flex; gap:10px; flex-wrap:wrap;
-      color: rgba(234,246,255,.9);
+      display:flex; gap:8px; flex-wrap:wrap;
       font-size:12px;
-      font-weight:800;
+      font-weight:900;
     }
     .stat{
       display:flex; align-items:center; gap:7px;
@@ -352,30 +371,67 @@
       border:1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.14);
     }
-    .actions{display:flex; gap:10px; flex-wrap:wrap}
-    .btnTry{
-      border:none;
-      background: linear-gradient(180deg, rgba(255,77,94,.95), rgba(255,77,94,.62));
-      color:#fff;
-      border-radius: 12px;
-      padding:10px 12px;
-      font-weight:950;
-      cursor:pointer;
-      box-shadow: 0 12px 26px rgba(255,77,94,.18);
+
+    .actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      margin-top:8px;
     }
-    .btnTry:hover{filter:brightness(1.03)}
-    .btnGhost{
+
+    /* アイコンボタン（hoverでツールチップ） */
+    .iconBtn{
+      position:relative;
       border:1px solid rgba(255,255,255,.14);
       background: rgba(0,0,0,.14);
       color:var(--text);
       border-radius: 12px;
-      padding:10px 12px;
-      font-weight:900;
+      padding:10px 10px;
+      font-weight:1000;
       cursor:pointer;
-      display:flex; align-items:center; gap:8px;
+      display:flex; align-items:center; justify-content:center;
+      min-width: 42px;
     }
-    .btnGhost:hover{background: rgba(255,255,255,.06)}
+    .iconBtn:hover{background: rgba(255,255,255,.06)}
+    .iconBtn.danger{border-color: rgba(255,77,94,.45)}
+    .iconBtn.ok{border-color: rgba(124,255,166,.45)}
+    .iconBtn.warn{border-color: rgba(255,201,77,.45)}
+    .iconBtn.primary{border-color: rgba(87,199,255,.45)}
 
+    .iconBtn[data-tip]::after{
+      content: attr(data-tip);
+      position:absolute;
+      bottom: calc(100% + 8px);
+      left:50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,.72);
+      border:1px solid rgba(255,255,255,.16);
+      color: rgba(255,255,255,.92);
+      padding:6px 8px;
+      border-radius: 10px;
+      font-size:11px;
+      font-weight:900;
+      white-space:nowrap;
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .12s ease, transform .12s ease;
+    }
+    .iconBtn:hover::after{
+      opacity:1;
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    .tryBtn{
+      background: linear-gradient(180deg, rgba(255,77,94,.95), rgba(255,77,94,.62));
+      border:none;
+      color:#fff;
+      box-shadow: 0 12px 26px rgba(255,77,94,.18);
+    }
+    .tryBtn:hover{filter:brightness(1.03)}
+    .tryBtn[data-tip]::after{ border-color: rgba(255,77,94,.25); }
+
+    /* 今日の進行中（上の通知風） */
     .toastWrap{
       position:sticky;
       top:10px;
@@ -396,24 +452,32 @@
     }
     @keyframes pop{from{transform: translateY(-6px); opacity:.0} to{transform: translateY(0); opacity:1}}
     .toast .left{display:flex; flex-direction:column; gap:4px; min-width:0}
-    .toast .kicker{font-size:12px; font-weight:900}
-    .toast .main{font-size:14px; font-weight:950; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+    .toast .main{font-size:14px; font-weight:1000; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
     .toast .right{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
-    .emojiBtn{
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.16);
-      border-radius: 12px;
-      padding:10px 12px;
-      cursor:pointer;
-      font-weight:900;
-      color:var(--text);
-      display:flex; align-items:center; gap:8px;
-    }
-    .emojiBtn:hover{background: rgba(255,255,255,.06)}
-    .emojiBtn.primary{border-color: rgba(124,255,166,.45); background: rgba(124,255,166,.12)}
-    .emojiBtn.danger{border-color: rgba(255,77,94,.45); background: rgba(255,77,94,.10)}
-    .emojiBtn.warn{border-color: rgba(255,201,77,.45); background: rgba(255,201,77,.10)}
 
+    .plusOne{
+      position:fixed;
+      right:22px;
+      top: 92px;
+      z-index:60;
+      font-weight:1000;
+      font-size:14px;
+      padding:10px 12px;
+      border-radius: 999px;
+      border:1px solid rgba(124,255,166,.35);
+      background: rgba(124,255,166,.12);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      display:none;
+      animation: floatUp .9s ease-out forwards;
+    }
+    @keyframes floatUp{
+      0%{transform: translateY(8px); opacity:0}
+      15%{opacity:1}
+      100%{transform: translateY(-18px); opacity:0}
+    }
+
+    /* composer */
     .composer{
       position:sticky;
       bottom: 12px;
@@ -426,16 +490,13 @@
       backdrop-filter: blur(12px);
       box-shadow: var(--shadow);
     }
-    .composer .row{
+    .composerGrid{
       display:grid;
       grid-template-columns: 1.2fr 1fr;
-      gap:12px;
-    }
-    @media (max-width: 980px){
-      .composer .row{grid-template-columns: 1fr}
+      gap:var(--gap);
     }
     .field{display:flex; flex-direction:column; gap:6px;}
-    .field input, .field textarea{
+    .field input, .field textarea, .field select{
       border:1px solid rgba(255,255,255,.12);
       background: rgba(0,0,0,.16);
       color:var(--text);
@@ -464,10 +525,11 @@
     .view{display:none}
     .view.active{display:block}
 
+    /* records */
     .recordGrid{
       display:grid;
       grid-template-columns: 1fr;
-      gap:12px;
+      gap:10px;
       padding:14px;
     }
     .recordCard{
@@ -476,11 +538,11 @@
       border:1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.14);
     }
-    .recordCard .rTop{
+    .recordTop{
       display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
     }
-    .recordCard .rTitle{font-weight:950; font-size:14px; margin:0}
-    .recordCard .rSub{color:var(--muted); font-size:12px; margin-top:6px; line-height:1.6}
+    .recordTitle{font-weight:1000; font-size:14px; margin:0}
+    .recordSub{color:var(--muted); font-size:12px; margin-top:6px; line-height:1.6}
     .stamps{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
     .stamp{
       border:1px solid rgba(255,255,255,.12);
@@ -495,6 +557,7 @@
     .stamp.hard{border-color: rgba(255,201,77,.40); background: rgba(255,201,77,.10)}
     .stamp.fail{border-color: rgba(255,77,94,.40); background: rgba(255,77,94,.10)}
 
+    /* modals */
     .modalBg{
       position:fixed; inset:0;
       background: rgba(0,0,0,.45);
@@ -514,6 +577,8 @@
       padding:16px;
     }
     .modal h2{margin:0; font-size:16px; letter-spacing:.06em}
+    .modalFooter{display:flex; gap:10px; justify-content:flex-end; margin-top:14px; flex-wrap:wrap}
+
     .catList{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
     .catBtn{
       padding:10px 12px;
@@ -526,46 +591,27 @@
     }
     .catBtn:hover{background: rgba(255,255,255,.06)}
     .catBtn.active{border-color: rgba(87,199,255,.55); background: rgba(87,199,255,.12)}
-    .modalFooter{display:flex; gap:10px; justify-content:flex-end; margin-top:14px; flex-wrap:wrap}
 
-    .plusOne{
-      position:fixed;
-      right:22px;
-      top: 92px;
-      z-index:60;
-      font-weight:1000;
-      font-size:14px;
+    /* rating/reviews */
+    .list{
+      margin-top:12px;
+      border-top:1px solid rgba(255,255,255,.10);
+      padding-top:12px;
+      display:flex; flex-direction:column; gap:10px;
+      max-height: 320px;
+      overflow:auto;
+    }
+    .review{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.14);
+      border-radius: 14px;
       padding:10px 12px;
-      border-radius: 999px;
-      border:1px solid rgba(124,255,166,.35);
-      background: rgba(124,255,166,.12);
-      backdrop-filter: blur(10px);
-      box-shadow: var(--shadow);
-      display:none;
-      animation: floatUp .9s ease-out forwards;
     }
-    @keyframes floatUp{
-      0%{transform: translateY(8px); opacity:0}
-      15%{opacity:1}
-      100%{transform: translateY(-18px); opacity:0}
-    }
+    .reviewTop{display:flex; align-items:center; justify-content:space-between; gap:10px}
+    .reviewName{font-weight:900; font-size:12px; opacity:.95}
+    .reviewMeta{font-size:12px; opacity:.9}
+    .reviewText{margin-top:8px; font-size:13px; line-height:1.55; opacity:.95; white-space:pre-wrap}
 
-    /* rating modal */
-    .ratingModal{
-      width:min(640px, 100%);
-      border-radius: 18px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(10,25,38,.94);
-      backdrop-filter: blur(14px);
-      box-shadow: var(--shadow);
-      padding:16px;
-    }
-    .ratingHead{
-      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
-      margin-bottom:10px;
-    }
-    .ratingTitle{font-weight:950; font-size:14px; margin:0}
-    .ratingSub{color:var(--muted); font-size:12px; margin-top:6px; line-height:1.6}
     .starsRow{display:flex; gap:8px; flex-wrap:wrap; margin:12px 0}
     .starBtn{
       border:1px solid rgba(255,255,255,.14);
@@ -578,7 +624,7 @@
       display:flex; align-items:center; gap:8px;
     }
     .starBtn.active{border-color: rgba(255,201,77,.55); background: rgba(255,201,77,.14)}
-    .row2{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+
     .toggle{
       border:1px solid rgba(255,255,255,.14);
       background: rgba(0,0,0,.16);
@@ -603,24 +649,47 @@
       min-height: 88px;
       resize: vertical;
     }
-    .list{
-      margin-top:12px;
-      border-top:1px solid rgba(255,255,255,.10);
-      padding-top:12px;
-      display:flex; flex-direction:column; gap:10px;
-      max-height: 260px;
-      overflow:auto;
-    }
-    .review{
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.14);
+
+    /* difficulty modal */
+    .diffRow{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+    .diffBtn{
+      flex:1 1 120px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.16);
       border-radius: 14px;
-      padding:10px 12px;
+      padding:14px 12px;
+      cursor:pointer;
+      font-weight:1000;
+      color:var(--text);
+      display:flex; align-items:center; justify-content:center; gap:10px;
+      font-size:18px;
     }
-    .reviewTop{display:flex; align-items:center; justify-content:space-between; gap:10px}
-    .reviewName{font-weight:900; font-size:12px; opacity:.95}
-    .reviewMeta{font-size:12px; opacity:.9}
-    .reviewText{margin-top:8px; font-size:13px; line-height:1.55; opacity:.95; white-space:pre-wrap}
+    .diffBtn:hover{background: rgba(255,255,255,.06)}
+    .diffBtn.easy{border-color: rgba(124,255,166,.35); background: rgba(124,255,166,.10)}
+    .diffBtn.mid{border-color: rgba(87,199,255,.35); background: rgba(87,199,255,.10)}
+    .diffBtn.hard{border-color: rgba(255,201,77,.40); background: rgba(255,201,77,.10)}
+
+    /* login gate */
+    .gate{
+      position:fixed; inset:0;
+      display:none;
+      align-items:center; justify-content:center;
+      z-index:100;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(10px);
+      padding:18px;
+    }
+    .gate.show{display:flex}
+    .gateCard{
+      width:min(520px, 100%);
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(10,25,38,.92);
+      box-shadow: var(--shadow);
+      padding:16px;
+    }
+    .gateTitle{margin:0; font-size:16px; font-weight:1000; letter-spacing:.06em}
+    .gateActions{display:flex; justify-content:flex-end; gap:10px; margin-top:14px; flex-wrap:wrap}
   </style>
 </head>
 
@@ -633,13 +702,21 @@
 
   <div class="plusOne" id="plusOne">✨ +1</div>
 
+  <!-- ログイン必須ゲート -->
+  <div class="gate" id="loginGate">
+    <div class="gateCard">
+      <p class="gateTitle">ログイン</p>
+      <div class="gateActions">
+        <button class="btn primary" id="gateLoginBtn">Googleログイン</button>
+      </div>
+    </div>
+  </div>
+
   <div class="app">
     <aside class="nav">
       <div class="brand">
         <div class="logo"></div>
-        <div>
-          <h1>習慣さがし｜つづく</h1>
-        </div>
+        <div><h1>習慣さがし</h1></div>
       </div>
 
       <div class="navSection">
@@ -651,13 +728,17 @@
           <div class="ico">📅</div>
           <div class="label">達成記録</div>
         </button>
+        <button class="navBtn" id="navProfile">
+          <div class="ico">👤</div>
+          <div class="label">プロフィール</div>
+        </button>
       </div>
 
       <div class="navFooter">
         <div class="userCard">
           <div class="avatar" id="userAvatar">👤</div>
           <div class="userMeta">
-            <div class="userName" id="userName">未ログイン</div>
+            <div class="userName" id="userName">—</div>
             <div class="userSmall" id="userSmall">—</div>
           </div>
         </div>
@@ -698,7 +779,6 @@
               <option value="rating">⭐ 評価</option>
               <option value="success">🎯 成功率</option>
               <option value="days">📅 継続</option>
-              <option value="favCreators">❤️ お気に入り</option>
             </select>
           </div>
 
@@ -712,13 +792,15 @@
           <div class="feedHeader">
             <div class="pill">件数：<b id="countShown">0</b></div>
             <div class="pill">カテゴリ：<b id="myCategory">未設定</b> <button class="btn small" id="btnChangeMyCategory">変更</button></div>
+            <div class="pill">依頼：<b id="activeCount">0</b> / 3</div>
           </div>
 
-          <div class="feed" id="feed"></div>
+          <div class="feedGrid" id="feed"></div>
 
           <div class="composer" id="composer">
             <div class="counter" id="counterAction">0 / 40</div>
-            <div class="row">
+
+            <div class="composerGrid">
               <div class="field">
                 <input id="newTitle" placeholder="タイトル" maxlength="40" />
               </div>
@@ -726,7 +808,11 @@
                 <input id="newTags" placeholder="タグ（例：不安,寝つき）" />
               </div>
               <div class="field">
-                <input id="newCategory" placeholder="カテゴリ（任意）" maxlength="20" />
+                <select id="newCategory">
+                  <option value="">カテゴリ（任意）</option>
+                  <option>健康</option><option>メンタル</option><option>勉強</option><option>仕事</option>
+                  <option>生活</option><option>睡眠</option><option>運動</option><option>英語</option><option>その他</option>
+                </select>
               </div>
               <div class="field">
                 <textarea id="newAction" placeholder="5分でやること（40文字）" maxlength="40"></textarea>
@@ -734,7 +820,6 @@
             </div>
 
             <div class="composerFooter">
-              <button class="btn" id="btnSeed">サンプル追加</button>
               <button class="btn primary" id="btnPost">投稿</button>
             </div>
           </div>
@@ -746,6 +831,12 @@
           <div class="recordGrid" id="recordGrid"></div>
         </div>
       </section>
+
+      <section class="view" id="viewProfile">
+        <div class="panel">
+          <div class="recordGrid" id="profileGrid"></div>
+        </div>
+      </section>
     </main>
   </div>
 
@@ -755,51 +846,103 @@
       <h2>カテゴリ選択</h2>
       <div class="catList" id="catList"></div>
       <div class="modalFooter">
-        <button class="btn" id="modalSkip">あとで</button>
+        <button class="btn" id="modalSkip">閉じる</button>
         <button class="btn primary" id="modalSave" disabled>保存</button>
       </div>
     </div>
   </div>
 
-  <!-- 評価モーダル -->
-  <div class="modalBg" id="ratingBg">
-    <div class="ratingModal">
-      <div class="ratingHead">
-        <div>
-          <p class="ratingTitle" id="ratingHabitTitle">評価</p>
-          <div class="ratingSub" id="ratingHabitMeta">—</div>
-        </div>
-        <button class="btn" id="ratingClose">閉じる</button>
+  <!-- 難易度（3択） -->
+  <div class="modalBg" id="diffBg">
+    <div class="modal">
+      <h2 id="diffTitle">難易度</h2>
+      <div class="diffRow">
+        <button class="diffBtn easy" data-diff="easy">😊</button>
+        <button class="diffBtn mid" data-diff="mid">🙂</button>
+        <button class="diffBtn hard" data-diff="hard">😅</button>
       </div>
+      <div class="modalFooter">
+        <button class="btn" id="diffClose">閉じる</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 評価（⭐/❤️/口コミ） -->
+  <div class="modalBg" id="ratingBg">
+    <div class="modal">
+      <h2 id="ratingHabitTitle">評価</h2>
 
       <div class="starsRow" id="starsRow"></div>
 
-      <div class="row2">
-        <button class="toggle" id="likeToggle">❤️ いいね</button>
-        <div class="pill">あなたのランク：<b id="myRank">1</b></div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center">
+        <button class="toggle" id="likeToggle">❤️</button>
+        <div class="pill">R<b id="myRank">1</b></div>
       </div>
 
       <textarea class="commentBox" id="commentBox" placeholder="口コミ（短文）"></textarea>
 
-      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px; flex-wrap:wrap">
+      <div class="modalFooter">
         <button class="btn danger" id="ratingDelete">削除</button>
         <button class="btn primary" id="ratingSave">保存</button>
+        <button class="btn" id="ratingClose">閉じる</button>
       </div>
 
       <div class="list" id="reviewList"></div>
     </div>
   </div>
 
+  <!-- 口コミ一覧（閲覧専用） -->
+  <div class="modalBg" id="reviewsBg">
+    <div class="modal">
+      <h2 id="reviewsTitle">口コミ</h2>
+      <div class="list" id="reviewsList"></div>
+      <div class="modalFooter">
+        <button class="btn" id="reviewsClose">閉じる</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 編集（ver保持＆派生） -->
+  <div class="modalBg" id="editBg">
+    <div class="modal">
+      <h2 id="editTitle">編集</h2>
+
+      <div class="composerGrid" style="margin-top:12px">
+        <div class="field"><input id="editNewTitle" placeholder="タイトル" maxlength="40"></div>
+        <div class="field"><input id="editNewTags" placeholder="タグ（例：不安,寝つき）"></div>
+        <div class="field">
+          <select id="editNewCategory">
+            <option value="">カテゴリ（任意）</option>
+            <option>健康</option><option>メンタル</option><option>勉強</option><option>仕事</option>
+            <option>生活</option><option>睡眠</option><option>運動</option><option>英語</option><option>その他</option>
+          </select>
+        </div>
+        <div class="field"><textarea id="editNewAction" placeholder="5分でやること（40文字）" maxlength="40"></textarea></div>
+      </div>
+
+      <div class="modalFooter">
+        <button class="btn" id="btnDerive">派生版</button>
+        <button class="btn primary" id="btnSaveEdit">保存</button>
+        <button class="btn" id="editClose">閉じる</button>
+      </div>
+
+      <div class="list" id="versionsList"></div>
+    </div>
+  </div>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-analytics.js";
+
     import {
       getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged,
     } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+
     import {
       getFirestore,
       collection, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc,
-      getDocs, query, where, orderBy, limit, serverTimestamp
+      getDocs, query, where, orderBy, limit, serverTimestamp,
+      runTransaction
     } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -813,83 +956,14 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    try { getAnalytics(app); } catch(e){}
-
+    try{ getAnalytics(app); }catch{}
     const auth = getAuth(app);
     const db = getFirestore(app);
 
     const $ = (id) => document.getElementById(id);
-
-    const navHome = $("navHome");
-    const navRecords = $("navRecords");
-    const viewHome = $("viewHome");
-    const viewRecords = $("viewRecords");
-
-    const btnLogin = $("btnLogin");
-    const btnLogout = $("btnLogout");
-
-    const userName = $("userName");
-    const userSmall = $("userSmall");
-    const userAvatar = $("userAvatar");
-
-    const qInput = $("q");
-    const categoryFilter = $("categoryFilter");
-    const sortBy = $("sortBy");
-
-    const chipsRecommend = $("chipsRecommend");
-    const chipsTop = $("chipsTop");
-
-    const feed = $("feed");
-    const countShown = $("countShown");
-    const myCategory = $("myCategory");
-    const btnChangeMyCategory = $("btnChangeMyCategory");
-
-    const toastWrap = $("toastWrap");
-    const plusOne = $("plusOne");
-
-    const newTitle = $("newTitle");
-    const newTags = $("newTags");
-    const newCategory = $("newCategory");
-    const newAction = $("newAction");
-    const counterAction = $("counterAction");
-    const btnPost = $("btnPost");
-    const btnSeed = $("btnSeed");
-
-    const recordGrid = $("recordGrid");
-
-    const modalBg = $("modalBg");
-    const catList = $("catList");
-    const modalSkip = $("modalSkip");
-    const modalSave = $("modalSave");
-
-    // rating modal
-    const ratingBg = $("ratingBg");
-    const ratingClose = $("ratingClose");
-    const ratingHabitTitle = $("ratingHabitTitle");
-    const ratingHabitMeta = $("ratingHabitMeta");
-    const starsRow = $("starsRow");
-    const likeToggle = $("likeToggle");
-    const myRankEl = $("myRank");
-    const commentBox = $("commentBox");
-    const ratingSave = $("ratingSave");
-    const ratingDelete = $("ratingDelete");
-    const reviewList = $("reviewList");
-
-    let currentUser = null;
-    let myProfile = null;
-
-    let selectedTag = "";
-    let selectedTopTags = [];
-    let selectedRecoTags = [];
-    let favCreatorsSet = new Set();
-
-    const CATS = ["メンタル","睡眠","運動","健康","生活","勉強","英語","仕事","その他"];
-    let modalSelected = "";
-
-    // rating state
-    let ratingTargetHabit = null; // {id, ...}
-    let ratingStars = 0;
-    let ratingLiked = false;
+    const escapeHtml = (s) => String(s ?? "")
+      .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;").replaceAll("'","&#39;");
 
     const nowLocal = () => new Date();
     const fmtDate = (d) => {
@@ -899,26 +973,123 @@
       return `${y}-${m}-${day}`;
     };
     const parseYMD = (s) => {
-      // "YYYY-MM-DD" だけ想定（"YYYY-MM-DD（休）"などは前半だけ取る）
       const raw = String(s||"").slice(0,10);
       if(!/^\d{4}-\d{2}-\d{2}$/.test(raw)) return null;
       const [y,m,d] = raw.split("-").map(Number);
       return new Date(y, m-1, d);
     };
     const daysBetween = (a, b) => {
-      // a,b: Date（ローカル日付）
       const A = new Date(a.getFullYear(), a.getMonth(), a.getDate()).getTime();
       const B = new Date(b.getFullYear(), b.getMonth(), b.getDate()).getTime();
       return Math.round((B - A) / 86400000);
     };
-    const escapeHtml = (s) => {
-      return String(s ?? "")
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#39;");
-    };
+
+    // nav/views
+    const navHome = $("navHome");
+    const navRecords = $("navRecords");
+    const navProfile = $("navProfile");
+    const viewHome = $("viewHome");
+    const viewRecords = $("viewRecords");
+    const viewProfile = $("viewProfile");
+
+    // auth UI
+    const btnLogin = $("btnLogin");
+    const btnLogout = $("btnLogout");
+    const gateLoginBtn = $("gateLoginBtn");
+    const loginGate = $("loginGate");
+    const userName = $("userName");
+    const userSmall = $("userSmall");
+    const userAvatar = $("userAvatar");
+
+    // home
+    const qInput = $("q");
+    const categoryFilter = $("categoryFilter");
+    const sortBy = $("sortBy");
+    const chipsRecommend = $("chipsRecommend");
+    const chipsTop = $("chipsTop");
+    const feed = $("feed");
+    const countShown = $("countShown");
+    const myCategory = $("myCategory");
+    const btnChangeMyCategory = $("btnChangeMyCategory");
+    const activeCount = $("activeCount");
+
+    // toast
+    const toastWrap = $("toastWrap");
+    const plusOne = $("plusOne");
+
+    // composer
+    const newTitle = $("newTitle");
+    const newTags = $("newTags");
+    const newCategory = $("newCategory");
+    const newAction = $("newAction");
+    const counterAction = $("counterAction");
+    const btnPost = $("btnPost");
+
+    // records/profile
+    const recordGrid = $("recordGrid");
+    const profileGrid = $("profileGrid");
+
+    // category modal
+    const modalBg = $("modalBg");
+    const catList = $("catList");
+    const modalSkip = $("modalSkip");
+    const modalSave = $("modalSave");
+
+    // difficulty modal
+    const diffBg = $("diffBg");
+    const diffTitle = $("diffTitle");
+    const diffClose = $("diffClose");
+
+    // rating modal
+    const ratingBg = $("ratingBg");
+    const ratingClose = $("ratingClose");
+    const ratingHabitTitle = $("ratingHabitTitle");
+    const starsRow = $("starsRow");
+    const likeToggle = $("likeToggle");
+    const myRankEl = $("myRank");
+    const commentBox = $("commentBox");
+    const ratingSave = $("ratingSave");
+    const ratingDelete = $("ratingDelete");
+    const reviewList = $("reviewList");
+
+    // reviews view-only modal
+    const reviewsBg = $("reviewsBg");
+    const reviewsTitle = $("reviewsTitle");
+    const reviewsList = $("reviewsList");
+    const reviewsClose = $("reviewsClose");
+
+    // edit modal
+    const editBg = $("editBg");
+    const editTitle = $("editTitle");
+    const editNewTitle = $("editNewTitle");
+    const editNewTags = $("editNewTags");
+    const editNewCategory = $("editNewCategory");
+    const editNewAction = $("editNewAction");
+    const btnSaveEdit = $("btnSaveEdit");
+    const btnDerive = $("btnDerive");
+    const editClose = $("editClose");
+    const versionsList = $("versionsList");
+
+    let currentUser = null;
+    let myProfile = null;
+
+    let selectedTag = "";
+    let selectedTopTags = [];
+    let selectedRecoTags = [];
+
+    // challenge state for difficulty modal
+    let diffTargetChallenge = null;
+
+    // rating state
+    let ratingTargetHabit = null;
+    let ratingStars = 0;
+    let ratingLiked = false;
+
+    // edit state
+    let editTargetHabit = null;
+
+    const CATS = ["メンタル","睡眠","運動","健康","生活","勉強","英語","仕事","その他"];
+    let modalSelected = "";
 
     function showPlusOne(){
       plusOne.style.display = "block";
@@ -929,16 +1100,109 @@
     }
 
     function setView(which){
-      const isHome = which === "home";
-      navHome.classList.toggle("active", isHome);
-      navRecords.classList.toggle("active", !isHome);
-      viewHome.classList.toggle("active", isHome);
-      viewRecords.classList.toggle("active", !isHome);
-      if(!isHome) refreshRecords();
+      const home = which==="home";
+      const records = which==="records";
+      const profile = which==="profile";
+
+      navHome.classList.toggle("active", home);
+      navRecords.classList.toggle("active", records);
+      navProfile.classList.toggle("active", profile);
+
+      viewHome.classList.toggle("active", home);
+      viewRecords.classList.toggle("active", records);
+      viewProfile.classList.toggle("active", profile);
+
+      if(records) refreshRecords();
+      if(profile) refreshProfile();
     }
     navHome.addEventListener("click", ()=> setView("home"));
     navRecords.addEventListener("click", ()=> setView("records"));
+    navProfile.addEventListener("click", ()=> setView("profile"));
 
+    // ===== Auth =====
+    async function login(){
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+    }
+    btnLogin.addEventListener("click", async ()=>{ try{ await login(); }catch(e){ alert("ログイン失敗"); } });
+    gateLoginBtn.addEventListener("click", async ()=>{ try{ await login(); }catch(e){ alert("ログイン失敗"); } });
+    btnLogout.addEventListener("click", async ()=>{
+      try{ await signOut(auth); }catch(e){ alert("ログアウト失敗"); }
+    });
+
+    onAuthStateChanged(auth, async (user)=>{
+      currentUser = user || null;
+
+      if(!currentUser){
+        loginGate.classList.add("show");
+        btnLogout.disabled = true;
+
+        userName.textContent = "—";
+        userSmall.textContent = "—";
+        userAvatar.innerHTML = "👤";
+
+        // ログイン必須なので、ここで操作不能にする
+        feed.innerHTML = "";
+        toastWrap.innerHTML = "";
+        recordGrid.innerHTML = "";
+        profileGrid.innerHTML = "";
+        return;
+      }
+
+      loginGate.classList.remove("show");
+      btnLogout.disabled = false;
+
+      userName.textContent = currentUser.displayName || "ユーザー";
+      userSmall.textContent = currentUser.email || "—";
+      userAvatar.innerHTML = "";
+      if(currentUser.photoURL){
+        const img = document.createElement("img");
+        img.src = currentUser.photoURL;
+        img.alt = "avatar";
+        userAvatar.appendChild(img);
+      }else{
+        userAvatar.textContent = "👤";
+      }
+
+      await ensureProfile();
+
+      // ★ ログイン時：3日連続未報告なら自動リタイア
+      await autoRetireIfMissed();
+
+      // 初回カテゴリ未設定ならモーダル
+      const pref = myProfile?.preferredCategory || "";
+      myCategory.textContent = pref || "未設定";
+      if(!pref) openCategoryModal();
+
+      await refreshHome();
+      await refreshRecords();
+      await refreshProfile();
+    });
+
+    async function ensureProfile(){
+      const ref = doc(db, "users", currentUser.uid);
+      const snap = await getDoc(ref);
+      if(!snap.exists()){
+        const initial = {
+          displayName: currentUser.displayName || "ユーザー",
+          photoURL: currentUser.photoURL || "",
+          preferredCategory: "",
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+          clearCount: 0,
+          totalChallenges: 0,
+          // 参加者ランク（1-3）
+          ratingRank: 1
+        };
+        await setDoc(ref, initial);
+        myProfile = initial;
+      }else{
+        myProfile = snap.data();
+      }
+      myRankEl.textContent = String(myProfile?.ratingRank || 1);
+    }
+
+    // ===== Category modal =====
     function openCategoryModal(){
       modalSelected = "";
       modalSave.disabled = true;
@@ -958,18 +1222,10 @@
       modalBg.classList.add("show");
     }
     function closeCategoryModal(){ modalBg.classList.remove("show"); }
-
+    btnChangeMyCategory.addEventListener("click", openCategoryModal);
     modalSkip.addEventListener("click", closeCategoryModal);
     modalSave.addEventListener("click", async ()=>{
       if(!modalSelected) return;
-      if(!currentUser){
-        localStorage.setItem("myCategory", modalSelected);
-        myCategory.textContent = modalSelected;
-        closeCategoryModal();
-        await refreshHome();
-        return;
-      }
-      await ensureProfile();
       await updateDoc(doc(db,"users",currentUser.uid), {
         preferredCategory: modalSelected,
         updatedAt: serverTimestamp()
@@ -979,106 +1235,18 @@
       closeCategoryModal();
       await refreshHome();
     });
-    btnChangeMyCategory.addEventListener("click", openCategoryModal);
 
-    btnLogin.addEventListener("click", async ()=>{
-      const provider = new GoogleAuthProvider();
-      try{ await signInWithPopup(auth, provider); }
-      catch(e){ alert("ログイン失敗：\n"+(e?.message ?? e)); }
-    });
-    btnLogout.addEventListener("click", async ()=>{
-      try{ await signOut(auth); }
-      catch(e){ alert("ログアウト失敗：\n"+(e?.message ?? e)); }
-    });
-
-    onAuthStateChanged(auth, async (user)=>{
-      currentUser = user || null;
-      btnLogout.disabled = !currentUser;
-
-      if(!currentUser){
-        userName.textContent = "未ログイン";
-        userSmall.textContent = "—";
-        userAvatar.innerHTML = "👤";
-        myProfile = null;
-
-        const lc = localStorage.getItem("myCategory") || "未設定";
-        myCategory.textContent = lc;
-
-        try{
-          const raw = localStorage.getItem("favCreators");
-          favCreatorsSet = new Set(raw ? JSON.parse(raw) : []);
-        }catch{ favCreatorsSet = new Set(); }
-
-        await refreshHome();
-        await refreshRecords();
-        return;
-      }
-
-      userName.textContent = currentUser.displayName || "ユーザー";
-      userSmall.textContent = currentUser.email || "—";
-      userAvatar.innerHTML = "";
-      if(currentUser.photoURL){
-        const img = document.createElement("img");
-        img.src = currentUser.photoURL;
-        img.alt = "avatar";
-        userAvatar.appendChild(img);
-      }else{
-        userAvatar.textContent = "👤";
-      }
-
-      await ensureProfile();
-
-      favCreatorsSet = new Set(myProfile?.favCreators || []);
-      localStorage.setItem("favCreators", JSON.stringify([...favCreatorsSet]));
-
-      const pref = myProfile?.preferredCategory || "";
-      myCategory.textContent = pref || "未設定";
-      if(!pref) openCategoryModal();
-
-      // ★ 3日連続未報告 自動リタイア判定（ログイン時に実行）
-      await autoRetireIfMissed();
-
-      await refreshHome();
-      await refreshRecords();
-    });
-
-    async function ensureProfile(){
-      if(!currentUser) return;
-      const ref = doc(db, "users", currentUser.uid);
-      const snap = await getDoc(ref);
-      if(!snap.exists()){
-        const initial = {
-          displayName: currentUser.displayName || "ユーザー",
-          photoURL: currentUser.photoURL || "",
-          preferredCategory: "",
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-          favCreators: [],
-          clearCount: 0,
-          activeCount: 0,
-          totalChallenges: 0,
-          // 参加者ランク（1-3）
-          ratingRank: 1
-        };
-        await setDoc(ref, initial);
-        myProfile = initial;
-      }else{
-        myProfile = snap.data();
-      }
-      myRankEl.textContent = String(myProfile?.ratingRank || 1);
-    }
-
+    // ===== Composer =====
     function updateCounter(){
       counterAction.textContent = `${newAction.value.length} / 40`;
     }
     newAction.addEventListener("input", updateCounter);
     updateCounter();
 
-    // ====== 投稿 ======
     btnPost.addEventListener("click", async ()=>{
       const title = newTitle.value.trim();
       const tags = newTags.value.split(",").map(s=>s.trim()).filter(Boolean).slice(0,8);
-      const category = newCategory.value.trim();
+      const category = String(newCategory.value || "").trim();
       const action = newAction.value.trim();
 
       if(!title || !action){ alert("タイトル / 5分でやること は必須"); return; }
@@ -1086,25 +1254,29 @@
 
       const data = {
         title, action, tags, category,
-        creatorUid: currentUser?.uid || "guest",
-        creatorName: currentUser?.displayName || "ゲスト",
-        creatorPhoto: currentUser?.photoURL || "",
+        creatorUid: currentUser.uid,
+        creatorName: currentUser.displayName || "作成者",
+        creatorPhoto: currentUser.photoURL || "",
         createdAt: serverTimestamp(),
+
+        // 集計（Phase2の土台）
         avgRating: 0,
         ratingCount: 0,
         participantsCount: 0,
         avgDays: 0,
-        successRate: 0
+        successRate: 0,
+        feelEasy: 0,
+        feelMid: 0,
+        feelHard: 0,
+
+        // versioning
+        baseHabitId: "", // 自分が派生なら元のID
+        version: 1,
+        updatedAt: serverTimestamp()
       };
 
       try{
-        if(currentUser){
-          await addDoc(collection(db, "habits"), data);
-        }else{
-          const local = JSON.parse(localStorage.getItem("localHabits") || "[]");
-          local.unshift({ ...data, _localId: crypto.randomUUID(), createdAtLocal: Date.now() });
-          localStorage.setItem("localHabits", JSON.stringify(local));
-        }
+        await addDoc(collection(db, "habits"), data);
 
         newTitle.value = "";
         newTags.value = "";
@@ -1113,46 +1285,13 @@
         updateCounter();
 
         await refreshHome();
+        await refreshProfile();
       }catch(e){
-        alert("投稿失敗：\n" + (e?.message ?? e));
+        alert("投稿失敗");
       }
     });
 
-    btnSeed.addEventListener("click", async ()=>{
-      const samples = [
-        { title:"夜5分散歩", action:"外に出て3分歩き、最後に深呼吸1回", tags:["不安","寝つき"], category:"メンタル" },
-        { title:"目を休める 1分", action:"遠くを見て、まばたき10回", tags:["集中","疲れ目"], category:"生活" },
-        { title:"英単語5つ", action:"単語帳で5単語だけ見る", tags:["英語","勉強"], category:"英語" },
-        { title:"寝る前に水", action:"コップ半分の水を飲む", tags:["睡眠","体調"], category:"睡眠" },
-      ];
-      try{
-        for(const s of samples){
-          const data = {
-            ...s,
-            creatorUid: currentUser?.uid || "guest",
-            creatorName: currentUser?.displayName || "ゲスト",
-            creatorPhoto: currentUser?.photoURL || "",
-            createdAt: serverTimestamp(),
-            avgRating: 4.2,
-            ratingCount: 12,
-            participantsCount: 54,
-            avgDays: 6.2,
-            successRate: 32
-          };
-          if(currentUser) await addDoc(collection(db,"habits"), data);
-          else{
-            const local = JSON.parse(localStorage.getItem("localHabits") || "[]");
-            local.unshift({ ...data, _localId: crypto.randomUUID(), createdAtLocal: Date.now() });
-            localStorage.setItem("localHabits", JSON.stringify(local));
-          }
-        }
-        await refreshHome();
-      }catch(e){
-        alert("失敗：\n" + (e?.message ?? e));
-      }
-    });
-
-    // ====== フィルタ ======
+    // ===== Filters =====
     function setSelectedTag(tag){
       selectedTag = tag || "";
       [...document.querySelectorAll(".chip")].forEach(ch=>{
@@ -1164,30 +1303,38 @@
     categoryFilter.addEventListener("change", refreshHome);
     sortBy.addEventListener("change", refreshHome);
 
-    // ====== Home ======
+    function renderChips(container, tags){
+      container.innerHTML = "";
+      for(const t of tags){
+        const chip = document.createElement("div");
+        chip.className = "chip";
+        chip.dataset.tag = t;
+        chip.textContent = `#${t}`;
+        chip.addEventListener("click", ()=> setSelectedTag(t));
+        container.appendChild(chip);
+      }
+      [...container.querySelectorAll(".chip")].forEach(ch=>{
+        ch.classList.toggle("active", ch.dataset.tag === selectedTag);
+      });
+    }
+
+    // ===== Home =====
     async function refreshHome(){
+      if(!currentUser) return;
+
       const keyword = qInput.value.trim().toLowerCase();
       const cat = categoryFilter.value.trim();
       const sort = sortBy.value;
+      const prefCat = myProfile?.preferredCategory || "";
 
-      const prefCat = (currentUser ? (myProfile?.preferredCategory || "") : (localStorage.getItem("myCategory") || "")) || "";
       myCategory.textContent = prefCat || "未設定";
 
+      // habits
       let habits = [];
+      const qs = await getDocs(query(collection(db,"habits"), orderBy("createdAt","desc"), limit(180)));
+      qs.forEach(docSnap=> habits.push({ id: docSnap.id, ...docSnap.data() }));
 
-      try{
-        const qs = await getDocs(query(collection(db,"habits"), orderBy("createdAt","desc"), limit(140)));
-        qs.forEach(docSnap=>{
-          habits.push({ id: docSnap.id, ...docSnap.data(), _source:"remote" });
-        });
-      }catch(e){}
-
-      try{
-        const local = JSON.parse(localStorage.getItem("localHabits") || "[]");
-        habits = habits.concat(local.map(x=>({ ...x, id: x._localId, _source:"local" })));
-      }catch{}
-
-      // tags
+      // tag counts
       const tagCounts = new Map();
       for(const h of habits){
         (h.tags || []).forEach(t=>{
@@ -1215,6 +1362,7 @@
       if(selectedRecoTags.length===0) selectedRecoTags = selectedTopTags;
       renderChips(chipsRecommend, selectedRecoTags);
 
+      // filter
       let filtered = habits.filter(h=>{
         if(cat && (h.category || "").trim() !== cat) return false;
         if(selectedTag && !(h.tags || []).includes(selectedTag)) return false;
@@ -1225,9 +1373,10 @@
         return true;
       });
 
+      // sort
       filtered.sort((a,b)=>{
-        const ca = a.createdAt?.seconds ? a.createdAt.seconds : (a.createdAtLocal ? Math.floor(a.createdAtLocal/1000) : 0);
-        const cb = b.createdAt?.seconds ? b.createdAt.seconds : (b.createdAtLocal ? Math.floor(b.createdAtLocal/1000) : 0);
+        const ca = a.createdAt?.seconds ? a.createdAt.seconds : 0;
+        const cb = b.createdAt?.seconds ? b.createdAt.seconds : 0;
 
         const ra = Number(a.avgRating||0);
         const rb = Number(b.avgRating||0);
@@ -1239,65 +1388,56 @@
         if(sort === "rating") return (rb - ra) || (cb - ca);
         if(sort === "success") return (sb - sa) || (cb - ca);
         if(sort === "days") return (dbb - da) || (cb - ca);
-        if(sort === "favCreators"){
-          const af = favCreatorsSet.has(a.creatorUid) ? 1 : 0;
-          const bf = favCreatorsSet.has(b.creatorUid) ? 1 : 0;
-          return (bf - af) || (cb - ca);
-        }
         return (cb - ca);
       });
 
       countShown.textContent = String(filtered.length);
 
-      feed.innerHTML = "";
+      // active count
+      const actives = await loadActiveChallenges();
+      activeCount.textContent = String(actives.length);
+
+      // today toasts
       await refreshTodayToasts();
+
+      // render
+      feed.innerHTML = "";
       for(const h of filtered){
         feed.appendChild(renderHabitCard(h));
       }
-    }
-
-    function renderChips(container, tags){
-      container.innerHTML = "";
-      for(const t of tags){
-        const chip = document.createElement("div");
-        chip.className = "chip";
-        chip.dataset.tag = t;
-        chip.textContent = `#${t}`;
-        chip.addEventListener("click", ()=> setSelectedTag(t));
-        container.appendChild(chip);
-      }
-      [...container.querySelectorAll(".chip")].forEach(ch=>{
-        ch.classList.toggle("active", ch.dataset.tag === selectedTag);
-      });
     }
 
     function renderHabitCard(h){
       const card = document.createElement("div");
       card.className = "habitCard";
 
-      const tags = (h.tags || []).slice(0,4);
+      const tags = (h.tags || []).slice(0,3);
       const cat = (h.category || "").trim();
 
       const avgRating = Number(h.avgRating||0);
       const avgDays = Number(h.avgDays||0);
       const successRate = Number(h.successRate||0);
 
+      const isMine = h.creatorUid === currentUser.uid;
+
       card.innerHTML = `
-        <div class="habitTop">
-          <div class="miniUser">
-            <div class="miniAva">${h.creatorPhoto ? `<img src="${h.creatorPhoto}" alt=""/>` : ""}</div>
-            <div class="miniName">${escapeHtml(h.creatorName || "作成者")}</div>
+        <div>
+          <div class="habitTop">
+            <div class="miniUser">
+              <div class="miniAva">${h.creatorPhoto ? `<img src="${escapeHtml(h.creatorPhoto)}" alt=""/>` : ""}</div>
+              <div class="miniName">${escapeHtml(h.creatorName || "作成者")}</div>
+            </div>
+            <div class="badgeRow">
+              ${cat ? `<span class="badge cat" data-cat="${escapeHtml(cat)}">${escapeHtml(cat)}</span>` : ""}
+              ${tags.map(t=>`<span class="badge tag" data-tag="${escapeHtml(t)}">${escapeHtml(t)}</span>`).join("")}
+            </div>
           </div>
-          <div class="badgeRow">
-            ${cat ? `<span class="badge cat" data-cat="${escapeHtml(cat)}">${escapeHtml(cat)}</span>` : ""}
-            ${tags.map(t=>`<span class="badge tag" data-tag="${escapeHtml(t)}">${escapeHtml(t)}</span>`).join("")}
-          </div>
+
+          <div class="habitTitle">${escapeHtml(h.title || "")}</div>
+          <p class="habitDesc">${escapeHtml(h.action || "")}</p>
         </div>
 
-        <div class="habitTitle">${escapeHtml(h.title || "")}</div>
-        <p class="habitDesc">${escapeHtml(h.action || "")}</p>
-
-        <div class="habitBottom">
+        <div>
           <div class="stats">
             <div class="stat">⭐ ${avgRating ? avgRating.toFixed(1) : "—"}</div>
             <div class="stat">📅 ${avgDays ? avgDays.toFixed(1) : "—"}</div>
@@ -1305,18 +1445,19 @@
           </div>
 
           <div class="actions">
-            <button class="btnGhost" data-act="bookmark">🔖</button>
-            <button class="btnGhost" data-act="rate">⭐</button>
-            <button class="btnGhost" data-act="fav">❤️</button>
-            <button class="btnTry" data-act="try">▶ 挑戦</button>
+            <button class="iconBtn primary" data-act="rate" data-tip="評価">⭐</button>
+            <button class="iconBtn" data-act="reviews" data-tip="口コミ">💬</button>
+            ${isMine ? `<button class="iconBtn warn" data-act="edit" data-tip="編集">🛠️</button>` : ""}
+            <button class="iconBtn tryBtn" data-act="try" data-tip="挑戦">▶</button>
           </div>
         </div>
       `;
 
       card.querySelector('[data-act="try"]').addEventListener("click", ()=> startChallenge(h));
-      card.querySelector('[data-act="bookmark"]').addEventListener("click", ()=> bookmarkHabit(h));
-      card.querySelector('[data-act="fav"]').addEventListener("click", ()=> toggleFavCreator(h.creatorUid));
       card.querySelector('[data-act="rate"]').addEventListener("click", ()=> openRatingModal(h));
+      card.querySelector('[data-act="reviews"]').addEventListener("click", ()=> openReviewsModal(h));
+      const editBtn = card.querySelector('[data-act="edit"]');
+      if(editBtn) editBtn.addEventListener("click", ()=> openEditModal(h));
 
       card.querySelectorAll(".badge.tag").forEach(el=>{
         el.addEventListener("click", (e)=>{
@@ -1335,102 +1476,30 @@
       return card;
     }
 
-    // ====== bookmark（非公開のみ） ======
-    async function bookmarkHabit(h){
-      if(!currentUser){
-        const key = "localBookmarks";
-        const arr = JSON.parse(localStorage.getItem(key) || "[]");
-        if(!arr.includes(h.id)){
-          arr.push(h.id);
-          localStorage.setItem(key, JSON.stringify(arr));
-        }
-        return;
-      }
-      try{
-        const ref = doc(db, "userBookmarks", currentUser.uid, "items", h.id);
-        const snap = await getDoc(ref);
-        if(!snap.exists()){
-          await setDoc(ref, {
-            habitId: h.id,
-            title: h.title || "",
-            createdAt: serverTimestamp(),
-            visibility: "private",
-            listName: "非公開リスト"
-          });
-        }
-      }catch(e){
-        alert("保存失敗：\n" + (e?.message ?? e));
-      }
+    // ===== Challenge =====
+    async function loadActiveChallenges(){
+      const qs = await getDocs(query(
+        collection(db, "userChallenges", currentUser.uid, "items"),
+        where("status","==","active"),
+        orderBy("updatedAt","desc"),
+        limit(10)
+      ));
+      const arr = [];
+      qs.forEach(s=> arr.push(s.data()));
+      return arr;
     }
 
-    async function toggleFavCreator(creatorUid){
-      if(!creatorUid) return;
-      if(!currentUser){
-        if(favCreatorsSet.has(creatorUid)) favCreatorsSet.delete(creatorUid);
-        else favCreatorsSet.add(creatorUid);
-        localStorage.setItem("favCreators", JSON.stringify([...favCreatorsSet]));
-        await refreshHome();
-        return;
-      }
-      try{
-        await ensureProfile();
-        if(favCreatorsSet.has(creatorUid)) favCreatorsSet.delete(creatorUid);
-        else favCreatorsSet.add(creatorUid);
-
-        await updateDoc(doc(db,"users",currentUser.uid), {
-          favCreators: [...favCreatorsSet],
-          updatedAt: serverTimestamp()
-        });
-        myProfile.favCreators = [...favCreatorsSet];
-        localStorage.setItem("favCreators", JSON.stringify([...favCreatorsSet]));
-        await refreshHome();
-      }catch(e){
-        alert("失敗：\n" + (e?.message ?? e));
-      }
-    }
-
-    // ====== Challenge ======
     async function startChallenge(h){
       const maxActive = 3;
       const actives = await loadActiveChallenges();
-      if(actives.length >= maxActive){
-        alert("依頼は最大3");
-        return;
-      }
+      if(actives.length >= maxActive){ alert("依頼は最大3"); return; }
 
       const start = fmtDate(nowLocal());
-
-      if(!currentUser){
-        const key = "localChallenges";
-        const items = JSON.parse(localStorage.getItem(key) || "[]");
-        const exists = items.find(x => x.habitId === h.id && x.status === "active");
-        if(exists) return;
-        items.unshift({
-          id: crypto.randomUUID(),
-          habitId: h.id,
-          habitTitle: h.title || "",
-          status:"active",
-          startDate:start,
-          day:1,
-          lastReportedDate:"",
-          streakMiss:0,
-          successDays:0,
-          restDays:0,
-          difficulty:{easy:0,mid:0,hard:0},
-          updatedAt: Date.now(),
-          category: h.category || "",
-          tags: h.tags || []
-        });
-        localStorage.setItem(key, JSON.stringify(items));
-        await refreshTodayToasts();
-        await refreshRecords();
-        return;
-      }
 
       try{
         const ref = doc(db, "userChallenges", currentUser.uid, "items", h.id);
         const snap = await getDoc(ref);
-        if(snap.exists() && (snap.data()?.status === "active")) return;
+        if(snap.exists() && snap.data()?.status === "active") return;
 
         await setDoc(ref, {
           habitId: h.id,
@@ -1443,54 +1512,40 @@
           successDays: 0,
           restDays: 0,
           difficulty: { easy:0, mid:0, hard:0 },
-          category: h.category || "",
-          tags: h.tags || [],
           updatedAt: serverTimestamp()
         });
 
-        // participantsCount 増やす（簡易）
-        try{
-          if(h._source === "remote"){
-            const href = doc(db, "habits", h.id);
-            const hs = await getDoc(href);
-            if(hs.exists()){
-              const cur = hs.data();
-              const pc = Number(cur.participantsCount||0) + 1;
-              await updateDoc(href, { participantsCount: pc });
-            }
-          }
-        }catch{}
+        // participantsCount +1（トランザクション）
+        await runTransaction(db, async (tx)=>{
+          const href = doc(db, "habits", h.id);
+          const hs = await tx.get(href);
+          if(!hs.exists()) return;
+          const cur = hs.data();
+          const pc = Number(cur.participantsCount||0) + 1;
+          tx.update(href, { participantsCount: pc, updatedAt: serverTimestamp() });
+        });
+
+        // user stats
+        await runTransaction(db, async (tx)=>{
+          const uref = doc(db, "users", currentUser.uid);
+          const us = await tx.get(uref);
+          if(!us.exists()) return;
+          const cur = us.data();
+          tx.update(uref, { totalChallenges: Number(cur.totalChallenges||0)+1, updatedAt: serverTimestamp() });
+        });
 
         await refreshTodayToasts();
         await refreshRecords();
+        await refreshHome();
       }catch(e){
-        alert("失敗：\n" + (e?.message ?? e));
-      }
-    }
-
-    async function loadActiveChallenges(){
-      if(!currentUser){
-        const items = JSON.parse(localStorage.getItem("localChallenges") || "[]");
-        return items.filter(x => x.status === "active");
-      }
-      try{
-        const qs = await getDocs(query(
-          collection(db, "userChallenges", currentUser.uid, "items"),
-          where("status","==","active"),
-          orderBy("updatedAt","desc"),
-          limit(10)
-        ));
-        const arr = [];
-        qs.forEach(s=> arr.push(s.data()));
-        return arr;
-      }catch(e){
-        return [];
+        alert("挑戦失敗");
       }
     }
 
     async function refreshTodayToasts(){
       toastWrap.innerHTML = "";
       const actives = await loadActiveChallenges();
+      activeCount.textContent = String(actives.length);
       if(actives.length === 0) return;
 
       for(const ch of actives.slice(0,3)){
@@ -1500,90 +1555,47 @@
         toast.className = "toast";
         toast.innerHTML = `
           <div class="left">
-            <div class="kicker">🌱</div>
-            <div class="main">${escapeHtml(title)}（${day}日目）</div>
+            <div class="main">🌱 ${escapeHtml(title)}（${day}日目）</div>
           </div>
           <div class="right">
-            <button class="emojiBtn primary" data-act="done">✅</button>
-            <button class="emojiBtn warn" data-act="rest">🛌</button>
-            <button class="emojiBtn danger" data-act="retire">🏳️</button>
+            <button class="iconBtn ok" data-act="done" data-tip="やった">✅</button>
+            <button class="iconBtn warn" data-act="rest" data-tip="休む">🛌</button>
+            <button class="iconBtn danger" data-act="retire" data-tip="リタイア">🏳️</button>
           </div>
         `;
-        toast.querySelector('[data-act="done"]').addEventListener("click", ()=> reportDone(ch, "done"));
-        toast.querySelector('[data-act="rest"]').addEventListener("click", ()=> reportDone(ch, "rest"));
-        toast.querySelector('[data-act="retire"]').addEventListener("click", ()=> reportDone(ch, "retire"));
+        toast.querySelector('[data-act="done"]').addEventListener("click", ()=> openDiffModal(ch));
+        toast.querySelector('[data-act="rest"]').addEventListener("click", ()=> applyReport(ch, { type:"rest" }));
+        toast.querySelector('[data-act="retire"]').addEventListener("click", async ()=>{
+          if(!confirm("リタイア？")) return;
+          await applyReport(ch, { type:"retire" });
+        });
         toastWrap.appendChild(toast);
       }
     }
 
-    function incPlusOne(){ showPlusOne(); }
-
-    async function reportDone(ch, mode){
-      if(mode === "done"){
-        const choice = prompt("😊🙂😅");
-        const d = (choice || "").trim();
-        const map = { "😊":"easy", "🙂":"mid", "😅":"hard" };
-        if(!map[d]) return;
-        await applyReport(ch, { type:"done", diff: map[d] });
-        return;
-      }
-      if(mode === "rest"){
-        await applyReport(ch, { type:"rest" });
-        return;
-      }
-      if(mode === "retire"){
-        const ok = confirm("リタイア？");
-        if(!ok) return;
-        await applyReport(ch, { type:"retire" });
-        return;
-      }
+    // ===== Difficulty modal =====
+    function openDiffModal(ch){
+      diffTargetChallenge = ch;
+      diffTitle.textContent = ch.habitTitle || "難易度";
+      diffBg.classList.add("show");
     }
+    function closeDiffModal(){
+      diffTargetChallenge = null;
+      diffBg.classList.remove("show");
+    }
+    diffClose.addEventListener("click", closeDiffModal);
+    diffBg.addEventListener("click", (e)=>{ if(e.target===diffBg) closeDiffModal(); });
+    diffBg.querySelectorAll(".diffBtn").forEach(btn=>{
+      btn.addEventListener("click", async ()=>{
+        if(!diffTargetChallenge) return;
+        const diff = btn.dataset.diff;
+        await applyReport(diffTargetChallenge, { type:"done", diff });
+        closeDiffModal();
+      });
+    });
 
     async function applyReport(ch, payload){
       const today = fmtDate(nowLocal());
-
-      if(!currentUser){
-        const key = "localChallenges";
-        const items = JSON.parse(localStorage.getItem(key) || "[]");
-        const idx = items.findIndex(x => x.habitId === ch.habitId && x.status === "active");
-        if(idx === -1) return;
-        const cur = items[idx];
-
-        if(payload.type === "done"){
-          cur.successDays = Number(cur.successDays||0) + 1;
-          cur.lastReportedDate = today;
-          cur.streakMiss = 0;
-          cur.day = Number(cur.day||1) + 1;
-          cur.difficulty = cur.difficulty || {easy:0,mid:0,hard:0};
-          cur.difficulty[payload.diff] = Number(cur.difficulty[payload.diff]||0) + 1;
-          incPlusOne();
-        }else if(payload.type === "rest"){
-          cur.restDays = Number(cur.restDays||0) + 1;
-          cur.lastReportedDate = today + "（休）";
-          cur.streakMiss = 0;
-          cur.day = Number(cur.day||1) + 1;
-        }else if(payload.type === "retire"){
-          cur.status = "retired";
-          cur.lastReportedDate = today + "（リタイア）";
-        }
-
-        if(cur.status === "active"){
-          if(Number(cur.successDays||0) >= 5 && Number(cur.day||1) >= 7){
-            const done = confirm("クリアにする？");
-            if(done){
-              cur.status = "cleared";
-              cur.lastReportedDate = today + "（クリア）";
-            }
-          }
-        }
-
-        cur.updatedAt = Date.now();
-        items[idx] = cur;
-        localStorage.setItem(key, JSON.stringify(items));
-        await refreshTodayToasts();
-        await refreshRecords();
-        return;
-      }
 
       try{
         const ref = doc(db, "userChallenges", currentUser.uid, "items", ch.habitId);
@@ -1597,10 +1609,12 @@
           update.lastReportedDate = today;
           update.streakMiss = 0;
           update.day = Number(cur.day||1) + 1;
+
           const diffObj = cur.difficulty || {easy:0,mid:0,hard:0};
           diffObj[payload.diff] = Number(diffObj[payload.diff]||0) + 1;
           update.difficulty = diffObj;
-          incPlusOne();
+
+          showPlusOne();
         }else if(payload.type === "rest"){
           update.restDays = Number(cur.restDays||0) + 1;
           update.lastReportedDate = today + "（休）";
@@ -1614,105 +1628,132 @@
         update.updatedAt = serverTimestamp();
         await updateDoc(ref, update);
 
-        if((payload.type === "done" || payload.type === "rest") && (cur.status === "active")){
-          const nextSuccess = (payload.type === "done") ? (Number(cur.successDays||0)+1) : Number(cur.successDays||0);
+        // 7日制：成功5でクリア（done時のみ確認）
+        if(payload.type === "done" && cur.status === "active"){
+          const nextSuccess = Number(cur.successDays||0)+1;
           const nextDay = Number(cur.day||1)+1;
           if(nextSuccess >= 5 && nextDay >= 7){
-            const done = confirm("クリアにする？");
-            if(done){
+            if(confirm("クリアにする？")){
               await updateDoc(ref, { status:"cleared", lastReportedDate: today + "（クリア）", updatedAt: serverTimestamp() });
+              await runTransaction(db, async (tx)=>{
+                const uref = doc(db, "users", currentUser.uid);
+                const us = await tx.get(uref);
+                if(!us.exists()) return;
+                const u = us.data();
+                tx.update(uref, { clearCount: Number(u.clearCount||0)+1, updatedAt: serverTimestamp() });
+              });
             }
           }
         }
 
-        // ★ 成功率/平均継続日数などの簡易集計を更新（クライアント集計）
-        await recomputeHabitStats(ch.habitId);
+        // ★ habitの簡易集計（できる範囲で）
+        await recomputeHabitStatsFromActions(ch.habitId, payload);
 
         await refreshTodayToasts();
         await refreshRecords();
+        await refreshHome();
       }catch(e){
-        alert("失敗：\n" + (e?.message ?? e));
+        alert("失敗");
       }
     }
 
-    // ====== 3日連続未報告 自動リタイア ======
-    async function autoRetireIfMissed(){
-      if(!currentUser) return;
-      const today = nowLocal();
-
-      let active = [];
+    // ===== Habit stats (簡易) =====
+    async function recomputeHabitStatsFromActions(habitId, payload){
+      // 本番はCloud Functions推奨。ここでは「最低限動く」。
+      // できること：体感比率 / 成功率 / 平均継続(雑) を習慣docへ反映
       try{
-        const qs = await getDocs(query(
-          collection(db, "userChallenges", currentUser.uid, "items"),
-          where("status","==","active"),
-          limit(50)
-        ));
-        qs.forEach(s=> active.push({ _id: s.id, ...s.data() }));
-      }catch(e){ return; }
+        await runTransaction(db, async (tx)=>{
+          const href = doc(db, "habits", habitId);
+          const hs = await tx.get(href);
+          if(!hs.exists()) return;
+          const h = hs.data();
 
+          let feelEasy = Number(h.feelEasy||0);
+          let feelMid  = Number(h.feelMid||0);
+          let feelHard = Number(h.feelHard||0);
+
+          let successRate = Number(h.successRate||0);
+          let avgDays = Number(h.avgDays||0);
+          const participants = Math.max(1, Number(h.participantsCount||0));
+
+          // doneのみ体感カウント & 成功率計算用の分母を増やす
+          if(payload.type === "done"){
+            if(payload.diff === "easy") feelEasy++;
+            if(payload.diff === "mid") feelMid++;
+            if(payload.diff === "hard") feelHard++;
+
+            // successRate を "成功報告数 / (成功+休+失敗の代替)" で雑に更新
+            const totalFeel = feelEasy + feelMid + feelHard;
+            successRate = totalFeel ? ( (feelEasy+feelMid+feelHard) / totalFeel ) * 100 : successRate;
+
+            // avgDays を "総成功報告 / 参加者" で雑に
+            avgDays = totalFeel ? (totalFeel / participants) : avgDays;
+          }
+
+          tx.update(href, {
+            feelEasy, feelMid, feelHard,
+            successRate: Number.isFinite(successRate) ? successRate : 0,
+            avgDays: Number.isFinite(avgDays) ? avgDays : 0,
+            updatedAt: serverTimestamp()
+          });
+        });
+      }catch{}
+    }
+
+    // ===== Auto retire (3日未報告) =====
+    async function autoRetireIfMissed(){
+      const today = nowLocal();
+      const qs = await getDocs(query(
+        collection(db, "userChallenges", currentUser.uid, "items"),
+        where("status","==","active"),
+        limit(50)
+      ));
       const updates = [];
-      for(const ch of active){
+      qs.forEach(s=>{
+        const ch = s.data();
         const startD = parseYMD(ch.startDate);
         const lastD = parseYMD(ch.lastReportedDate);
 
         let miss = 0;
-
         if(lastD){
           const gap = daysBetween(lastD, today);
-          // lastが今日なら0、昨日なら0、2日前なら1、3日前なら2…
           miss = Math.max(0, gap - 1);
         }else if(startD){
-          // 一度も報告してない：startから今日までの経過日数 - 1 を未報告連続扱い
           const gap = daysBetween(startD, today);
           miss = Math.max(0, gap - 1);
-        }else{
-          miss = 0;
         }
 
+        const ref = doc(db, "userChallenges", currentUser.uid, "items", ch.habitId);
         if(miss >= 3){
-          updates.push(updateDoc(
-            doc(db, "userChallenges", currentUser.uid, "items", ch.habitId),
-            { status:"retired", streakMiss: miss, lastReportedDate: fmtDate(today) + "（自動リタイア）", updatedAt: serverTimestamp() }
-          ));
+          updates.push(updateDoc(ref, {
+            status:"retired",
+            streakMiss: miss,
+            lastReportedDate: fmtDate(today) + "（自動リタイア）",
+            updatedAt: serverTimestamp()
+          }));
         }else{
-          // streakMissだけ更新（表示/内部用）
-          updates.push(updateDoc(
-            doc(db, "userChallenges", currentUser.uid, "items", ch.habitId),
-            { streakMiss: miss, updatedAt: serverTimestamp() }
-          ));
+          updates.push(updateDoc(ref, { streakMiss: miss, updatedAt: serverTimestamp() }));
         }
-      }
-      try{ await Promise.allSettled(updates); }catch{}
+      });
+      await Promise.allSettled(updates);
     }
 
-    // ====== Records ======
+    // ===== Records =====
     async function refreshRecords(){
-      const items = await loadAllChallengesForRecords();
-      recordGrid.innerHTML = "";
+      const qs = await getDocs(query(
+        collection(db, "userChallenges", currentUser.uid, "items"),
+        orderBy("updatedAt","desc"),
+        limit(80)
+      ));
+      const items = [];
+      qs.forEach(s=> items.push(s.data()));
 
       const order = (st)=> st==="active"?0 : st==="cleared"?1 : 2;
       items.sort((a,b)=> order(a.status)-order(b.status));
 
+      recordGrid.innerHTML = "";
       for(const ch of items){
         recordGrid.appendChild(renderRecordCard(ch));
-      }
-    }
-
-    async function loadAllChallengesForRecords(){
-      if(!currentUser){
-        return JSON.parse(localStorage.getItem("localChallenges") || "[]");
-      }
-      try{
-        const qs = await getDocs(query(
-          collection(db, "userChallenges", currentUser.uid, "items"),
-          orderBy("updatedAt","desc"),
-          limit(80)
-        ));
-        const arr = [];
-        qs.forEach(s=> arr.push(s.data()));
-        return arr;
-      }catch(e){
-        return [];
       }
     }
 
@@ -1731,17 +1772,16 @@
       const hardP = totalFeel ? Math.round((diff.hard||0)/totalFeel*100) : 0;
 
       card.innerHTML = `
-        <div class="rTop">
+        <div class="recordTop">
           <div>
-            <p class="rTitle">${stBadge} ${escapeHtml(ch.habitTitle || "習慣")}（${escapeHtml(stLabel)}）</p>
-            <div class="rSub">
-              ${escapeHtml(ch.startDate || "—")} / ${Number(ch.day||1)}日目 / 成功:${Number(ch.successDays||0)} / 休:${Number(ch.restDays||0)}
-              <br/>${escapeHtml(ch.lastReportedDate || "")}
+            <p class="recordTitle">${stBadge} ${escapeHtml(ch.habitTitle||"")}（${escapeHtml(stLabel)}）</p>
+            <div class="recordSub">
+              ${escapeHtml(ch.startDate||"—")} / ${Number(ch.day||1)}日目 / 成功:${Number(ch.successDays||0)} / 休:${Number(ch.restDays||0)}
+              <br/>${escapeHtml(ch.lastReportedDate||"")}
             </div>
           </div>
           <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end">
             ${st==="active" ? `<button class="btn small danger" data-act="retire">リタイア</button>` : `<button class="btn small" data-act="restart">再挑戦</button>`}
-            ${currentUser && st!=="active" ? `<button class="btn small" data-act="remove">削除</button>` : ""}
           </div>
         </div>
 
@@ -1756,8 +1796,7 @@
       const btnRet = card.querySelector('[data-act="retire"]');
       if(btnRet){
         btnRet.addEventListener("click", async ()=>{
-          const ok = confirm("リタイア？");
-          if(!ok) return;
+          if(!confirm("リタイア？")) return;
           await applyReport(ch, { type:"retire" });
         });
       }
@@ -1765,18 +1804,8 @@
       const btnRestart = card.querySelector('[data-act="restart"]');
       if(btnRestart){
         btnRestart.addEventListener("click", async ()=>{
-          const ok = confirm("再挑戦？");
-          if(!ok) return;
+          if(!confirm("再挑戦？")) return;
           await restartChallenge(ch);
-        });
-      }
-
-      const btnRemove = card.querySelector('[data-act="remove"]');
-      if(btnRemove){
-        btnRemove.addEventListener("click", async ()=>{
-          const ok = confirm("削除？");
-          if(!ok) return;
-          await removeChallenge(ch);
         });
       }
 
@@ -1785,85 +1814,70 @@
 
     async function restartChallenge(ch){
       const today = fmtDate(nowLocal());
-      if(!currentUser){
-        const key="localChallenges";
-        const items = JSON.parse(localStorage.getItem(key) || "[]");
-        const idx = items.findIndex(x=>x.habitId===ch.habitId);
-        if(idx<0) return;
-        items[idx].status="active";
-        items[idx].startDate=today;
-        items[idx].day=1;
-        items[idx].lastReportedDate="";
-        items[idx].streakMiss=0;
-        items[idx].successDays=0;
-        items[idx].restDays=0;
-        items[idx].difficulty={easy:0,mid:0,hard:0};
-        items[idx].updatedAt=Date.now();
-        localStorage.setItem(key, JSON.stringify(items));
-        await refreshTodayToasts();
-        await refreshRecords();
-        return;
-      }
-      try{
-        const ref = doc(db, "userChallenges", currentUser.uid, "items", ch.habitId);
-        await updateDoc(ref, {
-          status:"active",
-          startDate: today,
-          day:1,
-          lastReportedDate:"",
-          streakMiss:0,
-          successDays:0,
-          restDays:0,
-          difficulty:{easy:0,mid:0,hard:0},
-          updatedAt: serverTimestamp()
-        });
-        await refreshTodayToasts();
-        await refreshRecords();
-      }catch(e){
-        alert("失敗：\n" + (e?.message ?? e));
-      }
+      const ref = doc(db, "userChallenges", currentUser.uid, "items", ch.habitId);
+      await updateDoc(ref, {
+        status:"active",
+        startDate: today,
+        day:1,
+        lastReportedDate:"",
+        streakMiss:0,
+        successDays:0,
+        restDays:0,
+        difficulty:{easy:0,mid:0,hard:0},
+        updatedAt: serverTimestamp()
+      });
+      await refreshTodayToasts();
+      await refreshRecords();
+      await refreshHome();
     }
 
-    async function removeChallenge(ch){
-      if(!currentUser){
-        const key="localChallenges";
-        const items = JSON.parse(localStorage.getItem(key) || "[]");
-        const next = items.filter(x=>x.habitId!==ch.habitId);
-        localStorage.setItem(key, JSON.stringify(next));
-        await refreshTodayToasts();
-        await refreshRecords();
-        return;
-      }
-      try{
-        await deleteDoc(doc(db, "userChallenges", currentUser.uid, "items", ch.habitId));
-        await refreshTodayToasts();
-        await refreshRecords();
-      }catch(e){
-        alert("失敗：\n" + (e?.message ?? e));
-      }
+    // ===== Profile =====
+    async function refreshProfile(){
+      const u = myProfile || {};
+      profileGrid.innerHTML = `
+        <div class="recordCard">
+          <div class="recordTop">
+            <div>
+              <p class="recordTitle">👤 ${escapeHtml(u.displayName || "ユーザー")}</p>
+              <div class="recordSub">
+                🔥 クリア数 ${Number(u.clearCount||0)}<br>
+                📅 総挑戦数 ${Number(u.totalChallenges||0)}<br>
+                ⭐ 評価ランク R${Number(u.ratingRank||1)}
+              </div>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end">
+              <button class="btn small" id="rankUp">R+1</button>
+              <button class="btn small danger" id="rankDown">R-1</button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      const rankUp = $("rankUp");
+      const rankDown = $("rankDown");
+      rankUp.addEventListener("click", async ()=>{
+        const next = Math.min(3, Number(myProfile.ratingRank||1)+1);
+        await updateDoc(doc(db,"users",currentUser.uid), { ratingRank: next, updatedAt: serverTimestamp() });
+        myProfile.ratingRank = next;
+        myRankEl.textContent = String(next);
+        await refreshProfile();
+      });
+      rankDown.addEventListener("click", async ()=>{
+        const next = Math.max(1, Number(myProfile.ratingRank||1)-1);
+        await updateDoc(doc(db,"users",currentUser.uid), { ratingRank: next, updatedAt: serverTimestamp() });
+        myProfile.ratingRank = next;
+        myRankEl.textContent = String(next);
+        await refreshProfile();
+      });
     }
 
-    // ====== 評価（habits/{id}/ratings/{uid}） ======
-    ratingClose.addEventListener("click", closeRatingModal);
-    ratingBg.addEventListener("click", (e)=>{ if(e.target === ratingBg) closeRatingModal(); });
-
+    // ===== Ratings =====
     function openRatingModal(h){
-      if(h._source !== "remote"){
-        alert("ローカル投稿は評価対象外");
-        return;
-      }
-      if(!currentUser){
-        alert("評価はログイン必要");
-        return;
-      }
       ratingTargetHabit = h;
       ratingStars = 0;
       ratingLiked = false;
       commentBox.value = "";
-
-      ratingHabitTitle.textContent = `⭐ ${h.title || "評価"}`;
-      ratingHabitMeta.textContent = `タグ：${(h.tags||[]).slice(0,4).join(" / ") || "—"}`;
-
+      ratingHabitTitle.textContent = `⭐ ${h.title || ""}`;
       myRankEl.textContent = String(myProfile?.ratingRank || 1);
 
       renderStars();
@@ -1874,32 +1888,30 @@
       };
 
       ratingDelete.onclick = async ()=>{
-        const ok = confirm("削除？");
-        if(!ok) return;
+        if(!confirm("削除？")) return;
         await deleteMyRating(h.id);
-        await loadRatingsList(h.id);
-        await recomputeHabitStats(h.id);
+        await recomputeRatingAgg(h.id);
+        await loadRatingsList(h.id, reviewList);
         await refreshHome();
       };
 
       ratingSave.onclick = async ()=>{
         if(ratingStars < 1){ alert("⭐"); return; }
         await saveMyRating(h.id);
-        await loadRatingsList(h.id);
-        await recomputeHabitStats(h.id);
+        await recomputeRatingAgg(h.id);
+        await loadRatingsList(h.id, reviewList);
         await refreshHome();
       };
 
       ratingBg.classList.add("show");
-
-      // 自分の既存評価をロード
-      loadMyRating(h.id).then(()=> loadRatingsList(h.id));
+      loadMyRating(h.id).then(()=> loadRatingsList(h.id, reviewList));
     }
-
     function closeRatingModal(){
       ratingBg.classList.remove("show");
       ratingTargetHabit = null;
     }
+    ratingClose.addEventListener("click", closeRatingModal);
+    ratingBg.addEventListener("click", (e)=>{ if(e.target===ratingBg) closeRatingModal(); });
 
     function renderStars(){
       starsRow.innerHTML = "";
@@ -1916,30 +1928,25 @@
     }
 
     async function loadMyRating(habitId){
-      if(!currentUser) return;
-      try{
-        const ref = doc(db, "habits", habitId, "ratings", currentUser.uid);
-        const snap = await getDoc(ref);
-        if(!snap.exists()){
-          ratingStars = 0;
-          ratingLiked = false;
-          commentBox.value = "";
-          likeToggle.classList.remove("active");
-          renderStars();
-          return;
-        }
-        const data = snap.data();
-        ratingStars = Number(data.stars || 0);
-        ratingLiked = !!data.liked;
-        commentBox.value = String(data.comment || "");
-        likeToggle.classList.toggle("active", ratingLiked);
+      const ref = doc(db, "habits", habitId, "ratings", currentUser.uid);
+      const snap = await getDoc(ref);
+      if(!snap.exists()){
+        ratingStars = 0;
+        ratingLiked = false;
+        commentBox.value = "";
+        likeToggle.classList.remove("active");
         renderStars();
-      }catch(e){}
+        return;
+      }
+      const data = snap.data();
+      ratingStars = Number(data.stars || 0);
+      ratingLiked = !!data.liked;
+      commentBox.value = String(data.comment || "");
+      likeToggle.classList.toggle("active", ratingLiked);
+      renderStars();
     }
 
     async function saveMyRating(habitId){
-      if(!currentUser) return;
-
       const rank = Number(myProfile?.ratingRank || 1);
       const weight = rank === 3 ? 3 : rank === 2 ? 2 : 1;
 
@@ -1954,99 +1961,217 @@
         weight,
         updatedAt: serverTimestamp()
       };
-
-      try{
-        await setDoc(doc(db, "habits", habitId, "ratings", currentUser.uid), data, { merge:true });
-      }catch(e){
-        alert("失敗：\n" + (e?.message ?? e));
-      }
+      await setDoc(doc(db, "habits", habitId, "ratings", currentUser.uid), data, { merge:true });
     }
 
     async function deleteMyRating(habitId){
-      if(!currentUser) return;
-      try{
-        await deleteDoc(doc(db, "habits", habitId, "ratings", currentUser.uid));
-      }catch(e){
-        alert("失敗：\n" + (e?.message ?? e));
+      await deleteDoc(doc(db, "habits", habitId, "ratings", currentUser.uid));
+    }
+
+    async function loadRatingsList(habitId, container){
+      container.innerHTML = "";
+      const qs = await getDocs(query(
+        collection(db, "habits", habitId, "ratings"),
+        orderBy("updatedAt","desc"),
+        limit(40)
+      ));
+      const arr = [];
+      qs.forEach(s=> arr.push(s.data()));
+      for(const r of arr){
+        const box = document.createElement("div");
+        box.className = "review";
+        box.innerHTML = `
+          <div class="reviewTop">
+            <div class="reviewName">${escapeHtml(r.displayName || "ユーザー")}</div>
+            <div class="reviewMeta">⭐ ${Number(r.stars||0)} ${r.liked ? "❤️" : ""}（R${Number(r.rank||1)}）</div>
+          </div>
+          <div class="reviewText">${escapeHtml(r.comment || "")}</div>
+        `;
+        container.appendChild(box);
       }
     }
 
-    async function loadRatingsList(habitId){
-      reviewList.innerHTML = "";
-      try{
-        const qs = await getDocs(query(
-          collection(db, "habits", habitId, "ratings"),
-          orderBy("updatedAt","desc"),
-          limit(30)
-        ));
-        const arr = [];
-        qs.forEach(s=> arr.push(s.data()));
-        for(const r of arr){
-          const box = document.createElement("div");
-          box.className = "review";
-          box.innerHTML = `
-            <div class="reviewTop">
-              <div class="reviewName">${escapeHtml(r.displayName || "ユーザー")}</div>
-              <div class="reviewMeta">⭐ ${Number(r.stars||0)} ${r.liked ? "❤️" : ""}（R${Number(r.rank||1)}）</div>
-            </div>
-            <div class="reviewText">${escapeHtml(r.comment || "")}</div>
-          `;
-          reviewList.appendChild(box);
-        }
-      }catch(e){}
-    }
+    async function recomputeRatingAgg(habitId){
+      // ratingCount / avgRating を重み付きで更新
+      await runTransaction(db, async (tx)=>{
+        const href = doc(db, "habits", habitId);
+        const hs = await tx.get(href);
+        if(!hs.exists()) return;
 
-    // ====== 集計（簡易：評価+挑戦データから habits を更新） ======
-    async function recomputeHabitStats(habitId){
-      // 本番はCloud Functions推奨（不正防止＆整合性）
-      // ここでは「動く」こと優先で、クライアント集計する
-      try{
-        // 1) ratings 集計（重み付き平均）
-        const ratingsSnap = await getDocs(query(collection(db, "habits", habitId, "ratings"), limit(500)));
+        const rs = await getDocs(query(collection(db, "habits", habitId, "ratings"), limit(500)));
         let wSum = 0;
         let swSum = 0;
         let ratingCount = 0;
-        ratingsSnap.forEach(s=>{
+
+        rs.forEach(s=>{
           const r = s.data();
-          const stars = Number(r.stars || 0);
-          const w = Number(r.weight || 1);
-          if(stars >= 1 && stars <= 5){
+          const stars = Number(r.stars||0);
+          const w = Number(r.weight||1);
+          if(stars>=1 && stars<=5){
             wSum += w;
-            swSum += stars * w;
+            swSum += stars*w;
             ratingCount += 1;
           }
         });
         const avgRating = wSum ? (swSum / wSum) : 0;
 
-        // 2) userChallenges の集計（参加者数/成功率/平均継続）
-        //   ここは全ユーザー分が必要なので本当はFunctionsでやるべき
-        //   でも最小デモとして participantsCount / avgDays / successRate は「このプロジェクト上のchallengesコレクション」を使うか、
-        //   もしくは habits にキャッシュされる前提にして、ここでは ratingsだけ更新してもOK。
-        //   → 今回は「成功率/平均継続」は habitsに既存値があれば維持、無ければ0のまま
-        const habitRef = doc(db, "habits", habitId);
-        const habitSnap = await getDoc(habitRef);
-        const cur = habitSnap.exists() ? habitSnap.data() : {};
-
-        const patch = {
+        tx.update(href, {
+          ratingCount,
           avgRating: Number.isFinite(avgRating) ? avgRating : 0,
-          ratingCount: ratingCount,
-          // participantsCount / avgDays / successRate は現状維持（本番はFunctionsで全体集計）
-          participantsCount: Number(cur.participantsCount || 0),
-          avgDays: Number(cur.avgDays || 0),
-          successRate: Number(cur.successRate || 0),
           updatedAt: serverTimestamp()
-        };
-
-        await updateDoc(habitRef, patch);
-      }catch(e){}
+        });
+      });
     }
 
-    // ====== 起動 ======
-    myCategory.textContent = localStorage.getItem("myCategory") || "未設定";
+    // reviews view-only
+    function openReviewsModal(h){
+      reviewsTitle.textContent = `💬 ${h.title || ""}`;
+      reviewsList.innerHTML = "";
+      reviewsBg.classList.add("show");
+      loadRatingsList(h.id, reviewsList);
+    }
+    function closeReviewsModal(){ reviewsBg.classList.remove("show"); }
+    reviewsClose.addEventListener("click", closeReviewsModal);
+    reviewsBg.addEventListener("click", (e)=>{ if(e.target===reviewsBg) closeReviewsModal(); });
 
-    // 初期描画
-    refreshHome();
-    refreshRecords();
+    // ===== Edit (ver1-3) + derive =====
+    function openEditModal(h){
+      editTargetHabit = h;
+      editTitle.textContent = `🛠️ ${h.title || ""}`;
+      editNewTitle.value = h.title || "";
+      editNewTags.value = (h.tags || []).join(",");
+      editNewCategory.value = h.category || "";
+      editNewAction.value = h.action || "";
+      versionsList.innerHTML = "";
+      editBg.classList.add("show");
+
+      loadVersions(h.id);
+    }
+    function closeEditModal(){
+      editBg.classList.remove("show");
+      editTargetHabit = null;
+    }
+    editClose.addEventListener("click", closeEditModal);
+    editBg.addEventListener("click", (e)=>{ if(e.target===editBg) closeEditModal(); });
+
+    async function loadVersions(habitId){
+      versionsList.innerHTML = "";
+      const qs = await getDocs(query(
+        collection(db, "habits", habitId, "versions"),
+        orderBy("createdAt","desc"),
+        limit(3)
+      ));
+      qs.forEach(s=>{
+        const v = s.data();
+        const box = document.createElement("div");
+        box.className = "review";
+        box.innerHTML = `
+          <div class="reviewTop">
+            <div class="reviewName">ver${Number(v.version||1)}</div>
+            <div class="reviewMeta">${v.createdAt?.seconds ? "" : ""}</div>
+          </div>
+          <div class="reviewText">${escapeHtml(v.title||"")}\n${escapeHtml(v.action||"")}</div>
+        `;
+        versionsList.appendChild(box);
+      });
+    }
+
+    btnSaveEdit.addEventListener("click", async ()=>{
+      if(!editTargetHabit) return;
+
+      const title = editNewTitle.value.trim();
+      const tags = editNewTags.value.split(",").map(s=>s.trim()).filter(Boolean).slice(0,8);
+      const category = String(editNewCategory.value||"").trim();
+      const action = editNewAction.value.trim();
+
+      if(!title || !action){ alert("タイトル / 5分でやること は必須"); return; }
+      if(action.length > 40){ alert("40文字以内"); return; }
+
+      const habitId = editTargetHabit.id;
+
+      // ver管理：現在の内容を versions に保存、最大3つだけ残す（古いの削除）
+      await runTransaction(db, async (tx)=>{
+        const href = doc(db, "habits", habitId);
+        const hs = await tx.get(href);
+        if(!hs.exists()) return;
+        const cur = hs.data();
+
+        // versions に旧を保存
+        const nextVer = Math.min(3, Number(cur.version||1) + 1);
+        const vref = doc(collection(db, "habits", habitId, "versions"));
+        tx.set(vref, {
+          version: Number(cur.version||1),
+          title: cur.title||"",
+          action: cur.action||"",
+          tags: cur.tags||[],
+          category: cur.category||"",
+          createdAt: serverTimestamp()
+        });
+
+        // 本体更新（verは最大3）
+        tx.update(href, {
+          title, action, tags, category,
+          version: nextVer,
+          updatedAt: serverTimestamp()
+        });
+      });
+
+      // 3つ超えた versions を削る（ベストエフォート）
+      try{
+        const qs = await getDocs(query(collection(db, "habits", habitId, "versions"), orderBy("createdAt","desc"), limit(10)));
+        const all = [];
+        qs.forEach(s=> all.push({id:s.id, ...s.data(), _ref:s.ref}));
+        // createdAt desc → 先頭が新しい。3個残す
+        const toDelete = all.slice(3);
+        await Promise.allSettled(toDelete.map(x=>deleteDoc(x._ref)));
+      }catch{}
+
+      await loadVersions(habitId);
+      await refreshHome();
+    });
+
+    btnDerive.addEventListener("click", async ()=>{
+      if(!editTargetHabit) return;
+
+      const title = editNewTitle.value.trim();
+      const tags = editNewTags.value.split(",").map(s=>s.trim()).filter(Boolean).slice(0,8);
+      const category = String(editNewCategory.value||"").trim();
+      const action = editNewAction.value.trim();
+
+      if(!title || !action){ alert("タイトル / 5分でやること は必須"); return; }
+      if(action.length > 40){ alert("40文字以内"); return; }
+
+      // 派生版：baseHabitId に元IDを入れて新規作成
+      await addDoc(collection(db, "habits"), {
+        title, action, tags, category,
+        creatorUid: currentUser.uid,
+        creatorName: currentUser.displayName || "作成者",
+        creatorPhoto: currentUser.photoURL || "",
+        createdAt: serverTimestamp(),
+
+        avgRating: 0,
+        ratingCount: 0,
+        participantsCount: 0,
+        avgDays: 0,
+        successRate: 0,
+        feelEasy: 0,
+        feelMid: 0,
+        feelHard: 0,
+
+        baseHabitId: editTargetHabit.id,
+        version: 1,
+        updatedAt: serverTimestamp()
+      });
+
+      await refreshHome();
+      closeEditModal();
+    });
+
+    // ===== init =====
+    </script>
+
+  <script type="module">
+    // 2つ目のmoduleにするのが嫌なら上に統合してOK（今回は貼りやすさ優先）
   </script>
 </body>
 </html>
