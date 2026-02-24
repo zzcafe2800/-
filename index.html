@@ -9,8 +9,6 @@
     :root{
       --bg1:#071a2b;
       --bg2:#0b2b45;
-      --card:#0f2030cc;
-      --card2:#0f2030f2;
       --text:#eaf6ff;
       --muted:#b7d4e8;
       --line:#24465f;
@@ -36,11 +34,9 @@
                   linear-gradient(160deg, var(--bg1), var(--bg2));
     }
 
-    /* --- 背景の「ぼやけた魚」っぽい演出（CSSだけ） --- */
     .bg-fish{
       position:fixed; inset:0;
       pointer-events:none;
-      filter: blur(0.5px);
       opacity:.35;
       mix-blend-mode:screen;
     }
@@ -74,13 +70,11 @@
       100%{ left:120vw; transform: translateY(0) scale(1) }
     }
 
-    /* --- レイアウト --- */
     .app{
       position:relative;
       height:100%;
       display:grid;
-      grid-template-columns: 280px 1fr; /* 左：固定、右：可変 */
-      gap:0;
+      grid-template-columns: 280px 1fr;
     }
     @media (max-width: 980px){
       body{overflow:auto}
@@ -89,11 +83,11 @@
       .nav{padding:10px 8px}
       .nav .navBtn{justify-content:center}
       .content{padding:14px}
-      .topbar{gap:10px}
-      .tagGrid{grid-template-columns: 1fr; }
+      .tagGrid{grid-template-columns: 1fr;}
+      .topbar{grid-template-columns: 1fr; }
+      .select{width:100%}
     }
 
-    /* --- 左ナビ --- */
     .nav{
       padding:18px 16px;
       border-right:1px solid rgba(255,255,255,.06);
@@ -113,7 +107,7 @@
       font-size:16px; margin:0; line-height:1.1;
       letter-spacing:.06em;
     }
-    .brand .sub{font-size:12px; color:var(--muted); margin-top:3px}
+
     .navSection{margin-top:10px}
     .navBtn{
       width:100%;
@@ -135,6 +129,7 @@
     }
     .navBtn .ico{font-size:20px; width:26px; text-align:center}
     .navBtn .label{font-weight:700; letter-spacing:.04em}
+
     .navFooter{
       position:sticky; bottom:16px;
       margin-top:18px;
@@ -159,7 +154,8 @@
     .avatar img{width:100%; height:100%; object-fit:cover}
     .userMeta{min-width:0}
     .userName{font-size:13px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-    .userSmall{font-size:11px; color:var(--muted); margin-top:2px}
+    .userSmall{font-size:11px; color:var(--muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+
     .authRow{display:flex; gap:10px; margin-top:10px}
     .btn{
       border:1px solid rgba(255,255,255,.12);
@@ -183,28 +179,12 @@
       background: linear-gradient(180deg, rgba(255,77,94,.16), rgba(255,255,255,.04));
     }
     .btn.small{padding:8px 10px; font-size:12px; border-radius:10px}
-    .btn.icon{display:flex; align-items:center; gap:8px}
     .btn:disabled{opacity:.55; cursor:not-allowed; transform:none}
 
-    /* --- 右コンテンツ --- */
     .content{
       padding:18px 18px 12px;
       overflow:auto;
       height:100%;
-    }
-    .titleRow{
-      display:flex; align-items:flex-end; justify-content:space-between; gap:14px;
-      margin-bottom:14px;
-    }
-    .pageTitle{
-      margin:0;
-      font-size:20px;
-      letter-spacing:.06em;
-    }
-    .pageHint{
-      color:var(--muted);
-      font-size:12px;
-      margin-top:6px;
     }
 
     .panel{
@@ -215,7 +195,6 @@
       backdrop-filter: blur(10px);
     }
 
-    /* --- ホーム：上部検索 --- */
     .topbar{
       display:grid;
       grid-template-columns: 1fr auto auto;
@@ -238,14 +217,6 @@
       color:var(--text);
       font-size:14px;
     }
-    .searchBox .kbd{
-      font-family:var(--mono);
-      font-size:11px;
-      color:rgba(255,255,255,.6);
-      border:1px solid rgba(255,255,255,.14);
-      padding:2px 6px;
-      border-radius:8px;
-    }
     .select{
       min-width: 170px;
       border-radius: 14px;
@@ -257,10 +228,7 @@
       outline:none;
     }
 
-    /* --- タグエリア --- */
-    .tagArea{
-      padding: 0 14px 14px;
-    }
+    .tagArea{ padding: 0 14px 14px; }
     .tagGrid{
       display:grid;
       grid-template-columns: 1fr 1fr;
@@ -271,13 +239,8 @@
       border-radius:14px;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.12);
-      min-height:78px;
+      min-height:66px;
     }
-    .tagBlock .head{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      margin-bottom:10px;
-    }
-    .tagBlock .ttl{font-size:12px; color:var(--muted); font-weight:800; letter-spacing:.06em}
     .chips{display:flex; gap:8px; flex-wrap:wrap}
     .chip{
       border:1px solid rgba(87,199,255,.25);
@@ -297,16 +260,10 @@
       background: rgba(124,255,166,.14);
     }
 
-    /* --- 投稿一覧 --- */
     .feedHeader{
       display:flex; align-items:center; justify-content:space-between;
       gap:12px;
-      padding: 12px 14px 0;
-    }
-    .feedMeta{
-      font-size:12px;
-      color: var(--muted);
-      display:flex; gap:10px; flex-wrap:wrap;
+      padding: 10px 14px 0;
     }
     .pill{
       display:inline-flex; align-items:center; gap:8px;
@@ -314,7 +271,11 @@
       border-radius:999px;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.14);
+      font-size:12px;
+      color: rgba(255,255,255,.85);
+      font-weight:800;
     }
+
     .feed{
       padding: 12px 14px 14px;
       display:flex; flex-direction:column; gap:12px;
@@ -357,6 +318,7 @@
       background: rgba(0,0,0,.14);
       color: rgba(255,255,255,.85);
       font-weight:800;
+      cursor:pointer;
     }
     .badge.cat{border-color: rgba(255,201,77,.28); background: rgba(255,201,77,.12)}
     .badge.tag{border-color: rgba(87,199,255,.28); background: rgba(87,199,255,.10)}
@@ -410,11 +372,10 @@
       padding:10px 12px;
       font-weight:900;
       cursor:pointer;
+      display:flex; align-items:center; gap:8px;
     }
     .btnGhost:hover{background: rgba(255,255,255,.06)}
-    .bookmarkMark{font-size:16px}
 
-    /* --- 今日の習慣通知（上から出る） --- */
     .toastWrap{
       position:sticky;
       top:10px;
@@ -435,14 +396,9 @@
     }
     @keyframes pop{from{transform: translateY(-6px); opacity:.0} to{transform: translateY(0); opacity:1}}
     .toast .left{display:flex; flex-direction:column; gap:4px; min-width:0}
-    .toast .kicker{font-size:12px; color:rgba(255,255,255,.85); font-weight:900}
+    .toast .kicker{font-size:12px; font-weight:900}
     .toast .main{font-size:14px; font-weight:950; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-    .toast .sub{font-size:12px; color:var(--muted)}
     .toast .right{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
-    .seg{
-      display:flex; gap:8px; flex-wrap:wrap;
-      margin-top:8px;
-    }
     .emojiBtn{
       border:1px solid rgba(255,255,255,.14);
       background: rgba(0,0,0,.16);
@@ -458,7 +414,6 @@
     .emojiBtn.danger{border-color: rgba(255,77,94,.45); background: rgba(255,77,94,.10)}
     .emojiBtn.warn{border-color: rgba(255,201,77,.45); background: rgba(255,201,77,.10)}
 
-    /* --- 作成フォーム（下固定っぽく見せる） --- */
     .composer{
       position:sticky;
       bottom: 12px;
@@ -479,12 +434,7 @@
     @media (max-width: 980px){
       .composer .row{grid-template-columns: 1fr}
     }
-    .field{
-      display:flex; flex-direction:column; gap:6px;
-    }
-    .field label{
-      font-size:11px; color:var(--muted); font-weight:900; letter-spacing:.06em;
-    }
+    .field{display:flex; flex-direction:column; gap:6px;}
     .field input, .field textarea{
       border:1px solid rgba(255,255,255,.12);
       background: rgba(0,0,0,.16);
@@ -495,13 +445,8 @@
       font-size:14px;
     }
     .field textarea{min-height: 74px; resize: vertical}
-    .hint{
-      font-size:11px; color: rgba(255,255,255,.65);
-      margin-top:6px;
-      line-height:1.5;
-    }
     .composerFooter{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      display:flex; align-items:center; justify-content:flex-end; gap:10px;
       margin-top:10px;
       flex-wrap:wrap;
     }
@@ -513,13 +458,12 @@
       padding:6px 10px;
       border-radius:999px;
       background: rgba(0,0,0,.14);
+      margin-right:auto;
     }
 
-    /* --- 画面切り替え --- */
     .view{display:none}
     .view.active{display:block}
 
-    /* --- 達成記録 --- */
     .recordGrid{
       display:grid;
       grid-template-columns: 1fr;
@@ -536,7 +480,7 @@
       display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
     }
     .recordCard .rTitle{font-weight:950; font-size:14px; margin:0}
-    .recordCard .rSub{color:var(--muted); font-size:12px; margin-top:6px}
+    .recordCard .rSub{color:var(--muted); font-size:12px; margin-top:6px; line-height:1.6}
     .stamps{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
     .stamp{
       border:1px solid rgba(255,255,255,.12);
@@ -550,11 +494,7 @@
     .stamp.mid{border-color: rgba(87,199,255,.35); background: rgba(87,199,255,.10)}
     .stamp.hard{border-color: rgba(255,201,77,.40); background: rgba(255,201,77,.10)}
     .stamp.fail{border-color: rgba(255,77,94,.40); background: rgba(255,77,94,.10)}
-    .smallNote{
-      font-size:11px; color: rgba(255,255,255,.65); margin-top:10px; line-height:1.5;
-    }
 
-    /* --- モーダル（初回カテゴリ選択） --- */
     .modalBg{
       position:fixed; inset:0;
       background: rgba(0,0,0,.45);
@@ -574,8 +514,7 @@
       padding:16px;
     }
     .modal h2{margin:0; font-size:16px; letter-spacing:.06em}
-    .modal p{margin:8px 0 12px; color:var(--muted); font-size:12px; line-height:1.6}
-    .catList{display:flex; gap:10px; flex-wrap:wrap}
+    .catList{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
     .catBtn{
       padding:10px 12px;
       border-radius:999px;
@@ -589,7 +528,6 @@
     .catBtn.active{border-color: rgba(87,199,255,.55); background: rgba(87,199,255,.12)}
     .modalFooter{display:flex; gap:10px; justify-content:flex-end; margin-top:14px; flex-wrap:wrap}
 
-    /* --- 小さな「+1」演出 --- */
     .plusOne{
       position:fixed;
       right:22px;
@@ -612,14 +550,77 @@
       100%{transform: translateY(-18px); opacity:0}
     }
 
-    /* --- 非ログイン時の注意 --- */
-    .emptyState{
-      padding:14px;
-      color: var(--muted);
-      line-height:1.7;
-      font-size:13px;
+    /* rating modal */
+    .ratingModal{
+      width:min(640px, 100%);
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(10,25,38,.94);
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+      padding:16px;
     }
-    .mono{font-family: var(--mono)}
+    .ratingHead{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+      margin-bottom:10px;
+    }
+    .ratingTitle{font-weight:950; font-size:14px; margin:0}
+    .ratingSub{color:var(--muted); font-size:12px; margin-top:6px; line-height:1.6}
+    .starsRow{display:flex; gap:8px; flex-wrap:wrap; margin:12px 0}
+    .starBtn{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.16);
+      border-radius: 12px;
+      padding:10px 12px;
+      cursor:pointer;
+      font-weight:1000;
+      color:var(--text);
+      display:flex; align-items:center; gap:8px;
+    }
+    .starBtn.active{border-color: rgba(255,201,77,.55); background: rgba(255,201,77,.14)}
+    .row2{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .toggle{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.16);
+      border-radius: 12px;
+      padding:10px 12px;
+      cursor:pointer;
+      font-weight:900;
+      color:var(--text);
+      display:flex; align-items:center; gap:8px;
+    }
+    .toggle.active{border-color: rgba(255,77,94,.55); background: rgba(255,77,94,.14)}
+    .commentBox{
+      width:100%;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.16);
+      color:var(--text);
+      border-radius: 14px;
+      padding:10px 12px;
+      outline:none;
+      font-size:14px;
+      margin-top:10px;
+      min-height: 88px;
+      resize: vertical;
+    }
+    .list{
+      margin-top:12px;
+      border-top:1px solid rgba(255,255,255,.10);
+      padding-top:12px;
+      display:flex; flex-direction:column; gap:10px;
+      max-height: 260px;
+      overflow:auto;
+    }
+    .review{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.14);
+      border-radius: 14px;
+      padding:10px 12px;
+    }
+    .reviewTop{display:flex; align-items:center; justify-content:space-between; gap:10px}
+    .reviewName{font-weight:900; font-size:12px; opacity:.95}
+    .reviewMeta{font-size:12px; opacity:.9}
+    .reviewText{margin-top:8px; font-size:13px; line-height:1.55; opacity:.95; white-space:pre-wrap}
   </style>
 </head>
 
@@ -630,16 +631,14 @@
     <div class="fish f3"></div>
   </div>
 
-  <div class="plusOne" id="plusOne">✨ +1 達成が反映されました</div>
+  <div class="plusOne" id="plusOne">✨ +1</div>
 
   <div class="app">
-    <!-- 左ナビ -->
     <aside class="nav">
       <div class="brand">
         <div class="logo"></div>
         <div>
           <h1>習慣さがし｜つづく</h1>
-          <div class="sub">みんなの口コミとデータで、習慣が進化する。</div>
         </div>
       </div>
 
@@ -659,51 +658,30 @@
           <div class="avatar" id="userAvatar">👤</div>
           <div class="userMeta">
             <div class="userName" id="userName">未ログイン</div>
-            <div class="userSmall" id="userSmall">Googleログインで保存されます</div>
+            <div class="userSmall" id="userSmall">—</div>
           </div>
         </div>
 
         <div class="authRow">
-          <button class="btn primary icon" id="btnLogin">
-            <span>🔑</span><span>Googleログイン</span>
-          </button>
-          <button class="btn danger icon" id="btnLogout" disabled>
-            <span>🚪</span><span>ログアウト</span>
-          </button>
-        </div>
-
-        <div class="hint" style="margin-top:10px">
-          Phase1：投稿 → 挑戦 → 記録 → ☆評価（簡易）<br/>
-          <span class="mono">Firebase</span>（Auth / Firestore）でデータ保存
+          <button class="btn primary" id="btnLogin">Googleログイン</button>
+          <button class="btn danger" id="btnLogout" disabled>ログアウト</button>
         </div>
       </div>
     </aside>
 
-    <!-- 右コンテンツ -->
     <main class="content">
-      <!-- ========== HOME ========== -->
       <section class="view active" id="viewHome">
-        <div class="titleRow">
-          <div>
-            <h2 class="pageTitle">ホーム</h2>
-            <div class="pageHint">検索・タグから「小さな習慣」を探して、まずは気軽に挑戦。</div>
-          </div>
-          <div class="pill" id="todayStatsPill">本日 <b id="todayDone">0</b> 人が任務達成</div>
-        </div>
-
-        <!-- 今日の習慣（通知っぽく上から） -->
         <div class="toastWrap" id="toastWrap"></div>
 
         <div class="panel">
           <div class="topbar">
             <div class="searchBox">
               <span style="opacity:.85">🔎</span>
-              <input id="q" placeholder="習慣名 / 内容 / タグで検索（例：散歩 / 不安 / 英語）" />
-              <span class="kbd">Enter</span>
+              <input id="q" placeholder="検索" />
             </div>
 
             <select class="select" id="categoryFilter">
-              <option value="">カテゴリで検索（すべて）</option>
+              <option value="">カテゴリ（すべて）</option>
               <option>健康</option>
               <option>メンタル</option>
               <option>勉強</option>
@@ -716,175 +694,114 @@
             </select>
 
             <select class="select" id="sortBy">
-              <option value="new">🆕 新着順（基本）</option>
-              <option value="rating">⭐ 総合評価順</option>
-              <option value="success">🎯 成功率順</option>
-              <option value="days">📅 継続日数順</option>
-              <option value="favCreators">❤️ お気に入り中の人の</option>
+              <option value="new">🆕 新着</option>
+              <option value="rating">⭐ 評価</option>
+              <option value="success">🎯 成功率</option>
+              <option value="days">📅 継続</option>
+              <option value="favCreators">❤️ お気に入り</option>
             </select>
           </div>
 
           <div class="tagArea">
             <div class="tagGrid">
-              <div class="tagBlock">
-                <div class="head">
-                  <div class="ttl">おすすめタグ（あなたの傾向から）</div>
-                  <button class="btn small" id="btnClearTag">クリア</button>
-                </div>
-                <div class="chips" id="chipsRecommend"></div>
-              </div>
-
-              <div class="tagBlock">
-                <div class="head">
-                  <div class="ttl">トップタグ（投稿数・検索多め）</div>
-                  <span class="badge">TOP3</span>
-                </div>
-                <div class="chips" id="chipsTop"></div>
-              </div>
+              <div class="tagBlock"><div class="chips" id="chipsRecommend"></div></div>
+              <div class="tagBlock"><div class="chips" id="chipsTop"></div></div>
             </div>
           </div>
 
           <div class="feedHeader">
-            <div class="feedMeta" id="feedMeta">
-              <span class="pill">表示件数：<b id="countShown">0</b></span>
-              <span class="pill">条件：<span id="filterLabel">なし</span></span>
-            </div>
-
-            <div class="feedMeta">
-              <span class="pill">あなたのカテゴリ：<b id="myCategory">未設定</b></span>
-              <button class="btn small" id="btnChangeMyCategory">変更</button>
-            </div>
+            <div class="pill">件数：<b id="countShown">0</b></div>
+            <div class="pill">カテゴリ：<b id="myCategory">未設定</b> <button class="btn small" id="btnChangeMyCategory">変更</button></div>
           </div>
 
           <div class="feed" id="feed"></div>
 
-          <div class="emptyState" id="feedEmpty" style="display:none">
-            まだ投稿がありません。<br/>
-            まずは下の「投稿する」から、<b>40文字以内</b>の小さな習慣を置いてみてください。<br/>
-            例：<span class="mono">夜5分散歩 / 寝る前に水 / 目を休める1分</span>
-          </div>
-
-          <!-- 投稿フォーム（下固定っぽい） -->
           <div class="composer" id="composer">
-            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap">
-              <div style="font-weight:1000; letter-spacing:.06em">✍️ 習慣を投稿する（作成者）</div>
-              <div class="counter" id="counterAction">やること：0 / 40</div>
-            </div>
-
-            <div class="row" style="margin-top:10px">
+            <div class="counter" id="counterAction">0 / 40</div>
+            <div class="row">
               <div class="field">
-                <label>タイトル（例：夜5分散歩）</label>
-                <input id="newTitle" placeholder="短く、分かりやすく" maxlength="40" />
-                <div class="hint">「ちょいオリジナル」OK。誰でも真似できる小さめ推奨。</div>
+                <input id="newTitle" placeholder="タイトル" maxlength="40" />
               </div>
-
               <div class="field">
-                <label>タグ（悩みタグ）例：不安, 寝つき, 集中</label>
-                <input id="newTags" placeholder="カンマ区切り（例：不安,寝つき）" />
-                <div class="hint">タグから検索され、評価順/成功率順/継続率順で表示されます。</div>
+                <input id="newTags" placeholder="タグ（例：不安,寝つき）" />
               </div>
-
               <div class="field">
-                <label>カテゴリ（任意）</label>
-                <input id="newCategory" placeholder="例：メンタル / 英語 / 睡眠" maxlength="20" />
-                <div class="hint">未入力でもOK。カテゴリ検索に引っかかります。</div>
+                <input id="newCategory" placeholder="カテゴリ（任意）" maxlength="20" />
               </div>
-
               <div class="field">
-                <label>5分でやること（40文字以内）</label>
-                <textarea id="newAction" placeholder="例：外に出て3分歩き、最後に深呼吸1回" maxlength="40"></textarea>
-                <div class="hint">ここが「実行のしやすさ」の核。短く・具体的に。</div>
+                <textarea id="newAction" placeholder="5分でやること（40文字）" maxlength="40"></textarea>
               </div>
             </div>
 
             <div class="composerFooter">
-              <div class="hint">
-                ログインしていない場合：投稿はできますが「保存」はされません（試運転用）。<br/>
-                ちゃんと運用するなら Googleログインをお願いします。
-              </div>
-              <div style="display:flex; gap:10px; flex-wrap:wrap">
-                <button class="btn" id="btnSeed">サンプル投稿を追加</button>
-                <button class="btn primary" id="btnPost">投稿する</button>
-              </div>
+              <button class="btn" id="btnSeed">サンプル追加</button>
+              <button class="btn primary" id="btnPost">投稿</button>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- ========== RECORDS ========== -->
       <section class="view" id="viewRecords">
-        <div class="titleRow">
-          <div>
-            <h2 class="pageTitle">達成記録（後のデータ基盤）</h2>
-            <div class="pageHint">挑戦中の習慣の記録・体感スタンプ（😊🙂😅）を保存。</div>
-          </div>
-          <div class="pill">現在の依頼：<b id="activeCount">0</b> / 3</div>
-        </div>
-
         <div class="panel">
           <div class="recordGrid" id="recordGrid"></div>
-
-          <div class="emptyState" id="recordEmpty" style="display:none">
-            まだ挑戦中の習慣がありません。<br/>
-            ホームから <b>「挑戦」</b> を押すと、ここに出ます。
-          </div>
-
-          <div class="hint" style="padding:0 14px 14px">
-            ※ Phase1の想定：<b>7日制</b>（7日のうち5日達成でクリア / 3日連続未報告でリタイア推奨）。<br/>
-            今はWeb版なので、まずは「続けやすい体験」を優先してシンプル運用にしています。
-          </div>
         </div>
       </section>
     </main>
   </div>
 
-  <!-- 初回カテゴリ選択モーダル -->
+  <!-- 初回カテゴリ選択 -->
   <div class="modalBg" id="modalBg">
     <div class="modal">
-      <h2>最初に：どんな習慣をつけたい？（カテゴリ選択）</h2>
-      <p>
-        ここで選んだカテゴリを元に、最初のホーム一覧のおすすめが少し変わります。<br/>
-        （あとから変更できます）
-      </p>
+      <h2>カテゴリ選択</h2>
       <div class="catList" id="catList"></div>
       <div class="modalFooter">
         <button class="btn" id="modalSkip">あとで</button>
-        <button class="btn primary" id="modalSave" disabled>保存して進む</button>
+        <button class="btn primary" id="modalSave" disabled>保存</button>
       </div>
     </div>
   </div>
 
-  <!-- Firebase -->
+  <!-- 評価モーダル -->
+  <div class="modalBg" id="ratingBg">
+    <div class="ratingModal">
+      <div class="ratingHead">
+        <div>
+          <p class="ratingTitle" id="ratingHabitTitle">評価</p>
+          <div class="ratingSub" id="ratingHabitMeta">—</div>
+        </div>
+        <button class="btn" id="ratingClose">閉じる</button>
+      </div>
+
+      <div class="starsRow" id="starsRow"></div>
+
+      <div class="row2">
+        <button class="toggle" id="likeToggle">❤️ いいね</button>
+        <div class="pill">あなたのランク：<b id="myRank">1</b></div>
+      </div>
+
+      <textarea class="commentBox" id="commentBox" placeholder="口コミ（短文）"></textarea>
+
+      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px; flex-wrap:wrap">
+        <button class="btn danger" id="ratingDelete">削除</button>
+        <button class="btn primary" id="ratingSave">保存</button>
+      </div>
+
+      <div class="list" id="reviewList"></div>
+    </div>
+  </div>
+
   <script type="module">
-    // ========= Firebase SDK =========
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-analytics.js";
     import {
-      getAuth,
-      GoogleAuthProvider,
-      signInWithPopup,
-      signOut,
-      onAuthStateChanged,
+      getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged,
     } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
     import {
       getFirestore,
-      collection,
-      doc,
-      getDoc,
-      setDoc,
-      addDoc,
-      updateDoc,
-      deleteDoc,
-      getDocs,
-      query,
-      where,
-      orderBy,
-      limit,
-      serverTimestamp,
-      Timestamp
+      collection, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc,
+      getDocs, query, where, orderBy, limit, serverTimestamp
     } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-    // ========= あなたのFirebase設定（ユーザー指定のもの） =========
     const firebaseConfig = {
       apiKey: "AIzaSyCvdaEW4o2y8rljlafXQJbGE-nuGQn9Q88",
       authDomain: "zuzutomo-d8fa0.firebaseapp.com",
@@ -896,12 +813,11 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    try { getAnalytics(app); } catch(e) { /* analyticsはローカル環境だと失敗することがあります */ }
+    try { getAnalytics(app); } catch(e){}
 
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // ========= DOM =========
     const $ = (id) => document.getElementById(id);
 
     const navHome = $("navHome");
@@ -922,12 +838,9 @@
 
     const chipsRecommend = $("chipsRecommend");
     const chipsTop = $("chipsTop");
-    const btnClearTag = $("btnClearTag");
 
     const feed = $("feed");
-    const feedEmpty = $("feedEmpty");
     const countShown = $("countShown");
-    const filterLabel = $("filterLabel");
     const myCategory = $("myCategory");
     const btnChangeMyCategory = $("btnChangeMyCategory");
 
@@ -943,43 +856,73 @@
     const btnSeed = $("btnSeed");
 
     const recordGrid = $("recordGrid");
-    const recordEmpty = $("recordEmpty");
-    const activeCount = $("activeCount");
-
-    const todayDone = $("todayDone");
 
     const modalBg = $("modalBg");
     const catList = $("catList");
     const modalSkip = $("modalSkip");
     const modalSave = $("modalSave");
 
-    // ========= 状態 =========
+    // rating modal
+    const ratingBg = $("ratingBg");
+    const ratingClose = $("ratingClose");
+    const ratingHabitTitle = $("ratingHabitTitle");
+    const ratingHabitMeta = $("ratingHabitMeta");
+    const starsRow = $("starsRow");
+    const likeToggle = $("likeToggle");
+    const myRankEl = $("myRank");
+    const commentBox = $("commentBox");
+    const ratingSave = $("ratingSave");
+    const ratingDelete = $("ratingDelete");
+    const reviewList = $("reviewList");
+
     let currentUser = null;
     let myProfile = null;
 
-    // 画面のフィルタ状態
     let selectedTag = "";
-    let selectedTopTags = []; // 表示用
-    let selectedRecoTags = []; // 表示用
+    let selectedTopTags = [];
+    let selectedRecoTags = [];
+    let favCreatorsSet = new Set();
 
-    // 「お気に入り中の人」(Phase3相当) ここでは最低限：creatorをお気に入りとして保存できるようにする
-    // 今回はPhase1の範囲内でも邪魔にならない最小要素として入れておく
-    let favCreatorsSet = new Set(); // uidの集合
+    const CATS = ["メンタル","睡眠","運動","健康","生活","勉強","英語","仕事","その他"];
+    let modalSelected = "";
 
-    // ========== ユーティリティ ==========
-    const nowJST = () => new Date(); // ブラウザローカルでOK（JST想定）
+    // rating state
+    let ratingTargetHabit = null; // {id, ...}
+    let ratingStars = 0;
+    let ratingLiked = false;
+
+    const nowLocal = () => new Date();
     const fmtDate = (d) => {
       const y = d.getFullYear();
       const m = String(d.getMonth()+1).padStart(2,"0");
       const day = String(d.getDate()).padStart(2,"0");
       return `${y}-${m}-${day}`;
     };
-    const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+    const parseYMD = (s) => {
+      // "YYYY-MM-DD" だけ想定（"YYYY-MM-DD（休）"などは前半だけ取る）
+      const raw = String(s||"").slice(0,10);
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(raw)) return null;
+      const [y,m,d] = raw.split("-").map(Number);
+      return new Date(y, m-1, d);
+    };
+    const daysBetween = (a, b) => {
+      // a,b: Date（ローカル日付）
+      const A = new Date(a.getFullYear(), a.getMonth(), a.getDate()).getTime();
+      const B = new Date(b.getFullYear(), b.getMonth(), b.getDate()).getTime();
+      return Math.round((B - A) / 86400000);
+    };
+    const escapeHtml = (s) => {
+      return String(s ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#39;");
+    };
 
     function showPlusOne(){
       plusOne.style.display = "block";
       plusOne.style.animation = "none";
-      // reflow
       void plusOne.offsetWidth;
       plusOne.style.animation = "floatUp .9s ease-out forwards";
       setTimeout(()=> plusOne.style.display = "none", 950);
@@ -991,17 +934,11 @@
       navRecords.classList.toggle("active", !isHome);
       viewHome.classList.toggle("active", isHome);
       viewRecords.classList.toggle("active", !isHome);
-      if(!isHome){
-        refreshRecords();
-      }
+      if(!isHome) refreshRecords();
     }
-
     navHome.addEventListener("click", ()=> setView("home"));
     navRecords.addEventListener("click", ()=> setView("records"));
 
-    // ========== 初回カテゴリ選択 ==========
-    const CATS = ["メンタル","睡眠","運動","健康","生活","勉強","英語","仕事","その他"];
-    let modalSelected = "";
     function openCategoryModal(){
       modalSelected = "";
       modalSave.disabled = true;
@@ -1020,16 +957,12 @@
       }
       modalBg.classList.add("show");
     }
-    function closeCategoryModal(){
-      modalBg.classList.remove("show");
-    }
-    modalSkip.addEventListener("click", ()=>{
-      closeCategoryModal();
-    });
+    function closeCategoryModal(){ modalBg.classList.remove("show"); }
+
+    modalSkip.addEventListener("click", closeCategoryModal);
     modalSave.addEventListener("click", async ()=>{
       if(!modalSelected) return;
       if(!currentUser){
-        // 未ログインでもローカルに保存だけ
         localStorage.setItem("myCategory", modalSelected);
         myCategory.textContent = modalSelected;
         closeCategoryModal();
@@ -1046,25 +979,16 @@
       closeCategoryModal();
       await refreshHome();
     });
-
     btnChangeMyCategory.addEventListener("click", openCategoryModal);
 
-    // ========== ログイン/ログアウト ==========
     btnLogin.addEventListener("click", async ()=>{
       const provider = new GoogleAuthProvider();
-      try{
-        await signInWithPopup(auth, provider);
-      }catch(e){
-        alert("ログインに失敗しました：\n" + (e?.message ?? e));
-      }
+      try{ await signInWithPopup(auth, provider); }
+      catch(e){ alert("ログイン失敗：\n"+(e?.message ?? e)); }
     });
-
     btnLogout.addEventListener("click", async ()=>{
-      try{
-        await signOut(auth);
-      }catch(e){
-        alert("ログアウトに失敗しました：\n" + (e?.message ?? e));
-      }
+      try{ await signOut(auth); }
+      catch(e){ alert("ログアウト失敗：\n"+(e?.message ?? e)); }
     });
 
     onAuthStateChanged(auth, async (user)=>{
@@ -1073,15 +997,13 @@
 
       if(!currentUser){
         userName.textContent = "未ログイン";
-        userSmall.textContent = "Googleログインで保存されます";
+        userSmall.textContent = "—";
         userAvatar.innerHTML = "👤";
         myProfile = null;
 
-        // ローカルカテゴリ
         const lc = localStorage.getItem("myCategory") || "未設定";
         myCategory.textContent = lc;
 
-        // favCreatorsはローカル
         try{
           const raw = localStorage.getItem("favCreators");
           favCreatorsSet = new Set(raw ? JSON.parse(raw) : []);
@@ -1092,9 +1014,8 @@
         return;
       }
 
-      // ユーザー表示
       userName.textContent = currentUser.displayName || "ユーザー";
-      userSmall.textContent = currentUser.email || "";
+      userSmall.textContent = currentUser.email || "—";
       userAvatar.innerHTML = "";
       if(currentUser.photoURL){
         const img = document.createElement("img");
@@ -1105,19 +1026,17 @@
         userAvatar.textContent = "👤";
       }
 
-      // プロフィールロード
       await ensureProfile();
 
-      // favCreatorsロード
       favCreatorsSet = new Set(myProfile?.favCreators || []);
       localStorage.setItem("favCreators", JSON.stringify([...favCreatorsSet]));
 
-      // 初回カテゴリが無ければモーダル
       const pref = myProfile?.preferredCategory || "";
       myCategory.textContent = pref || "未設定";
-      if(!pref){
-        openCategoryModal();
-      }
+      if(!pref) openCategoryModal();
+
+      // ★ 3日連続未報告 自動リタイア判定（ログイン時に実行）
+      await autoRetireIfMissed();
 
       await refreshHome();
       await refreshRecords();
@@ -1134,12 +1053,11 @@
           preferredCategory: "",
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
-          // Phase3相当の土台（最小）：好きな作成者
           favCreators: [],
-          // 簡易プロフィール数値（将来の集計用）
           clearCount: 0,
           activeCount: 0,
           totalChallenges: 0,
+          // 参加者ランク（1-3）
           ratingRank: 1
         };
         await setDoc(ref, initial);
@@ -1147,72 +1065,31 @@
       }else{
         myProfile = snap.data();
       }
+      myRankEl.textContent = String(myProfile?.ratingRank || 1);
     }
 
-    // ========== 入力カウンタ ==========
     function updateCounter(){
-      counterAction.textContent = `やること：${newAction.value.length} / 40`;
+      counterAction.textContent = `${newAction.value.length} / 40`;
     }
     newAction.addEventListener("input", updateCounter);
     updateCounter();
 
-    // ========== データ設計（Phase1の最小） ==========
-    // habits（習慣投稿）
-    //  - title: string
-    //  - action: string (<=40)
-    //  - tags: string[]
-    //  - category: string
-    //  - creatorUid, creatorName, creatorPhoto
-    //  - createdAt
-    //
-    // challenges（ユーザーの挑戦）… userChallenges/{uid}/items/{habitId}
-    //  - habitId
-    //  - habitTitle
-    //  - status: "active" | "cleared" | "retired"
-    //  - startDate: "YYYY-MM-DD"
-    //  - day: number (継続日数)
-    //  - lastReportedDate: "YYYY-MM-DD" | ""
-    //  - streakMiss: number (連続未報告)
-    //  - successDays: number (やった回数)
-    //  - restDays: number (休んだ回数)
-    //  - difficulty: {easy,mid,hard}
-    //  - updatedAt
-    //
-    // ratings（簡易評価）… habits/{habitId}/ratings/{uid}
-    //  - stars: 1..5
-    //  - liked: boolean
-    //  - comment: string (短文)
-    //  - weightRank: 1..3（今は未実装。将来ここにランクを入れる）
-    //
-    // 集計（今は軽くクライアント側で計算し、表示用にhabitsにキャッシュしてもOK）
-    //  - avgRating, ratingCount, participantsCount, avgDays, successRate
-
-    // ========== 投稿作成 ==========
+    // ====== 投稿 ======
     btnPost.addEventListener("click", async ()=>{
       const title = newTitle.value.trim();
       const tags = newTags.value.split(",").map(s=>s.trim()).filter(Boolean).slice(0,8);
       const category = newCategory.value.trim();
       const action = newAction.value.trim();
 
-      if(!title || !action){
-        alert("タイトルと「5分でやること」は必須です。");
-        return;
-      }
-      if(action.length > 40){
-        alert("「5分でやること」は40文字以内です。");
-        return;
-      }
+      if(!title || !action){ alert("タイトル / 5分でやること は必須"); return; }
+      if(action.length > 40){ alert("40文字以内"); return; }
 
       const data = {
-        title,
-        action,
-        tags,
-        category,
+        title, action, tags, category,
         creatorUid: currentUser?.uid || "guest",
         creatorName: currentUser?.displayName || "ゲスト",
         creatorPhoto: currentUser?.photoURL || "",
         createdAt: serverTimestamp(),
-        // 表示用の初期集計
         avgRating: 0,
         ratingCount: 0,
         participantsCount: 0,
@@ -1224,7 +1101,6 @@
         if(currentUser){
           await addDoc(collection(db, "habits"), data);
         }else{
-          // 未ログインはローカルに保存（試運転用）
           const local = JSON.parse(localStorage.getItem("localHabits") || "[]");
           local.unshift({ ...data, _localId: crypto.randomUUID(), createdAtLocal: Date.now() });
           localStorage.setItem("localHabits", JSON.stringify(local));
@@ -1238,11 +1114,10 @@
 
         await refreshHome();
       }catch(e){
-        alert("投稿に失敗しました：\n" + (e?.message ?? e));
+        alert("投稿失敗：\n" + (e?.message ?? e));
       }
     });
 
-    // ========== サンプル投入 ==========
     btnSeed.addEventListener("click", async ()=>{
       const samples = [
         { title:"夜5分散歩", action:"外に出て3分歩き、最後に深呼吸1回", tags:["不安","寝つき"], category:"メンタル" },
@@ -1250,7 +1125,6 @@
         { title:"英単語5つ", action:"単語帳で5単語だけ見る", tags:["英語","勉強"], category:"英語" },
         { title:"寝る前に水", action:"コップ半分の水を飲む", tags:["睡眠","体調"], category:"睡眠" },
       ];
-
       try{
         for(const s of samples){
           const data = {
@@ -1265,9 +1139,8 @@
             avgDays: 6.2,
             successRate: 32
           };
-          if(currentUser){
-            await addDoc(collection(db,"habits"), data);
-          }else{
+          if(currentUser) await addDoc(collection(db,"habits"), data);
+          else{
             const local = JSON.parse(localStorage.getItem("localHabits") || "[]");
             local.unshift({ ...data, _localId: crypto.randomUUID(), createdAtLocal: Date.now() });
             localStorage.setItem("localHabits", JSON.stringify(local));
@@ -1275,98 +1148,57 @@
         }
         await refreshHome();
       }catch(e){
-        alert("サンプル追加に失敗しました：\n" + (e?.message ?? e));
+        alert("失敗：\n" + (e?.message ?? e));
       }
     });
 
-    // ========== 検索/フィルタ ==========
+    // ====== フィルタ ======
     function setSelectedTag(tag){
       selectedTag = tag || "";
-      // chip UI更新
       [...document.querySelectorAll(".chip")].forEach(ch=>{
         ch.classList.toggle("active", ch.dataset.tag === selectedTag);
       });
       refreshHome();
     }
-
-    btnClearTag.addEventListener("click", ()=>{
-      setSelectedTag("");
-    });
-
-    qInput.addEventListener("keydown", (e)=>{
-      if(e.key === "Enter"){
-        refreshHome();
-      }
-    });
+    qInput.addEventListener("keydown", (e)=>{ if(e.key==="Enter") refreshHome(); });
     categoryFilter.addEventListener("change", refreshHome);
     sortBy.addEventListener("change", refreshHome);
 
-    // ========== 今日達成者数（簡易演出） ==========
-    // 本番は集計基盤が必要。今は「ローカルでそれっぽく」動かす。
-    function loadTodayDone(){
-      const key = "todayDone_" + fmtDate(nowJST());
-      const v = Number(localStorage.getItem(key) || "32"); // 初期32っぽく
-      localStorage.setItem(key, String(v));
-      todayDone.textContent = String(v);
-      return v;
-    }
-    function incTodayDone(){
-      const key = "todayDone_" + fmtDate(nowJST());
-      const v = Number(localStorage.getItem(key) || "32") + 1;
-      localStorage.setItem(key, String(v));
-      todayDone.textContent = String(v);
-      showPlusOne();
-    }
-    loadTodayDone();
-
-    // ========== Home表示（一覧） ==========
+    // ====== Home ======
     async function refreshHome(){
       const keyword = qInput.value.trim().toLowerCase();
       const cat = categoryFilter.value.trim();
       const sort = sortBy.value;
 
-      // 個人カテゴリ（おすすめに使う）
       const prefCat = (currentUser ? (myProfile?.preferredCategory || "") : (localStorage.getItem("myCategory") || "")) || "";
       myCategory.textContent = prefCat || "未設定";
 
-      // 1) 投稿一覧をロード（Firestore + ローカル投稿）
       let habits = [];
 
-      // Firestore分
       try{
-        const qs = await getDocs(query(collection(db,"habits"), orderBy("createdAt","desc"), limit(120)));
+        const qs = await getDocs(query(collection(db,"habits"), orderBy("createdAt","desc"), limit(140)));
         qs.forEach(docSnap=>{
           habits.push({ id: docSnap.id, ...docSnap.data(), _source:"remote" });
         });
-      }catch(e){
-        // ローカル運用やCORS等で失敗しても、ローカルだけ表示できるようにする
-        console.warn("habits load error", e);
-      }
+      }catch(e){}
 
-      // ローカル分（ゲスト投稿）
       try{
         const local = JSON.parse(localStorage.getItem("localHabits") || "[]");
         habits = habits.concat(local.map(x=>({ ...x, id: x._localId, _source:"local" })));
       }catch{}
 
-      // 2) トップタグ / おすすめタグ を作る
+      // tags
       const tagCounts = new Map();
-      const catCounts = new Map();
       for(const h of habits){
         (h.tags || []).forEach(t=>{
           const k = String(t || "").trim();
           if(!k) return;
           tagCounts.set(k, (tagCounts.get(k)||0)+1);
         });
-        const c = (h.category || "").trim();
-        if(c) catCounts.set(c, (catCounts.get(c)||0)+1);
       }
-
-      // topタグ（投稿数上位）
       selectedTopTags = [...tagCounts.entries()].sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
       renderChips(chipsTop, selectedTopTags);
 
-      // recoタグ（あなたのカテゴリや検索傾向をざっくり反映：prefCat関連の投稿からタグ抽出）
       const recoPool = habits.filter(h=>{
         if(!prefCat) return true;
         return (h.category || "").trim() === prefCat;
@@ -1380,34 +1212,19 @@
         });
       }
       selectedRecoTags = [...recoCounts.entries()].sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
-      if(selectedRecoTags.length === 0){
-        // fallback
-        selectedRecoTags = ["不安","集中","寝つき"].filter(t=>tagCounts.has(t)).slice(0,3);
-        if(selectedRecoTags.length === 0) selectedRecoTags = selectedTopTags;
-      }
+      if(selectedRecoTags.length===0) selectedRecoTags = selectedTopTags;
       renderChips(chipsRecommend, selectedRecoTags);
 
-      // 3) フィルタ適用
       let filtered = habits.filter(h=>{
-        // カテゴリ
-        if(cat){
-          if((h.category || "").trim() !== cat) return false;
-        }
-        // タグ
-        if(selectedTag){
-          if(!(h.tags || []).includes(selectedTag)) return false;
-        }
-        // キーワード（title/action/tags/category）
+        if(cat && (h.category || "").trim() !== cat) return false;
+        if(selectedTag && !(h.tags || []).includes(selectedTag)) return false;
         if(keyword){
-          const blob = [
-            h.title, h.action, (h.tags||[]).join(" "), h.category, h.creatorName
-          ].join(" ").toLowerCase();
+          const blob = [h.title, h.action, (h.tags||[]).join(" "), h.category, h.creatorName].join(" ").toLowerCase();
           if(!blob.includes(keyword)) return false;
         }
         return true;
       });
 
-      // 4) 並び替え
       filtered.sort((a,b)=>{
         const ca = a.createdAt?.seconds ? a.createdAt.seconds : (a.createdAtLocal ? Math.floor(a.createdAtLocal/1000) : 0);
         const cb = b.createdAt?.seconds ? b.createdAt.seconds : (b.createdAtLocal ? Math.floor(b.createdAtLocal/1000) : 0);
@@ -1427,29 +1244,13 @@
           const bf = favCreatorsSet.has(b.creatorUid) ? 1 : 0;
           return (bf - af) || (cb - ca);
         }
-        // new
         return (cb - ca);
       });
 
-      // 5) メタ表示
       countShown.textContent = String(filtered.length);
-      const fl = [];
-      if(keyword) fl.push(`検索「${keyword}」`);
-      if(cat) fl.push(`カテゴリ:${cat}`);
-      if(selectedTag) fl.push(`タグ:${selectedTag}`);
-      filterLabel.textContent = fl.length ? fl.join(" / ") : "なし";
 
-      // 6) 描画
       feed.innerHTML = "";
-      if(filtered.length === 0){
-        feedEmpty.style.display = habits.length ? "block" : "block";
-      }else{
-        feedEmpty.style.display = "none";
-      }
-
-      // 今日の習慣トースト（挑戦中を上から出す）
       await refreshTodayToasts();
-
       for(const h of filtered){
         feed.appendChild(renderHabitCard(h));
       }
@@ -1465,7 +1266,6 @@
         chip.addEventListener("click", ()=> setSelectedTag(t));
         container.appendChild(chip);
       }
-      // active状態反映
       [...container.querySelectorAll(".chip")].forEach(ch=>{
         ch.classList.toggle("active", ch.dataset.tag === selectedTag);
       });
@@ -1478,7 +1278,6 @@
       const tags = (h.tags || []).slice(0,4);
       const cat = (h.category || "").trim();
 
-      // 表示値（未集計でも破綻しないように）
       const avgRating = Number(h.avgRating||0);
       const avgDays = Number(h.avgDays||0);
       const successRate = Number(h.successRate||0);
@@ -1490,8 +1289,8 @@
             <div class="miniName">${escapeHtml(h.creatorName || "作成者")}</div>
           </div>
           <div class="badgeRow">
-            ${cat ? `<span class="badge cat">${escapeHtml(cat)}</span>` : ""}
-            ${tags.map(t=>`<span class="badge tag">${escapeHtml(t)}</span>`).join("")}
+            ${cat ? `<span class="badge cat" data-cat="${escapeHtml(cat)}">${escapeHtml(cat)}</span>` : ""}
+            ${tags.map(t=>`<span class="badge tag" data-tag="${escapeHtml(t)}">${escapeHtml(t)}</span>`).join("")}
           </div>
         </div>
 
@@ -1501,39 +1300,33 @@
         <div class="habitBottom">
           <div class="stats">
             <div class="stat">⭐ ${avgRating ? avgRating.toFixed(1) : "—"}</div>
-            <div class="stat">📅 ${avgDays ? avgDays.toFixed(1) + "日" : "—"}</div>
+            <div class="stat">📅 ${avgDays ? avgDays.toFixed(1) : "—"}</div>
             <div class="stat">🎯 ${successRate ? successRate.toFixed(0) + "%" : "—"}</div>
           </div>
 
           <div class="actions">
-            <button class="btnGhost" data-act="bookmark"><span class="bookmarkMark">🔖</span> 保存</button>
-            <button class="btnGhost" data-act="favCreator">❤️ 作成者</button>
+            <button class="btnGhost" data-act="bookmark">🔖</button>
+            <button class="btnGhost" data-act="rate">⭐</button>
+            <button class="btnGhost" data-act="fav">❤️</button>
             <button class="btnTry" data-act="try">▶ 挑戦</button>
           </div>
         </div>
       `;
 
-      // ボタン動作
-      const btnTry = card.querySelector('[data-act="try"]');
-      const btnBm = card.querySelector('[data-act="bookmark"]');
-      const btnFav = card.querySelector('[data-act="favCreator"]');
+      card.querySelector('[data-act="try"]').addEventListener("click", ()=> startChallenge(h));
+      card.querySelector('[data-act="bookmark"]').addEventListener("click", ()=> bookmarkHabit(h));
+      card.querySelector('[data-act="fav"]').addEventListener("click", ()=> toggleFavCreator(h.creatorUid));
+      card.querySelector('[data-act="rate"]').addEventListener("click", ()=> openRatingModal(h));
 
-      btnTry.addEventListener("click", ()=> startChallenge(h));
-      btnBm.addEventListener("click", ()=> bookmarkHabit(h));
-      btnFav.addEventListener("click", ()=> toggleFavCreator(h.creatorUid));
-
-      // バッジ（カテゴリ/タグ）を押したらフィルタに反映（あなたの指定）
       card.querySelectorAll(".badge.tag").forEach(el=>{
         el.addEventListener("click", (e)=>{
-          const t = el.textContent.trim();
-          const raw = t.startsWith("#") ? t.slice(1) : t;
-          setSelectedTag(raw);
+          setSelectedTag(el.dataset.tag || el.textContent.trim());
           e.stopPropagation();
         });
       });
       card.querySelectorAll(".badge.cat").forEach(el=>{
         el.addEventListener("click", (e)=>{
-          categoryFilter.value = el.textContent.trim();
+          categoryFilter.value = el.dataset.cat || el.textContent.trim();
           refreshHome();
           e.stopPropagation();
         });
@@ -1542,29 +1335,14 @@
       return card;
     }
 
-    function escapeHtml(s){
-      return String(s ?? "")
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#39;");
-    }
-
-    // ========== 保存（Phase3の最小：非公開リスト1つだけ） ==========
+    // ====== bookmark（非公開のみ） ======
     async function bookmarkHabit(h){
-      // 今回：非公開リスト only（あなたの指定）
-      // userBookmarks/{uid}/items/{habitId}
       if(!currentUser){
-        // ゲスト：ローカル
         const key = "localBookmarks";
         const arr = JSON.parse(localStorage.getItem(key) || "[]");
         if(!arr.includes(h.id)){
           arr.push(h.id);
           localStorage.setItem(key, JSON.stringify(arr));
-          alert("🔖 非公開リストに保存しました（ローカル）");
-        }else{
-          alert("すでに保存済みです（ローカル）");
         }
         return;
       }
@@ -1579,26 +1357,19 @@
             visibility: "private",
             listName: "非公開リスト"
           });
-          alert("🔖 非公開リストに保存しました");
-        }else{
-          // もう一度押したら解除でもいいが、今回は「保存確認」でOK
-          alert("すでに保存済みです");
         }
       }catch(e){
-        alert("保存に失敗しました：\n" + (e?.message ?? e));
+        alert("保存失敗：\n" + (e?.message ?? e));
       }
     }
 
-    // ========== 作成者お気に入り（Phase3土台） ==========
     async function toggleFavCreator(creatorUid){
       if(!creatorUid) return;
       if(!currentUser){
-        // ローカル
         if(favCreatorsSet.has(creatorUid)) favCreatorsSet.delete(creatorUid);
         else favCreatorsSet.add(creatorUid);
         localStorage.setItem("favCreators", JSON.stringify([...favCreatorsSet]));
         await refreshHome();
-        alert(favCreatorsSet.has(creatorUid) ? "❤️ 作成者をお気に入り" : "💤 お気に入り解除");
         return;
       }
       try{
@@ -1613,35 +1384,27 @@
         myProfile.favCreators = [...favCreatorsSet];
         localStorage.setItem("favCreators", JSON.stringify([...favCreatorsSet]));
         await refreshHome();
-        alert(favCreatorsSet.has(creatorUid) ? "❤️ 作成者をお気に入り" : "💤 お気に入り解除");
       }catch(e){
-        alert("お気に入り更新に失敗：\n" + (e?.message ?? e));
+        alert("失敗：\n" + (e?.message ?? e));
       }
     }
 
-    // ========== 挑戦開始 ==========
+    // ====== Challenge ======
     async function startChallenge(h){
-      // 最大3つ（あなたの指定）
       const maxActive = 3;
-
-      // まず現在の挑戦数を数える
       const actives = await loadActiveChallenges();
       if(actives.length >= maxActive){
-        alert("現在の依頼が上限（3件）です。達成記録から完了/リタイアして空きを作ってください。");
+        alert("依頼は最大3");
         return;
       }
 
-      const start = fmtDate(nowJST());
+      const start = fmtDate(nowLocal());
 
       if(!currentUser){
-        // ゲストはローカル
         const key = "localChallenges";
         const items = JSON.parse(localStorage.getItem(key) || "[]");
         const exists = items.find(x => x.habitId === h.id && x.status === "active");
-        if(exists){
-          alert("すでに挑戦中です（ローカル）");
-          return;
-        }
+        if(exists) return;
         items.unshift({
           id: crypto.randomUUID(),
           habitId: h.id,
@@ -1655,25 +1418,19 @@
           restDays:0,
           difficulty:{easy:0,mid:0,hard:0},
           updatedAt: Date.now(),
-          // 表示用にタグ/カテゴリも少し持つ
           category: h.category || "",
           tags: h.tags || []
         });
         localStorage.setItem(key, JSON.stringify(items));
-        alert("▶ 挑戦を開始しました（ローカル）");
         await refreshTodayToasts();
         await refreshRecords();
         return;
       }
 
       try{
-        // userChallenges/{uid}/items/{habitId}
         const ref = doc(db, "userChallenges", currentUser.uid, "items", h.id);
         const snap = await getDoc(ref);
-        if(snap.exists() && (snap.data()?.status === "active")){
-          alert("すでに挑戦中です。");
-          return;
-        }
+        if(snap.exists() && (snap.data()?.status === "active")) return;
 
         await setDoc(ref, {
           habitId: h.id,
@@ -1691,8 +1448,7 @@
           updatedAt: serverTimestamp()
         });
 
-        // 作成者側の participantsCount を増やす（本番はCloud Function推奨、今は簡易）
-        // 失敗しても致命ではないので try-catch で握る
+        // participantsCount 増やす（簡易）
         try{
           if(h._source === "remote"){
             const href = doc(db, "habits", h.id);
@@ -1705,61 +1461,69 @@
           }
         }catch{}
 
-        alert("▶ 挑戦を開始しました");
         await refreshTodayToasts();
         await refreshRecords();
       }catch(e){
-        alert("挑戦の開始に失敗しました：\n" + (e?.message ?? e));
+        alert("失敗：\n" + (e?.message ?? e));
       }
     }
 
-    // ========== 今日の習慣トースト（通知） ==========
+    async function loadActiveChallenges(){
+      if(!currentUser){
+        const items = JSON.parse(localStorage.getItem("localChallenges") || "[]");
+        return items.filter(x => x.status === "active");
+      }
+      try{
+        const qs = await getDocs(query(
+          collection(db, "userChallenges", currentUser.uid, "items"),
+          where("status","==","active"),
+          orderBy("updatedAt","desc"),
+          limit(10)
+        ));
+        const arr = [];
+        qs.forEach(s=> arr.push(s.data()));
+        return arr;
+      }catch(e){
+        return [];
+      }
+    }
+
     async function refreshTodayToasts(){
       toastWrap.innerHTML = "";
       const actives = await loadActiveChallenges();
-
       if(actives.length === 0) return;
 
-      // その日の始まりに上から通知みたいに出す：アクティブ全部出す（最大3）
       for(const ch of actives.slice(0,3)){
         const title = ch.habitTitle || "習慣";
         const day = Number(ch.day||1);
-        const last = ch.lastReportedDate || "未報告";
         const toast = document.createElement("div");
         toast.className = "toast";
         toast.innerHTML = `
           <div class="left">
-            <div class="kicker">🌱 今日の習慣</div>
+            <div class="kicker">🌱</div>
             <div class="main">${escapeHtml(title)}（${day}日目）</div>
-            <div class="sub">前回：${escapeHtml(last)}</div>
           </div>
           <div class="right">
-            <button class="emojiBtn primary" data-act="done">✅ やった</button>
-            <button class="emojiBtn warn" data-act="rest">🛌 今日は休む</button>
-            <button class="emojiBtn danger" data-act="retire">🏳️ リタイア</button>
+            <button class="emojiBtn primary" data-act="done">✅</button>
+            <button class="emojiBtn warn" data-act="rest">🛌</button>
+            <button class="emojiBtn danger" data-act="retire">🏳️</button>
           </div>
         `;
-
         toast.querySelector('[data-act="done"]').addEventListener("click", ()=> reportDone(ch, "done"));
         toast.querySelector('[data-act="rest"]').addEventListener("click", ()=> reportDone(ch, "rest"));
         toast.querySelector('[data-act="retire"]').addEventListener("click", ()=> reportDone(ch, "retire"));
-
         toastWrap.appendChild(toast);
       }
     }
 
-    // ========== 報告（やった / 休む / リタイア） ==========
+    function incPlusOne(){ showPlusOne(); }
+
     async function reportDone(ch, mode){
-      // mode: "done" | "rest" | "retire"
-      // やった場合：難易度選択（😊🙂😅）
       if(mode === "done"){
-        const choice = prompt("今日の難易度はどうでしたか？\n😊=楽 / 🙂=ちょうどいい / 😅=大変\n（絵文字を入力：😊🙂😅）");
+        const choice = prompt("😊🙂😅");
         const d = (choice || "").trim();
         const map = { "😊":"easy", "🙂":"mid", "😅":"hard" };
-        if(!map[d]){
-          alert("😊🙂😅 のどれかを入力してください。");
-          return;
-        }
+        if(!map[d]) return;
         await applyReport(ch, { type:"done", diff: map[d] });
         return;
       }
@@ -1768,7 +1532,7 @@
         return;
       }
       if(mode === "retire"){
-        const ok = confirm("リタイアしますか？（あとから再挑戦はできます）");
+        const ok = confirm("リタイア？");
         if(!ok) return;
         await applyReport(ch, { type:"retire" });
         return;
@@ -1776,16 +1540,15 @@
     }
 
     async function applyReport(ch, payload){
-      const today = fmtDate(nowJST());
+      const today = fmtDate(nowLocal());
 
       if(!currentUser){
-        // ローカル更新
         const key = "localChallenges";
         const items = JSON.parse(localStorage.getItem(key) || "[]");
         const idx = items.findIndex(x => x.habitId === ch.habitId && x.status === "active");
         if(idx === -1) return;
-
         const cur = items[idx];
+
         if(payload.type === "done"){
           cur.successDays = Number(cur.successDays||0) + 1;
           cur.lastReportedDate = today;
@@ -1793,7 +1556,7 @@
           cur.day = Number(cur.day||1) + 1;
           cur.difficulty = cur.difficulty || {easy:0,mid:0,hard:0};
           cur.difficulty[payload.diff] = Number(cur.difficulty[payload.diff]||0) + 1;
-          incTodayDone();
+          incPlusOne();
         }else if(payload.type === "rest"){
           cur.restDays = Number(cur.restDays||0) + 1;
           cur.lastReportedDate = today + "（休）";
@@ -1804,10 +1567,9 @@
           cur.lastReportedDate = today + "（リタイア）";
         }
 
-        // 7日制：7日のうち5日達成でクリア（簡易）
         if(cur.status === "active"){
           if(Number(cur.successDays||0) >= 5 && Number(cur.day||1) >= 7){
-            const done = confirm("🎉 クリア判定！この依頼は完了として終了しますか？\n（OKでクリア / キャンセルで続行）");
+            const done = confirm("クリアにする？");
             if(done){
               cur.status = "cleared";
               cur.lastReportedDate = today + "（クリア）";
@@ -1818,7 +1580,6 @@
         cur.updatedAt = Date.now();
         items[idx] = cur;
         localStorage.setItem(key, JSON.stringify(items));
-
         await refreshTodayToasts();
         await refreshRecords();
         return;
@@ -1839,7 +1600,7 @@
           const diffObj = cur.difficulty || {easy:0,mid:0,hard:0};
           diffObj[payload.diff] = Number(diffObj[payload.diff]||0) + 1;
           update.difficulty = diffObj;
-          incTodayDone();
+          incPlusOne();
         }else if(payload.type === "rest"){
           update.restDays = Number(cur.restDays||0) + 1;
           update.lastReportedDate = today + "（休）";
@@ -1853,63 +1614,82 @@
         update.updatedAt = serverTimestamp();
         await updateDoc(ref, update);
 
-        // 7日制：7日のうち5日達成でクリア（簡易）
         if((payload.type === "done" || payload.type === "rest") && (cur.status === "active")){
           const nextSuccess = (payload.type === "done") ? (Number(cur.successDays||0)+1) : Number(cur.successDays||0);
           const nextDay = Number(cur.day||1)+1;
           if(nextSuccess >= 5 && nextDay >= 7){
-            const done = confirm("🎉 クリア判定！この依頼は完了として終了しますか？\n（OKでクリア / キャンセルで続行）");
+            const done = confirm("クリアにする？");
             if(done){
               await updateDoc(ref, { status:"cleared", lastReportedDate: today + "（クリア）", updatedAt: serverTimestamp() });
             }
           }
         }
 
+        // ★ 成功率/平均継続日数などの簡易集計を更新（クライアント集計）
+        await recomputeHabitStats(ch.habitId);
+
         await refreshTodayToasts();
         await refreshRecords();
       }catch(e){
-        alert("記録に失敗しました：\n" + (e?.message ?? e));
+        alert("失敗：\n" + (e?.message ?? e));
       }
     }
 
-    // ========== 挑戦中ロード ==========
-    async function loadActiveChallenges(){
-      // status==="active" のみ
-      if(!currentUser){
-        const items = JSON.parse(localStorage.getItem("localChallenges") || "[]");
-        return items.filter(x => x.status === "active");
-      }
+    // ====== 3日連続未報告 自動リタイア ======
+    async function autoRetireIfMissed(){
+      if(!currentUser) return;
+      const today = nowLocal();
+
+      let active = [];
       try{
         const qs = await getDocs(query(
           collection(db, "userChallenges", currentUser.uid, "items"),
           where("status","==","active"),
-          orderBy("updatedAt","desc"),
-          limit(10)
+          limit(50)
         ));
-        const arr = [];
-        qs.forEach(s=> arr.push(s.data()));
-        return arr;
-      }catch(e){
-        console.warn("active challenges load error", e);
-        return [];
+        qs.forEach(s=> active.push({ _id: s.id, ...s.data() }));
+      }catch(e){ return; }
+
+      const updates = [];
+      for(const ch of active){
+        const startD = parseYMD(ch.startDate);
+        const lastD = parseYMD(ch.lastReportedDate);
+
+        let miss = 0;
+
+        if(lastD){
+          const gap = daysBetween(lastD, today);
+          // lastが今日なら0、昨日なら0、2日前なら1、3日前なら2…
+          miss = Math.max(0, gap - 1);
+        }else if(startD){
+          // 一度も報告してない：startから今日までの経過日数 - 1 を未報告連続扱い
+          const gap = daysBetween(startD, today);
+          miss = Math.max(0, gap - 1);
+        }else{
+          miss = 0;
+        }
+
+        if(miss >= 3){
+          updates.push(updateDoc(
+            doc(db, "userChallenges", currentUser.uid, "items", ch.habitId),
+            { status:"retired", streakMiss: miss, lastReportedDate: fmtDate(today) + "（自動リタイア）", updatedAt: serverTimestamp() }
+          ));
+        }else{
+          // streakMissだけ更新（表示/内部用）
+          updates.push(updateDoc(
+            doc(db, "userChallenges", currentUser.uid, "items", ch.habitId),
+            { streakMiss: miss, updatedAt: serverTimestamp() }
+          ));
+        }
       }
+      try{ await Promise.allSettled(updates); }catch{}
     }
 
-    // ========== 達成記録画面 ==========
+    // ====== Records ======
     async function refreshRecords(){
       const items = await loadAllChallengesForRecords();
-
-      const actives = items.filter(x=>x.status==="active");
-      activeCount.textContent = String(actives.length);
-
       recordGrid.innerHTML = "";
-      if(items.length === 0){
-        recordEmpty.style.display = "block";
-        return;
-      }
-      recordEmpty.style.display = "none";
 
-      // 表示：アクティブ→クリア→リタイア
       const order = (st)=> st==="active"?0 : st==="cleared"?1 : 2;
       items.sort((a,b)=> order(a.status)-order(b.status));
 
@@ -1920,20 +1700,18 @@
 
     async function loadAllChallengesForRecords(){
       if(!currentUser){
-        const items = JSON.parse(localStorage.getItem("localChallenges") || "[]");
-        return items;
+        return JSON.parse(localStorage.getItem("localChallenges") || "[]");
       }
       try{
         const qs = await getDocs(query(
           collection(db, "userChallenges", currentUser.uid, "items"),
           orderBy("updatedAt","desc"),
-          limit(60)
+          limit(80)
         ));
         const arr = [];
         qs.forEach(s=> arr.push(s.data()));
         return arr;
       }catch(e){
-        console.warn("records load error", e);
         return [];
       }
     }
@@ -1952,43 +1730,33 @@
       const midP  = totalFeel ? Math.round((diff.mid||0)/totalFeel*100) : 0;
       const hardP = totalFeel ? Math.round((diff.hard||0)/totalFeel*100) : 0;
 
-      const miss = Number(ch.streakMiss||0);
-      const last = ch.lastReportedDate || "未報告";
-
       card.innerHTML = `
         <div class="rTop">
           <div>
-            <p class="rTitle">${stBadge} ${escapeHtml(ch.habitTitle || "習慣")} <span style="opacity:.7">（${escapeHtml(stLabel)}）</span></p>
+            <p class="rTitle">${stBadge} ${escapeHtml(ch.habitTitle || "習慣")}（${escapeHtml(stLabel)}）</p>
             <div class="rSub">
-              開始：${escapeHtml(ch.startDate || "—")} / 日数：${Number(ch.day||1)} / 成功：${Number(ch.successDays||0)} / 休み：${Number(ch.restDays||0)}
-              <br/>前回：${escapeHtml(last)}
+              ${escapeHtml(ch.startDate || "—")} / ${Number(ch.day||1)}日目 / 成功:${Number(ch.successDays||0)} / 休:${Number(ch.restDays||0)}
+              <br/>${escapeHtml(ch.lastReportedDate || "")}
             </div>
           </div>
           <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end">
-            ${st==="active" ? `<button class="btn small danger" data-act="retire">リタイア</button>` : ""}
-            ${st!=="active" ? `<button class="btn small" data-act="restart">再挑戦</button>` : ""}
+            ${st==="active" ? `<button class="btn small danger" data-act="retire">リタイア</button>` : `<button class="btn small" data-act="restart">再挑戦</button>`}
             ${currentUser && st!=="active" ? `<button class="btn small" data-act="remove">削除</button>` : ""}
           </div>
         </div>
 
         <div class="stamps">
-          <div class="stamp easy">😊 楽 ${easyP}%</div>
-          <div class="stamp mid">🙂 ちょうどい ${midP}%</div>
-          <div class="stamp hard">😅 大変 ${hardP}%</div>
-          ${st==="retired" ? `<div class="stamp fail">🏳️ リタイア</div>` : ""}
-        </div>
-
-        <div class="smallNote">
-          推奨：3日連続未報告でリタイア（今は簡易。将来は自動判定）。<br/>
-          ※ ここにカレンダー表示（スタンプ反映 / 期間選択振り返り）をPhase5で追加できます。
+          <div class="stamp easy">😊 ${easyP}%</div>
+          <div class="stamp mid">🙂 ${midP}%</div>
+          <div class="stamp hard">😅 ${hardP}%</div>
+          ${st==="retired" ? `<div class="stamp fail">🏳️</div>` : ""}
         </div>
       `;
 
-      // actions
       const btnRet = card.querySelector('[data-act="retire"]');
       if(btnRet){
         btnRet.addEventListener("click", async ()=>{
-          const ok = confirm("リタイアしますか？");
+          const ok = confirm("リタイア？");
           if(!ok) return;
           await applyReport(ch, { type:"retire" });
         });
@@ -1997,8 +1765,7 @@
       const btnRestart = card.querySelector('[data-act="restart"]');
       if(btnRestart){
         btnRestart.addEventListener("click", async ()=>{
-          // 再挑戦は startChallenge で作り直すのが本筋だが、Phase1なので「activeに戻す」でもOK
-          const ok = confirm("再挑戦しますか？（進行中に戻します）");
+          const ok = confirm("再挑戦？");
           if(!ok) return;
           await restartChallenge(ch);
         });
@@ -2007,7 +1774,7 @@
       const btnRemove = card.querySelector('[data-act="remove"]');
       if(btnRemove){
         btnRemove.addEventListener("click", async ()=>{
-          const ok = confirm("この記録を削除しますか？（元に戻せません）");
+          const ok = confirm("削除？");
           if(!ok) return;
           await removeChallenge(ch);
         });
@@ -2017,7 +1784,7 @@
     }
 
     async function restartChallenge(ch){
-      const today = fmtDate(nowJST());
+      const today = fmtDate(nowLocal());
       if(!currentUser){
         const key="localChallenges";
         const items = JSON.parse(localStorage.getItem(key) || "[]");
@@ -2053,7 +1820,7 @@
         await refreshTodayToasts();
         await refreshRecords();
       }catch(e){
-        alert("再挑戦に失敗：\n" + (e?.message ?? e));
+        alert("失敗：\n" + (e?.message ?? e));
       }
     }
 
@@ -2072,19 +1839,214 @@
         await refreshTodayToasts();
         await refreshRecords();
       }catch(e){
-        alert("削除に失敗：\n" + (e?.message ?? e));
+        alert("失敗：\n" + (e?.message ?? e));
       }
     }
 
-    // ========== 起動時 ==========
-    // 最初のおすすめカテゴリが未設定の場合、ローカルから拾う
+    // ====== 評価（habits/{id}/ratings/{uid}） ======
+    ratingClose.addEventListener("click", closeRatingModal);
+    ratingBg.addEventListener("click", (e)=>{ if(e.target === ratingBg) closeRatingModal(); });
+
+    function openRatingModal(h){
+      if(h._source !== "remote"){
+        alert("ローカル投稿は評価対象外");
+        return;
+      }
+      if(!currentUser){
+        alert("評価はログイン必要");
+        return;
+      }
+      ratingTargetHabit = h;
+      ratingStars = 0;
+      ratingLiked = false;
+      commentBox.value = "";
+
+      ratingHabitTitle.textContent = `⭐ ${h.title || "評価"}`;
+      ratingHabitMeta.textContent = `タグ：${(h.tags||[]).slice(0,4).join(" / ") || "—"}`;
+
+      myRankEl.textContent = String(myProfile?.ratingRank || 1);
+
+      renderStars();
+      likeToggle.classList.remove("active");
+      likeToggle.onclick = ()=>{
+        ratingLiked = !ratingLiked;
+        likeToggle.classList.toggle("active", ratingLiked);
+      };
+
+      ratingDelete.onclick = async ()=>{
+        const ok = confirm("削除？");
+        if(!ok) return;
+        await deleteMyRating(h.id);
+        await loadRatingsList(h.id);
+        await recomputeHabitStats(h.id);
+        await refreshHome();
+      };
+
+      ratingSave.onclick = async ()=>{
+        if(ratingStars < 1){ alert("⭐"); return; }
+        await saveMyRating(h.id);
+        await loadRatingsList(h.id);
+        await recomputeHabitStats(h.id);
+        await refreshHome();
+      };
+
+      ratingBg.classList.add("show");
+
+      // 自分の既存評価をロード
+      loadMyRating(h.id).then(()=> loadRatingsList(h.id));
+    }
+
+    function closeRatingModal(){
+      ratingBg.classList.remove("show");
+      ratingTargetHabit = null;
+    }
+
+    function renderStars(){
+      starsRow.innerHTML = "";
+      for(let i=1;i<=5;i++){
+        const b = document.createElement("button");
+        b.className = "starBtn" + (i===ratingStars ? " active" : "");
+        b.textContent = `⭐ ${i}`;
+        b.addEventListener("click", ()=>{
+          ratingStars = i;
+          renderStars();
+        });
+        starsRow.appendChild(b);
+      }
+    }
+
+    async function loadMyRating(habitId){
+      if(!currentUser) return;
+      try{
+        const ref = doc(db, "habits", habitId, "ratings", currentUser.uid);
+        const snap = await getDoc(ref);
+        if(!snap.exists()){
+          ratingStars = 0;
+          ratingLiked = false;
+          commentBox.value = "";
+          likeToggle.classList.remove("active");
+          renderStars();
+          return;
+        }
+        const data = snap.data();
+        ratingStars = Number(data.stars || 0);
+        ratingLiked = !!data.liked;
+        commentBox.value = String(data.comment || "");
+        likeToggle.classList.toggle("active", ratingLiked);
+        renderStars();
+      }catch(e){}
+    }
+
+    async function saveMyRating(habitId){
+      if(!currentUser) return;
+
+      const rank = Number(myProfile?.ratingRank || 1);
+      const weight = rank === 3 ? 3 : rank === 2 ? 2 : 1;
+
+      const data = {
+        uid: currentUser.uid,
+        displayName: currentUser.displayName || "ユーザー",
+        photoURL: currentUser.photoURL || "",
+        stars: ratingStars,
+        liked: ratingLiked,
+        comment: (commentBox.value || "").trim().slice(0, 300),
+        rank,
+        weight,
+        updatedAt: serverTimestamp()
+      };
+
+      try{
+        await setDoc(doc(db, "habits", habitId, "ratings", currentUser.uid), data, { merge:true });
+      }catch(e){
+        alert("失敗：\n" + (e?.message ?? e));
+      }
+    }
+
+    async function deleteMyRating(habitId){
+      if(!currentUser) return;
+      try{
+        await deleteDoc(doc(db, "habits", habitId, "ratings", currentUser.uid));
+      }catch(e){
+        alert("失敗：\n" + (e?.message ?? e));
+      }
+    }
+
+    async function loadRatingsList(habitId){
+      reviewList.innerHTML = "";
+      try{
+        const qs = await getDocs(query(
+          collection(db, "habits", habitId, "ratings"),
+          orderBy("updatedAt","desc"),
+          limit(30)
+        ));
+        const arr = [];
+        qs.forEach(s=> arr.push(s.data()));
+        for(const r of arr){
+          const box = document.createElement("div");
+          box.className = "review";
+          box.innerHTML = `
+            <div class="reviewTop">
+              <div class="reviewName">${escapeHtml(r.displayName || "ユーザー")}</div>
+              <div class="reviewMeta">⭐ ${Number(r.stars||0)} ${r.liked ? "❤️" : ""}（R${Number(r.rank||1)}）</div>
+            </div>
+            <div class="reviewText">${escapeHtml(r.comment || "")}</div>
+          `;
+          reviewList.appendChild(box);
+        }
+      }catch(e){}
+    }
+
+    // ====== 集計（簡易：評価+挑戦データから habits を更新） ======
+    async function recomputeHabitStats(habitId){
+      // 本番はCloud Functions推奨（不正防止＆整合性）
+      // ここでは「動く」こと優先で、クライアント集計する
+      try{
+        // 1) ratings 集計（重み付き平均）
+        const ratingsSnap = await getDocs(query(collection(db, "habits", habitId, "ratings"), limit(500)));
+        let wSum = 0;
+        let swSum = 0;
+        let ratingCount = 0;
+        ratingsSnap.forEach(s=>{
+          const r = s.data();
+          const stars = Number(r.stars || 0);
+          const w = Number(r.weight || 1);
+          if(stars >= 1 && stars <= 5){
+            wSum += w;
+            swSum += stars * w;
+            ratingCount += 1;
+          }
+        });
+        const avgRating = wSum ? (swSum / wSum) : 0;
+
+        // 2) userChallenges の集計（参加者数/成功率/平均継続）
+        //   ここは全ユーザー分が必要なので本当はFunctionsでやるべき
+        //   でも最小デモとして participantsCount / avgDays / successRate は「このプロジェクト上のchallengesコレクション」を使うか、
+        //   もしくは habits にキャッシュされる前提にして、ここでは ratingsだけ更新してもOK。
+        //   → 今回は「成功率/平均継続」は habitsに既存値があれば維持、無ければ0のまま
+        const habitRef = doc(db, "habits", habitId);
+        const habitSnap = await getDoc(habitRef);
+        const cur = habitSnap.exists() ? habitSnap.data() : {};
+
+        const patch = {
+          avgRating: Number.isFinite(avgRating) ? avgRating : 0,
+          ratingCount: ratingCount,
+          // participantsCount / avgDays / successRate は現状維持（本番はFunctionsで全体集計）
+          participantsCount: Number(cur.participantsCount || 0),
+          avgDays: Number(cur.avgDays || 0),
+          successRate: Number(cur.successRate || 0),
+          updatedAt: serverTimestamp()
+        };
+
+        await updateDoc(habitRef, patch);
+      }catch(e){}
+    }
+
+    // ====== 起動 ======
     myCategory.textContent = localStorage.getItem("myCategory") || "未設定";
 
-    // 最初の描画
+    // 初期描画
     refreshHome();
     refreshRecords();
-
-    // ヒント：チップクリックが分かりやすいように、初期は空なら何も選ばない
   </script>
 </body>
 </html>
