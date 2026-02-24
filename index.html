@@ -6,19 +6,18 @@
   <title>習慣さがし</title>
   <style>
     :root{
-      --bg:#071a2b;
-      --panel: rgba(255,255,255,.04);
-      --panel2: rgba(0,0,0,.14);
-      --line: rgba(255,255,255,.12);
-      --text:#eaf6ff;
-      --muted: rgba(234,246,255,.75);
-      --accent:#57c7ff;
-      --ok:#7cffa6;
-      --danger:#ff4d5e;
-      --warn:#ffc94d;
-      --r:16px;
+      --bg:#ffffff;
+      --card:#ffffff;
+      --line:#e6e6e6;
+      --text:#111111;
+      --muted:#6a6a6a;
+      --muted2:#8a8a8a;
+      --on:#111111;
+      --off:#ffffff;
+
+      --r:14px;
       --gap:10px;
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --shadow: 0 4px 14px rgba(0,0,0,.06);
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", "Meiryo", sans-serif;
       --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
     }
@@ -27,353 +26,365 @@
     body{
       margin:0;
       font-family:var(--sans);
+      background:var(--bg);
       color:var(--text);
       overflow:hidden;
-      background:
-        radial-gradient(1200px 700px at 10% 0%, #103e63 0%, transparent 55%),
-        radial-gradient(900px 600px at 95% 30%, #083a5a 0%, transparent 55%),
-        linear-gradient(160deg, #061827, #0b2b45);
     }
 
-    /* 背景(薄い魚) */
-    .bg{position:fixed; inset:0; pointer-events:none; opacity:.28; mix-blend-mode:screen}
-    .fish{
-      position:absolute; top:35%;
-      width:240px; height:90px;
-      background: radial-gradient(closest-side, rgba(120,220,255,.5), transparent 70%),
-                  radial-gradient(closest-side, rgba(90,255,180,.35), transparent 72%);
-      border-radius: 999px;
-      filter: blur(10px);
-      animation: swim 18s linear infinite;
-    }
-    .fish::before{
-      content:""; position:absolute; right:-18px; top:26px;
-      width:40px; height:40px;
-      background: radial-gradient(circle at 30% 50%, rgba(120,220,255,.5), transparent 70%);
-      border-radius: 8px 999px 999px 8px;
-      transform: rotate(20deg);
-      filter: blur(6px);
-    }
-    .fish.f2{top:18%; animation-duration:22s; opacity:.25}
-    .fish.f3{top:62%; animation-duration:19s; opacity:.2}
-    @keyframes swim{0%{left:-35vw}100%{left:120vw}}
-
+    /* ===== Layout ===== */
     .app{
-      position:relative;
       height:100%;
       display:grid;
-      grid-template-columns: 260px 1fr;
+      grid-template-columns: 280px 1fr;
     }
     @media (max-width: 980px){
       body{overflow:auto}
-      .app{grid-template-columns: 84px 1fr; height:auto; min-height:100%}
+      .app{grid-template-columns: 86px 1fr; height:auto; min-height:100%}
       .nav{padding:10px 8px}
       .nav .label{display:none}
+      .nav .brandName{display:none}
       .nav .navBtn{justify-content:center}
-      .content{padding:14px}
-      .topbar{grid-template-columns: 1fr; }
-      .feedGrid{grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));}
-      .composerGrid{grid-template-columns: 1fr}
+      .content{padding:12px}
+      .feedGrid{grid-template-columns: 1fr;} /* スマホ1列 */
+      .bottomBar{grid-template-columns: 1fr;}
+      .bottomBar .miniRow{justify-content:flex-start; flex-wrap:wrap}
+      .bottomBar .miniSelect{min-width: 140px}
     }
 
     .nav{
-      padding:16px 14px;
-      border-right:1px solid rgba(255,255,255,.06);
-      background: linear-gradient(180deg, rgba(10,35,55,.65), rgba(10,30,48,.30));
-      backdrop-filter: blur(10px);
+      border-right:1px solid var(--line);
+      padding:14px;
+      background: #fff;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      min-width:0;
     }
-    .brand{display:flex; align-items:center; gap:10px; padding:8px 8px 14px}
+    .brand{
+      display:flex; align-items:center; gap:10px;
+      padding:4px 6px 10px;
+    }
     .logo{
-      width:38px; height:38px; border-radius:14px;
-      background: radial-gradient(circle at 30% 30%, #7fe3ff, #1a6f9b 55%, #07314d);
-      box-shadow: 0 12px 26px rgba(0,0,0,.35);
-      flex:0 0 auto;
+      width:34px; height:34px;
+      border:1px solid var(--line);
+      border-radius:10px;
+      background:#fff;
+      display:grid; place-items:center;
     }
-    .brand h1{font-size:15px; margin:0; letter-spacing:.06em}
+    .brandName{
+      font-size:14px;
+      font-weight:900;
+      letter-spacing:.06em;
+      white-space:nowrap;
+    }
 
     .navBtn{
       width:100%;
-      border:1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.04);
-      color:var(--text);
-      border-radius:14px;
-      padding:12px 12px;
-      display:flex; align-items:center; gap:10px;
-      cursor:pointer;
-      margin:10px 0;
-      transition: .12s transform, .12s background, .12s border-color;
-    }
-    .navBtn:hover{transform: translateY(-1px); background: rgba(255,255,255,.06)}
-    .navBtn.active{
-      border-color: rgba(87,199,255,.45);
-      background: linear-gradient(180deg, rgba(87,199,255,.14), rgba(255,255,255,.04));
-      box-shadow: 0 14px 30px rgba(0,0,0,.22);
-    }
-    .navBtn .ico{font-size:20px; width:26px; text-align:center}
-    .navBtn .label{font-weight:900; letter-spacing:.04em}
-
-    .navFooter{
-      position:sticky; bottom:14px;
-      margin-top:14px;
-      padding-top:12px;
-      border-top:1px solid rgba(255,255,255,.08);
-    }
-    .userCard{
-      display:flex; align-items:center; gap:10px;
-      padding:10px;
-      border-radius:14px;
-      background: rgba(255,255,255,.04);
-      border:1px solid rgba(255,255,255,.08);
-    }
-    .avatar{
-      width:34px; height:34px; border-radius:50%;
-      background: rgba(255,255,255,.08);
-      overflow:hidden;
-      flex:0 0 auto;
-      display:grid; place-items:center;
-      border:1px solid rgba(255,255,255,.12);
-    }
-    .avatar img{width:100%; height:100%; object-fit:cover}
-    .userMeta{min-width:0}
-    .userName{font-size:13px; font-weight:1000; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-    .userSmall{font-size:11px; color:var(--muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-
-    .authRow{display:flex; gap:10px; margin-top:10px}
-    .btn{
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
+      border:1px solid var(--line);
+      background:#fff;
       color:var(--text);
       border-radius:12px;
-      padding:10px 12px;
+      padding:10px 10px;
+      display:flex; align-items:center; gap:10px;
       cursor:pointer;
-      font-weight:1000;
-      letter-spacing:.03em;
-      transition:.12s transform, .12s background, .12s border-color;
-      user-select:none;
-    }
-    .btn:hover{transform:translateY(-1px); background: rgba(255,255,255,.08)}
-    .btn.primary{border-color: rgba(87,199,255,.55); background: rgba(87,199,255,.14)}
-    .btn.danger{border-color: rgba(255,77,94,.55); background: rgba(255,77,94,.14)}
-    .btn.small{padding:8px 10px; font-size:12px; border-radius:10px}
-    .btn:disabled{opacity:.55; cursor:not-allowed; transform:none}
-
-    .content{
-      padding:16px;
-      overflow:auto;
-      height:100%;
-    }
-    .panel{
-      background: var(--panel);
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: var(--r);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(10px);
-    }
-
-    .topbar{
-      display:grid;
-      grid-template-columns: 1fr auto auto auto;
-      gap:var(--gap);
-      padding:12px;
-      align-items:center;
-    }
-    .searchBox{
-      display:flex; gap:10px; align-items:center;
-      padding:10px 12px;
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.16);
-    }
-    .searchBox input{
-      width:100%;
-      border:none; outline:none;
-      background:transparent;
-      color:var(--text);
-      font-size:14px;
-    }
-    .select{
-      min-width: 160px;
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.16);
-      color:var(--text);
-      padding:10px 12px;
-      font-weight:900;
-      outline:none;
-    }
-
-    .tagArea{padding: 0 12px 12px;}
-    .tagGrid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:var(--gap);
-    }
-    .tagBlock{
-      padding:10px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.12);
-      min-height:56px;
-    }
-    .chips{display:flex; gap:8px; flex-wrap:wrap}
-    .chip{
-      border:1px solid rgba(87,199,255,.25);
-      background: rgba(87,199,255,.10);
-      color: var(--text);
-      padding:7px 10px;
-      border-radius: 999px;
-      cursor:pointer;
-      font-weight:1000;
-      font-size:12px;
       transition:.12s transform, .12s background;
       user-select:none;
     }
-    .chip:hover{transform: translateY(-1px); background: rgba(87,199,255,.14)}
-    .chip.active{border-color: rgba(124,255,166,.55); background: rgba(124,255,166,.14)}
+    .navBtn:hover{transform: translateY(-1px); background:#fafafa}
+    .navBtn.active{background:#f4f4f4}
+    .navBtn .ico{width:26px; display:grid; place-items:center}
+    .navBtn .label{font-weight:900; letter-spacing:.03em}
 
-    .feedHeader{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:10px;
-      padding: 8px 12px 0;
-      flex-wrap:wrap;
+    .sep{
+      height:1px; background:var(--line);
+      margin: 6px 0;
     }
-    .pill{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.14);
-      font-size:12px;
-      color: rgba(255,255,255,.88);
-      font-weight:1000;
-    }
-    .pill b{font-weight:1100}
 
-    /* ★ 正方形・余白最小グリッド */
-    .feedGrid{
-      padding: 12px;
-      display:grid;
-      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-      gap: var(--gap);
-      align-items:stretch;
-    }
-    .habitCard{
-      position:relative;
+    .userBox{
+      border:1px solid var(--line);
+      border-radius: 12px;
       padding:10px;
-      border-radius: 16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: linear-gradient(180deg, rgba(0,0,0,.16), rgba(255,255,255,.03));
+      display:flex; gap:10px; align-items:center;
+      background:#fff;
+      min-width:0;
+    }
+    .avatar{
+      width:32px; height:32px;
+      border:1px solid var(--line);
+      border-radius:50%;
+      background:#fff;
       overflow:hidden;
-      aspect-ratio: 1 / 1; /* ★ 正方形 */
+      flex:0 0 auto;
+      display:grid; place-items:center;
+    }
+    .avatar img{width:100%; height:100%; object-fit:cover}
+    .userMeta{min-width:0}
+    .userName{font-weight:900; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+    .userSmall{font-size:11px; color:var(--muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+
+    /* 左：依頼一覧 */
+    .sideTitle{
+      font-weight:900;
+      font-size:12px;
+      color: var(--muted);
+      letter-spacing:.06em;
+      padding: 2px 4px 0;
+    }
+    .sideList{
       display:flex;
       flex-direction:column;
-      justify-content:space-between;
-      min-height:0;
+      gap:8px;
+      overflow:auto;
+      padding-right:2px;
+      max-height: calc(100vh - 280px);
     }
-    .habitTop{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:10px; margin-bottom:8px; min-width:0;
+    .sideItem{
+      border:1px solid var(--line);
+      border-radius: 12px;
+      padding:10px;
+      background:#fff;
+      box-shadow: var(--shadow);
+      display:flex;
+      flex-direction:column;
+      gap:8px;
     }
-    .miniUser{display:flex; align-items:center; gap:8px; min-width:0}
-    .miniAva{
-      width:24px; height:24px; border-radius:50%;
-      background: rgba(255,255,255,.08);
+    .sideTop{
+      display:flex; justify-content:space-between; gap:10px; align-items:flex-start;
+      min-width:0;
+    }
+    .sideHabit{
+      font-weight:900;
+      font-size:13px;
+      line-height:1.2;
+      display:-webkit-box;
+      -webkit-line-clamp:2;
+      -webkit-box-orient:vertical;
       overflow:hidden;
-      border:1px solid rgba(255,255,255,.12);
+    }
+    .sideMeta{
+      font-size:11px; color:var(--muted);
+      font-family:var(--mono);
+      white-space:nowrap;
+    }
+    .sideBtns{
+      display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end;
+    }
+
+    /* ===== Main ===== */
+    .content{
+      height:100%;
+      overflow:auto;
+      padding:14px;
+      position:relative;
+      background:#fff;
+    }
+
+    .panel{
+      border:1px solid var(--line);
+      border-radius: var(--r);
+      background:#fff;
+      box-shadow: var(--shadow);
+    }
+
+    .headerBar{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px; padding:12px;
+      border-bottom:1px solid var(--line);
+    }
+    .hTitle{
+      font-weight:1000;
+      letter-spacing:.06em;
+      font-size:14px;
+      display:flex; align-items:center; gap:10px;
+      white-space:nowrap;
+    }
+    .hBadge{
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:6px 10px;
+      font-weight:900;
+      font-size:12px;
+      font-family:var(--mono);
+      background:#fff;
+    }
+
+    .listHeader{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:12px;
+      border-bottom:1px solid var(--line);
+      background:#fff;
+    }
+    .listHeaderLeft{
+      display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    }
+    .labelPill{
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:6px 10px;
+      font-size:12px;
+      font-weight:900;
+      color: var(--muted);
+      background:#fff;
+    }
+
+    /* ===== Tag ranking blocks ===== */
+    .tagWrap{
+      padding:12px;
+      border-bottom:1px solid var(--line);
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    @media (max-width: 980px){
+      .tagWrap{grid-template-columns:1fr;}
+    }
+    .rankBox{
+      border:1px solid var(--line);
+      border-radius: 12px;
+      background:#fff;
+      padding:10px;
+      box-shadow: var(--shadow);
+    }
+    .rankTitle{
+      font-size:12px;
+      font-weight:1000;
+      letter-spacing:.06em;
+      color: var(--muted);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:8px;
+    }
+    .rankGrid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:6px;
+    }
+    .rankChip{
+      border:1px solid var(--line);
+      border-radius: 10px;
+      padding:8px 8px;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      background:#fff;
+      user-select:none;
+      min-width:0;
+    }
+    .rankChip:hover{background:#fafafa}
+    .rankChip.active{background:#f2f2f2}
+    .rk{
+      font-family:var(--mono);
+      font-size:11px;
+      color: var(--muted);
+      flex:0 0 auto;
+    }
+    .tagName{
+      font-weight:1000;
+      font-size:12px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      min-width:0;
+    }
+
+    /* ===== Feed ===== */
+    .feedArea{
+      padding:12px;
+    }
+    .feedLabel{
+      font-weight:1000;
+      letter-spacing:.06em;
+      color: var(--muted);
+      font-size:12px;
+      margin: 0 0 10px 0;
+    }
+
+    /* 必ず縦2列 */
+    .feedGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      align-items:stretch;
+    }
+
+    .habitCard{
+      border:1px solid var(--line);
+      border-radius: 12px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+      padding:10px;
+      display:grid;
+      grid-template-rows: auto 1fr auto;
+      gap:8px;
+      min-height: 180px;
+    }
+
+    .cardTop{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .creatorRow{
+      display:flex; align-items:center; gap:8px;
+      min-width:0;
+    }
+    .miniAva{
+      width:22px; height:22px;
+      border:1px solid var(--line);
+      border-radius:50%;
+      overflow:hidden;
+      background:#fff;
       flex:0 0 auto;
     }
     .miniAva img{width:100%; height:100%; object-fit:cover}
-    .miniName{
-      font-size:12px; font-weight:1000;
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-      max-width: 140px;
-    }
-    .badgeRow{display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end}
-    .badge{
-      font-size:11px;
-      padding:5px 8px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.14);
-      color: rgba(255,255,255,.86);
+    .creatorName{
+      font-size:12px;
       font-weight:1000;
-      cursor:pointer;
-    }
-    .badge.cat{border-color: rgba(255,201,77,.28); background: rgba(255,201,77,.12)}
-    .badge.tag{border-color: rgba(87,199,255,.28); background: rgba(87,199,255,.10)}
-
-    .habitTitle{
-      font-size:15px; font-weight:1100;
-      letter-spacing:.03em;
-      margin:2px 0 6px;
-      line-height:1.25;
-      display:-webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
+      white-space:nowrap;
       overflow:hidden;
-    }
-    .habitDesc{
-      color: rgba(234,246,255,.92);
-      font-size:13px;
-      line-height:1.45;
-      margin:0 0 10px;
-      white-space:pre-wrap;
-      display:-webkit-box;
-      -webkit-line-clamp: 4;
-      -webkit-box-orient: vertical;
-      overflow:hidden;
-      opacity:.95;
+      text-overflow:ellipsis;
+      max-width: 160px;
     }
 
-    .stats{display:flex; gap:8px; flex-wrap:wrap; font-size:12px; font-weight:1000}
-    .stat{
-      display:flex; align-items:center; gap:7px;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.14);
+    .topActions{
+      display:flex; gap:6px; align-items:center; flex-wrap:wrap; justify-content:flex-end;
     }
 
-    .actions{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-      margin-top:8px;
-    }
-
-    /* アイコンボタン（ホバーで名前） */
     .iconBtn{
-      position:relative;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.14);
+      border:1px solid var(--line);
+      background:#fff;
       color:var(--text);
-      border-radius: 12px;
-      padding:10px 10px;
-      font-weight:1100;
+      border-radius: 10px;
+      padding:8px 9px;
       cursor:pointer;
-      display:flex; align-items:center; justify-content:center;
-      min-width: 42px;
+      display:grid;
+      place-items:center;
+      min-width:36px;
       user-select:none;
+      position:relative;
     }
-    .iconBtn:hover{background: rgba(255,255,255,.06)}
-    .iconBtn.danger{border-color: rgba(255,77,94,.45)}
-    .iconBtn.ok{border-color: rgba(124,255,166,.45)}
-    .iconBtn.warn{border-color: rgba(255,201,77,.45)}
-    .iconBtn.primary{border-color: rgba(87,199,255,.45)}
+    .iconBtn:hover{background:#fafafa}
+    .iconBtn.on{background:#111; color:#fff; border-color:#111}
+
     .iconBtn[data-tip]::after{
       content: attr(data-tip);
       position:absolute;
-      bottom: calc(100% + 8px);
+      bottom: calc(100% + 6px);
       left:50%;
       transform: translateX(-50%);
-      background: rgba(0,0,0,.72);
-      border:1px solid rgba(255,255,255,.16);
-      color: rgba(255,255,255,.92);
+      background:#111;
+      color:#fff;
       padding:6px 8px;
-      border-radius: 10px;
+      border-radius:10px;
       font-size:11px;
-      font-weight:1000;
+      font-weight:900;
       white-space:nowrap;
       opacity:0;
       pointer-events:none;
@@ -381,435 +392,579 @@
     }
     .iconBtn:hover::after{opacity:1; transform: translateX(-50%) translateY(-2px)}
 
-    .tryBtn{
-      background: linear-gradient(180deg, rgba(255,77,94,.95), rgba(255,77,94,.62));
-      border:none;
-      color:#fff;
-      box-shadow: 0 12px 26px rgba(255,77,94,.18);
-    }
-    .tryBtn:hover{filter:brightness(1.03)}
-    .tryBtn[data-tip]::after{ border-color: rgba(255,77,94,.25); }
-
-    /* 今日の進行中（通知風） */
-    .toastWrap{
-      position:sticky;
-      top:10px;
-      z-index:20;
+    .titleBlock{
       display:flex;
       flex-direction:column;
-      gap:10px;
-      padding: 0 0 10px;
+      gap:6px;
+      min-height: 0;
     }
-    .toast{
-      border-radius: 16px;
-      border:1px solid rgba(124,255,166,.25);
-      background: linear-gradient(180deg, rgba(124,255,166,.14), rgba(0,0,0,.12));
-      padding:12px;
-      box-shadow: var(--shadow);
-      display:flex; gap:12px; align-items:center; justify-content:space-between;
-      animation: pop .18s ease-out;
-    }
-    @keyframes pop{from{transform: translateY(-6px); opacity:.0} to{transform: translateY(0); opacity:1}}
-    .toast .left{display:flex; flex-direction:column; gap:4px; min-width:0}
-    .toast .main{font-size:14px; font-weight:1100; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-    .toast .right{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
-
-    .plusOne{
-      position:fixed;
-      right:22px;
-      top: 92px;
-      z-index:60;
+    .habitTitle{
+      font-size:20px;
       font-weight:1100;
-      font-size:14px;
-      padding:10px 12px;
-      border-radius: 999px;
-      border:1px solid rgba(124,255,166,.35);
-      background: rgba(124,255,166,.12);
-      backdrop-filter: blur(10px);
-      box-shadow: var(--shadow);
-      display:none;
-      animation: floatUp .9s ease-out forwards;
+      letter-spacing:.02em;
+      line-height:1.15;
+      margin:0;
+      display:-webkit-box;
+      -webkit-line-clamp:3; /* ★カードの7-8割はタイトル */
+      -webkit-box-orient:vertical;
+      overflow:hidden;
     }
-    @keyframes floatUp{
-      0%{transform: translateY(8px); opacity:0}
-      15%{opacity:1}
-      100%{transform: translateY(-18px); opacity:0}
+    .habitAction{
+      font-size:12px;
+      color: var(--muted2);
+      line-height:1.35;
+      margin:0;
+      display:-webkit-box;
+      -webkit-line-clamp:2;
+      -webkit-box-orient:vertical;
+      overflow:hidden;
     }
 
-    /* composer */
-    .composer{
-      position:sticky;
-      bottom: 12px;
-      z-index:10;
-      margin-top: 12px;
-      padding: 12px;
-      border-radius: 18px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(10,25,38,.78);
-      backdrop-filter: blur(12px);
-      box-shadow: var(--shadow);
-    }
-    .composerGrid{
-      display:grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap:var(--gap);
-    }
-    .field{display:flex; flex-direction:column; gap:6px;}
-    .field input, .field textarea, .field select{
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.16);
-      color:var(--text);
-      border-radius: 14px;
-      padding:10px 12px;
-      outline:none;
-      font-size:14px;
-    }
-    .field textarea{min-height: 74px; resize: vertical}
-    .composerFooter{
-      display:flex; align-items:center; justify-content:flex-end; gap:10px;
-      margin-top:10px;
+    .cardBottom{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:10px;
       flex-wrap:wrap;
     }
-    .counter{
-      font-family:var(--mono);
+    .metaLeft{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      min-width:0;
+    }
+    .catTagRow{
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+      align-items:center;
       font-size:11px;
-      color: rgba(255,255,255,.7);
-      border:1px solid rgba(255,255,255,.12);
-      padding:6px 10px;
+      color:var(--muted);
+      font-weight:900;
+    }
+    .chipMini{
+      border:1px solid var(--line);
       border-radius:999px;
-      background: rgba(0,0,0,.14);
-      margin-right:auto;
+      padding:5px 8px;
+      background:#fff;
+      cursor:pointer;
+    }
+    .chipMini:hover{background:#fafafa}
+
+    .statsRow{
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+      align-items:center;
+      font-size:12px;
+      font-weight:1000;
+      color:#111;
+    }
+    .statPill{
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:6px 10px;
+      background:#fff;
+      font-family:var(--mono);
     }
 
-    .view{display:none}
-    .view.active{display:block}
-
-    /* list screens */
-    .listWrap{padding:12px}
-    .simpleRow{
-      padding:12px;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.14);
-      margin:10px 0;
+    /* ===== Bottom bars ===== */
+    .bottomWrap{
+      position:sticky;
+      bottom:0;
+      z-index:20;
+      background:#fff;
+      border-top:1px solid var(--line);
+      padding:10px;
     }
-    .rowTop{display:flex; align-items:flex-start; justify-content:space-between; gap:12px}
-    .rowTitle{font-weight:1100; font-size:14px; margin:0}
-    .rowSub{color:var(--muted); font-size:12px; margin-top:6px; line-height:1.6}
+    .bottomBar{
+      display:grid;
+      grid-template-columns: 1fr auto;
+      gap:10px;
+      align-items:center;
+    }
+    .searchGroup{
+      border:1px solid var(--line);
+      border-radius: 12px;
+      background:#fff;
+      padding:8px;
+      display:grid;
+      grid-template-columns: 1fr auto;
+      gap:10px;
+      align-items:center;
+    }
+    .searchInput{
+      border:none;
+      outline:none;
+      font-size:14px;
+      padding:8px 10px;
+      background:transparent;
+      color:#111;
+      width:100%;
+    }
+    .miniRow{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      justify-content:flex-end;
+      flex-wrap:wrap;
+    }
+    .miniSelect, .miniBtn{
+      border:1px solid var(--line);
+      background:#fff;
+      color:#111;
+      border-radius: 10px;
+      padding:8px 10px;
+      font-weight:900;
+      cursor:pointer;
+      min-height: 36px;
+    }
+    .miniSelect{outline:none}
+    .miniBtn:hover, .miniSelect:hover{background:#fafafa}
 
-    /* modals */
+    .postBtn{
+      border:1px solid #111;
+      background:#111;
+      color:#fff;
+      border-radius: 12px;
+      padding:10px 12px;
+      font-weight:1000;
+      cursor:pointer;
+      min-height: 44px;
+      white-space:nowrap;
+    }
+    .postBtn:hover{filter:brightness(1.03)}
+
+    /* ===== Modals ===== */
     .modalBg{
       position:fixed; inset:0;
-      background: rgba(0,0,0,.45);
+      background: rgba(0,0,0,.40);
       display:none;
       align-items:center; justify-content:center;
       padding:18px;
-      z-index:50;
+      z-index:60;
     }
     .modalBg.show{display:flex}
     .modal{
-      width:min(720px, 100%);
-      border-radius: 18px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(10,25,38,.92);
-      backdrop-filter: blur(14px);
+      width:min(760px, 100%);
+      border:1px solid var(--line);
+      border-radius: 14px;
+      background:#fff;
       box-shadow: var(--shadow);
-      padding:16px;
+      padding:14px;
     }
-    .modal h2{margin:0; font-size:16px; letter-spacing:.06em}
-    .modalFooter{display:flex; gap:10px; justify-content:flex-end; margin-top:14px; flex-wrap:wrap}
-
-    .catList{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
-    .catBtn{
-      padding:10px 12px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.14);
-      color:var(--text);
-      font-weight:1000;
-      cursor:pointer;
+    .modal h2{
+      margin:0;
+      font-size:14px;
+      font-weight:1100;
+      letter-spacing:.06em;
     }
-    .catBtn:hover{background: rgba(255,255,255,.06)}
-    .catBtn.active{border-color: rgba(87,199,255,.55); background: rgba(87,199,255,.12)}
-
-    .list{
+    .modalFooter{
+      display:flex;
+      justify-content:flex-end;
+      gap:8px;
       margin-top:12px;
-      border-top:1px solid rgba(255,255,255,.10);
-      padding-top:12px;
-      display:flex; flex-direction:column; gap:10px;
-      max-height: 320px;
+      flex-wrap:wrap;
+    }
+    .btn{
+      border:1px solid var(--line);
+      background:#fff;
+      color:#111;
+      border-radius: 10px;
+      padding:9px 10px;
+      cursor:pointer;
+      font-weight:1000;
+    }
+    .btn:hover{background:#fafafa}
+    .btn.primary{border-color:#111; background:#111; color:#fff}
+    .btn.danger{border-color:#111; background:#fff; color:#111}
+    .btn:disabled{opacity:.6; cursor:not-allowed}
+
+    .fieldRow{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    @media (max-width: 980px){ .fieldRow{grid-template-columns:1fr} }
+
+    /* 枠は極力減らす（下線のみ） */
+    .lineInput{
+      border:none;
+      border-bottom:1px solid var(--line);
+      border-radius:0;
+      padding:10px 2px;
+      outline:none;
+      font-size:14px;
+      width:100%;
+      background:transparent;
+      color:#111;
+    }
+    .lineArea{
+      border:none;
+      border-bottom:1px solid var(--line);
+      border-radius:0;
+      padding:10px 2px;
+      outline:none;
+      font-size:14px;
+      width:100%;
+      background:transparent;
+      color:#111;
+      resize:vertical;
+      min-height: 72px;
+    }
+    .selectKeep{
+      border:1px solid var(--line);
+      border-radius: 10px;
+      padding:10px 10px;
+      outline:none;
+      background:#fff;
+      font-weight:900;
+      min-height: 40px;
+    }
+
+    .starsRow{
+      display:grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap:8px;
+      margin-top:10px;
+    }
+    .starBtn{
+      border:1px solid var(--line);
+      border-radius: 10px;
+      background:#fff;
+      padding:10px 8px;
+      cursor:pointer;
+      font-weight:1000;
+      text-align:center;
+      user-select:none;
+    }
+    .starBtn.active{background:#111; color:#fff; border-color:#111}
+    .toggleBtn{
+      border:1px solid var(--line);
+      border-radius: 10px;
+      background:#fff;
+      padding:10px 10px;
+      cursor:pointer;
+      font-weight:1000;
+      user-select:none;
+    }
+    .toggleBtn.active{background:#111; color:#fff; border-color:#111}
+    .reviewList{
+      margin-top:12px;
+      border-top:1px solid var(--line);
+      padding-top:10px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      max-height: 260px;
       overflow:auto;
     }
     .review{
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.14);
-      border-radius: 14px;
-      padding:10px 12px;
-    }
-    .reviewTop{display:flex; align-items:center; justify-content:space-between; gap:10px}
-    .reviewName{font-weight:1000; font-size:12px; opacity:.95}
-    .reviewMeta{font-size:12px; opacity:.9}
-    .reviewText{margin-top:8px; font-size:13px; line-height:1.55; opacity:.95; white-space:pre-wrap}
-
-    .starsRow{display:flex; gap:8px; flex-wrap:wrap; margin:12px 0}
-    .starBtn{
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.16);
+      border:1px solid var(--line);
       border-radius: 12px;
-      padding:10px 12px;
-      cursor:pointer;
-      font-weight:1100;
-      color:var(--text);
-      display:flex; align-items:center; gap:8px;
+      padding:10px;
+      background:#fff;
     }
-    .starBtn.active{border-color: rgba(255,201,77,.55); background: rgba(255,201,77,.14)}
-
-    .toggle{
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.16);
-      border-radius: 12px;
-      padding:10px 12px;
-      cursor:pointer;
-      font-weight:1000;
-      color:var(--text);
-      display:flex; align-items:center; gap:8px;
-      user-select:none;
-    }
-    .toggle.active{border-color: rgba(255,77,94,.55); background: rgba(255,77,94,.14)}
-    .commentBox{
-      width:100%;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.16);
-      color:var(--text);
-      border-radius: 14px;
-      padding:10px 12px;
-      outline:none;
-      font-size:14px;
-      margin-top:10px;
-      min-height: 88px;
-      resize: vertical;
+    .reviewTop{display:flex; justify-content:space-between; gap:10px}
+    .reviewName{font-weight:1000; font-size:12px}
+    .reviewMeta{font-size:12px; color:var(--muted); font-family:var(--mono)}
+    .reviewText{margin-top:8px; font-size:13px; color:#111; white-space:pre-wrap; line-height:1.5}
+    .counter{
+      font-family:var(--mono);
+      font-size:11px;
+      color:var(--muted);
     }
 
-    /* difficulty modal */
-    .diffRow{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
-    .diffBtn{
-      flex:1 1 120px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.16);
-      border-radius: 14px;
-      padding:14px 12px;
-      cursor:pointer;
-      font-weight:1100;
-      color:var(--text);
-      display:flex; align-items:center; justify-content:center; gap:10px;
-      font-size:18px;
-    }
-    .diffBtn:hover{background: rgba(255,255,255,.06)}
-    .diffBtn.easy{border-color: rgba(124,255,166,.35); background: rgba(124,255,166,.10)}
-    .diffBtn.mid{border-color: rgba(87,199,255,.35); background: rgba(87,199,255,.10)}
-    .diffBtn.hard{border-color: rgba(255,201,77,.40); background: rgba(255,201,77,.10)}
-
-    /* login gate */
+    /* Gate */
     .gate{
       position:fixed; inset:0;
       display:none;
       align-items:center; justify-content:center;
       z-index:100;
-      background: rgba(0,0,0,.55);
-      backdrop-filter: blur(10px);
+      background: rgba(0,0,0,.35);
       padding:18px;
     }
     .gate.show{display:flex}
     .gateCard{
       width:min(520px, 100%);
-      border-radius: 18px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(10,25,38,.92);
+      border:1px solid var(--line);
+      border-radius: 14px;
+      background:#fff;
       box-shadow: var(--shadow);
-      padding:16px;
+      padding:14px;
     }
-    .gateTitle{margin:0; font-size:16px; font-weight:1100; letter-spacing:.06em}
-    .gateActions{display:flex; justify-content:flex-end; gap:10px; margin-top:14px; flex-wrap:wrap}
+    .gateTitle{
+      margin:0;
+      font-size:14px;
+      font-weight:1100;
+      letter-spacing:.06em;
+    }
+    .gateActions{display:flex; justify-content:flex-end; gap:10px; margin-top:12px}
+    .gateBtn{
+      border:1px solid #111;
+      background:#111;
+      color:#fff;
+      border-radius: 12px;
+      padding:10px 12px;
+      font-weight:1000;
+      cursor:pointer;
+    }
+
+    /* Profile login/logout (右下固定) */
+    .profileAuthDock{
+      position:sticky;
+      bottom: 10px;
+      display:flex;
+      justify-content:flex-end;
+      gap:10px;
+      padding: 12px;
+      border-top:1px solid var(--line);
+      background:#fff;
+    }
+
+    /* 小さい +1 演出 */
+    .plusOne{
+      position:fixed;
+      right:18px;
+      top: 18px;
+      z-index:120;
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:999px;
+      padding:10px 12px;
+      box-shadow: var(--shadow);
+      display:none;
+      font-weight:1100;
+      font-family:var(--mono);
+    }
+    @keyframes floatUp{
+      0%{transform: translateY(8px); opacity:0}
+      15%{opacity:1}
+      100%{transform: translateY(-14px); opacity:0}
+    }
   </style>
 </head>
 
 <body>
-  <div class="bg" aria-hidden="true">
-    <div class="fish f2"></div>
-    <div class="fish"></div>
-    <div class="fish f3"></div>
-  </div>
-
-  <div class="plusOne" id="plusOne">✨ +1</div>
+  <div class="plusOne" id="plusOne">+1</div>
 
   <!-- ログイン必須ゲート -->
   <div class="gate" id="loginGate">
     <div class="gateCard">
       <p class="gateTitle">ログイン</p>
       <div class="gateActions">
-        <button class="btn primary" id="gateLoginBtn">Googleログイン</button>
+        <button class="gateBtn" id="gateLoginBtn">Googleログイン</button>
       </div>
     </div>
   </div>
 
   <div class="app">
+    <!-- ===== Left ===== -->
     <aside class="nav">
       <div class="brand">
-        <div class="logo"></div>
-        <div><h1>習慣さがし</h1></div>
+        <div class="logo">□</div>
+        <div class="brandName">習慣さがし</div>
       </div>
 
-      <div class="navSection">
-        <button class="navBtn active" id="navHome"><div class="ico">🏠</div><div class="label">ホーム</div></button>
-        <button class="navBtn" id="navRecords"><div class="ico">📅</div><div class="label">達成記録</div></button>
-        <button class="navBtn" id="navBookmarks"><div class="ico">🔖</div><div class="label">保存</div></button>
-        <button class="navBtn" id="navProfile"><div class="ico">👤</div><div class="label">プロフィール</div></button>
-      </div>
-
-      <div class="navFooter">
-        <div class="userCard">
-          <div class="avatar" id="userAvatar">👤</div>
-          <div class="userMeta">
-            <div class="userName" id="userName">—</div>
-            <div class="userSmall" id="userSmall">—</div>
-          </div>
+      <button class="navBtn active" id="navHome">
+        <div class="ico">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg>
         </div>
+        <div class="label">ホーム</div>
+      </button>
 
-        <div class="authRow">
-          <button class="btn primary" id="btnLogin">Googleログイン</button>
-          <button class="btn danger" id="btnLogout" disabled>ログアウト</button>
+      <button class="navBtn" id="navRecords">
+        <div class="ico">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2v3M16 2v3"/><path d="M3 7h18"/><path d="M5 7v14a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7"/><path d="M8 11h3"/><path d="M8 15h6"/></svg>
+        </div>
+        <div class="label">達成記録</div>
+      </button>
+
+      <button class="navBtn" id="navBookmarks">
+        <div class="ico">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12a1 1 0 0 1 1 1v18l-7-4-7 4V4a1 1 0 0 1 1-1z"/></svg>
+        </div>
+        <div class="label">保存</div>
+      </button>
+
+      <button class="navBtn" id="navProfile">
+        <div class="ico">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div class="label">プロフィール</div>
+      </button>
+
+      <div class="sep"></div>
+
+      <div class="userBox">
+        <div class="avatar" id="userAvatar">□</div>
+        <div class="userMeta">
+          <div class="userName" id="userName">—</div>
+          <div class="userSmall" id="userSmall">—</div>
         </div>
       </div>
+
+      <div class="sep"></div>
+
+      <div class="sideTitle">依頼（挑戦中）</div>
+      <div class="sideList" id="sideActiveList"></div>
     </aside>
 
+    <!-- ===== Right ===== -->
     <main class="content">
-      <section class="view active" id="viewHome">
-        <div class="toastWrap" id="toastWrap"></div>
-
-        <div class="panel">
-          <div class="topbar">
-            <div class="searchBox">
-              <span style="opacity:.85">🔎</span>
-              <input id="q" placeholder="検索" />
-            </div>
-
-            <select class="select" id="categoryFilter">
-              <option value="">カテゴリ（すべて）</option>
-              <option>健康</option><option>メンタル</option><option>勉強</option><option>仕事</option>
-              <option>生活</option><option>睡眠</option><option>運動</option><option>英語</option><option>その他</option>
-            </select>
-
-            <select class="select" id="sortBy">
-              <option value="new">🆕 新着</option>
-              <option value="rating">⭐ 評価</option>
-              <option value="success">🎯 成功率</option>
-              <option value="days">📅 継続</option>
-              <option value="favCreators">❤️ お気に入り中の人</option>
-            </select>
-
-            <button class="btn small" id="btnClearTag">タグ解除</button>
+      <!-- ===== Home ===== -->
+      <section class="panel" id="viewHome">
+        <div class="headerBar">
+          <div class="hTitle">
+            習慣探し
+            <span class="hBadge" id="todayDoneBadge">本日 0 人が達成</span>
           </div>
+          <div class="hBadge">表示 <span id="countShown">0</span></div>
+        </div>
 
-          <div class="tagArea">
-            <div class="tagGrid">
-              <div class="tagBlock"><div class="chips" id="chipsRecommend"></div></div>
-              <div class="tagBlock"><div class="chips" id="chipsTop"></div></div>
-            </div>
+        <!-- tags -->
+        <div class="tagWrap">
+          <div class="rankBox">
+            <div class="rankTitle"><span>おすすめTOP</span><span class="counter" id="recoHint">—</span></div>
+            <div class="rankGrid" id="rankReco"></div>
           </div>
-
-          <div class="feedHeader">
-            <div class="pill">件数：<b id="countShown">0</b></div>
-            <div class="pill">カテゴリ：<b id="myCategory">未設定</b> <button class="btn small" id="btnChangeMyCategory">変更</button></div>
-            <div class="pill">依頼：<b id="activeCount">0</b> / 3</div>
+          <div class="rankBox">
+            <div class="rankTitle"><span>人気TOP</span><span class="counter" id="topHint">—</span></div>
+            <div class="rankGrid" id="rankTop"></div>
           </div>
+        </div>
 
+        <!-- list -->
+        <div class="feedArea">
+          <p class="feedLabel">一覧</p>
           <div class="feedGrid" id="feed"></div>
+        </div>
 
-          <div class="composer" id="composer">
-            <div class="counter" id="counterAction">0 / 40</div>
-
-            <div class="composerGrid">
-              <div class="field">
-                <input id="newTitle" placeholder="タイトル" maxlength="40" />
-              </div>
-              <div class="field">
-                <input id="newTags" placeholder="タグ（例：不安,寝つき）" />
-              </div>
-              <div class="field">
-                <select id="newCategory">
-                  <option value="">カテゴリ（任意）</option>
-                  <option>健康</option><option>メンタル</option><option>勉強</option><option>仕事</option>
-                  <option>生活</option><option>睡眠</option><option>運動</option><option>英語</option><option>その他</option>
+        <!-- bottom search (常に一番下) -->
+        <div class="bottomWrap">
+          <div class="bottomBar">
+            <div class="searchGroup">
+              <input class="searchInput" id="q" placeholder="検索（ここにカテゴリ・並び替え・タグ解除が入ります）" />
+              <div class="miniRow">
+                <select class="miniSelect" id="categoryFilter" title="カテゴリ">
+                  <option value="">カテゴリ（すべて）</option>
+                  <option>メンタル</option><option>睡眠</option><option>運動</option><option>健康</option>
+                  <option>生活</option><option>勉強</option><option>英語</option><option>仕事</option><option>その他</option>
                 </select>
-              </div>
-              <div class="field">
-                <textarea id="newAction" placeholder="5分でやること（40文字）" maxlength="40"></textarea>
+
+                <select class="miniSelect" id="sortBy" title="並び替え">
+                  <option value="new">新着</option>
+                  <option value="rating">評価</option>
+                  <option value="success">成功率</option>
+                  <option value="days">継続</option>
+                  <option value="favCreators">お気に入り中の人</option>
+                </select>
+
+                <button class="miniBtn" id="btnClearTag" title="タグ解除">タグ解除</button>
               </div>
             </div>
 
-            <div class="composerFooter">
-              <button class="btn primary" id="btnPost">投稿</button>
-            </div>
+            <button class="postBtn" id="openPost">投稿</button>
           </div>
         </div>
       </section>
 
-      <section class="view" id="viewRecords">
-        <div class="panel">
-          <div class="listWrap" id="recordList"></div>
+      <!-- ===== Records ===== -->
+      <section class="panel" id="viewRecords" style="display:none">
+        <div class="headerBar">
+          <div class="hTitle">達成記録</div>
+          <div class="hBadge">—</div>
         </div>
+        <div style="padding:12px" id="recordList"></div>
       </section>
 
-      <section class="view" id="viewBookmarks">
-        <div class="panel">
-          <div class="feedHeader" style="padding:12px">
-            <div class="pill">保存：<b id="bmCount">0</b></div>
-          </div>
+      <!-- ===== Bookmarks ===== -->
+      <section class="panel" id="viewBookmarks" style="display:none">
+        <div class="headerBar">
+          <div class="hTitle">保存</div>
+          <div class="hBadge">件数 <span id="bmCount">0</span></div>
+        </div>
+        <div style="padding:12px">
           <div class="feedGrid" id="bmFeed"></div>
         </div>
       </section>
 
-      <section class="view" id="viewProfile">
-        <div class="panel">
-          <div class="listWrap" id="profileList"></div>
+      <!-- ===== Profile ===== -->
+      <section class="panel" id="viewProfile" style="display:none">
+        <div class="headerBar">
+          <div class="hTitle">プロフィール</div>
+          <div class="hBadge">—</div>
+        </div>
+        <div style="padding:12px" id="profileList"></div>
+
+        <!-- Googleログイン/ログアウトはここだけ（右下） -->
+        <div class="profileAuthDock">
+          <button class="btn primary" id="btnLogin">Googleログイン</button>
+          <button class="btn" id="btnLogout" disabled>ログアウト</button>
         </div>
       </section>
     </main>
   </div>
 
-  <!-- 名前登録 -->
+  <!-- ===== 名前登録 ===== -->
   <div class="modalBg" id="nameBg">
     <div class="modal">
       <h2>名前</h2>
-      <div class="field" style="margin-top:12px">
-        <input id="nameInput" placeholder="名前" maxlength="16" />
-      </div>
+      <input class="lineInput" id="nameInput" placeholder="名前" maxlength="16" />
       <div class="modalFooter">
         <button class="btn primary" id="nameSave" disabled>保存</button>
       </div>
     </div>
   </div>
 
-  <!-- 初回カテゴリ選択 -->
-  <div class="modalBg" id="modalBg">
+  <!-- ===== 初回カテゴリ選択 ===== -->
+  <div class="modalBg" id="catBg">
     <div class="modal">
       <h2>カテゴリ</h2>
-      <div class="catList" id="catList"></div>
+      <div class="fieldRow" id="catList" style="margin-top:10px"></div>
       <div class="modalFooter">
-        <button class="btn" id="modalSkip">閉じる</button>
-        <button class="btn primary" id="modalSave" disabled>保存</button>
+        <button class="btn" id="catClose">閉じる</button>
+        <button class="btn primary" id="catSave" disabled>保存</button>
       </div>
     </div>
   </div>
 
-  <!-- 難易度（3択） -->
+  <!-- ===== 投稿 ===== -->
+  <div class="modalBg" id="postBg">
+    <div class="modal">
+      <h2>投稿</h2>
+
+      <div style="margin-top:10px">
+        <div class="counter" id="postCounter">0 / 40</div>
+        <input class="lineInput" id="newTitle" placeholder="タイトル" maxlength="40" />
+        <textarea class="lineArea" id="newAction" placeholder="やること（40文字）" maxlength="40"></textarea>
+      </div>
+
+      <div class="fieldRow">
+        <input class="lineInput" id="newTags" placeholder="タグ（例：不安,寝つき）" />
+        <select class="selectKeep" id="newCategory">
+          <option value="">カテゴリ（任意）</option>
+          <option>メンタル</option><option>睡眠</option><option>運動</option><option>健康</option>
+          <option>生活</option><option>勉強</option><option>英語</option><option>仕事</option><option>その他</option>
+        </select>
+      </div>
+
+      <div class="modalFooter">
+        <button class="btn" id="postClose">閉じる</button>
+        <button class="btn primary" id="btnPost">投稿</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 難易度（3択） ===== -->
   <div class="modalBg" id="diffBg">
     <div class="modal">
       <h2 id="diffTitle">難易度</h2>
-      <div class="diffRow">
-        <button class="diffBtn easy" data-diff="easy">😊</button>
-        <button class="diffBtn mid" data-diff="mid">🙂</button>
-        <button class="diffBtn hard" data-diff="hard">😅</button>
+      <div class="fieldRow" style="grid-template-columns:1fr 1fr 1fr; margin-top:12px">
+        <button class="btn" data-diff="easy">😊</button>
+        <button class="btn" data-diff="mid">🙂</button>
+        <button class="btn" data-diff="hard">😅</button>
       </div>
       <div class="modalFooter">
         <button class="btn" id="diffClose">閉じる</button>
@@ -817,66 +972,56 @@
     </div>
   </div>
 
-  <!-- 評価（⭐/❤️/口コミ） -->
+  <!-- ===== 評価（実際に参加した人だけ / リタイア or 7日後） ===== -->
   <div class="modalBg" id="ratingBg">
     <div class="modal">
-      <h2 id="ratingHabitTitle">評価</h2>
+      <h2 id="ratingTitle">評価</h2>
 
       <div class="starsRow" id="starsRow"></div>
 
-      <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center">
-        <button class="toggle" id="likeToggle">❤️</button>
-        <div class="pill">R<b id="myRank">1</b></div>
+      <div style="display:flex; gap:8px; align-items:center; margin-top:10px; flex-wrap:wrap">
+        <button class="toggleBtn" id="likeToggle">フォロー</button>
+        <span class="labelPill">R<span id="myRank">1</span></span>
       </div>
 
-      <textarea class="commentBox" id="commentBox" placeholder="口コミ（短文）"></textarea>
+      <textarea class="lineArea" id="commentBox" placeholder="口コミ（短文）" style="margin-top:10px"></textarea>
 
       <div class="modalFooter">
-        <button class="btn danger" id="ratingDelete">削除</button>
-        <button class="btn primary" id="ratingSave">保存</button>
         <button class="btn" id="ratingClose">閉じる</button>
+        <button class="btn primary" id="ratingSave">送信</button>
       </div>
 
-      <div class="list" id="reviewList"></div>
+      <div class="reviewList" id="reviewList"></div>
     </div>
   </div>
 
-  <!-- 口コミ一覧（閲覧専用） -->
-  <div class="modalBg" id="reviewsBg">
-    <div class="modal">
-      <h2 id="reviewsTitle">口コミ</h2>
-      <div class="list" id="reviewsList"></div>
-      <div class="modalFooter">
-        <button class="btn" id="reviewsClose">閉じる</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 編集（ver保持＆派生） -->
+  <!-- ===== 編集（自分の投稿だけ） ===== -->
   <div class="modalBg" id="editBg">
     <div class="modal">
       <h2 id="editTitle">編集</h2>
 
-      <div class="composerGrid" style="margin-top:12px">
-        <div class="field"><input id="editNewTitle" placeholder="タイトル" maxlength="40"></div>
-        <div class="field"><input id="editNewTags" placeholder="タグ（例：不安,寝つき）"></div>
-        <div class="field">
-          <select id="editNewCategory">
-            <option value="">カテゴリ（任意）</option>
-            <option>健康</option><option>メンタル</option><option>勉強</option><option>仕事</option>
-            <option>生活</option><option>睡眠</option><option>運動</option><option>英語</option><option>その他</option>
-          </select>
-        </div>
-        <div class="field"><textarea id="editNewAction" placeholder="5分でやること（40文字）" maxlength="40"></textarea></div>
+      <div style="margin-top:10px">
+        <div class="counter" id="editCounter">0 / 40</div>
+        <input class="lineInput" id="editNewTitle" placeholder="タイトル" maxlength="40" />
+        <textarea class="lineArea" id="editNewAction" placeholder="やること（40文字）" maxlength="40"></textarea>
+      </div>
+
+      <div class="fieldRow">
+        <input class="lineInput" id="editNewTags" placeholder="タグ（例：不安,寝つき）" />
+        <select class="selectKeep" id="editNewCategory">
+          <option value="">カテゴリ（任意）</option>
+          <option>メンタル</option><option>睡眠</option><option>運動</option><option>健康</option>
+          <option>生活</option><option>勉強</option><option>英語</option><option>仕事</option><option>その他</option>
+        </select>
       </div>
 
       <div class="modalFooter">
-        <button class="btn" id="btnDerive">派生</button>
-        <button class="btn primary" id="btnSaveEdit">保存</button>
         <button class="btn" id="editClose">閉じる</button>
+        <button class="btn primary" id="btnSaveEdit">保存</button>
+        <button class="btn" id="btnDerive">派生</button>
       </div>
 
-      <div class="list" id="versionsList"></div>
+      <div class="reviewList" id="versionsList"></div>
     </div>
   </div>
 
@@ -892,7 +1037,7 @@
       getFirestore,
       collection, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc,
       getDocs, query, orderBy, limit, serverTimestamp,
-      runTransaction
+      runTransaction, increment
     } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -916,7 +1061,7 @@
       .replaceAll('"',"&quot;").replaceAll("'","&#39;");
 
     const nowLocal = () => new Date();
-    const fmtDate = (d) => {
+    const fmtYMD = (d) => {
       const y = d.getFullYear();
       const m = String(d.getMonth()+1).padStart(2,"0");
       const day = String(d.getDate()).padStart(2,"0");
@@ -933,8 +1078,20 @@
       const B = new Date(b.getFullYear(), b.getMonth(), b.getDate()).getTime();
       return Math.round((B - A) / 86400000);
     };
+    const msToMidnight = () => {
+      const n = nowLocal();
+      const next = new Date(n.getFullYear(), n.getMonth(), n.getDate()+1, 0,0,0,0);
+      return Math.max(0, next.getTime() - n.getTime());
+    };
+    const fmtCountdown = (ms) => {
+      const s = Math.floor(ms/1000);
+      const hh = String(Math.floor(s/3600)).padStart(2,"0");
+      const mm = String(Math.floor((s%3600)/60)).padStart(2,"0");
+      const ss = String(s%60).padStart(2,"0");
+      return `${hh}:${mm}:${ss}`;
+    };
 
-    // nav/views
+    // ===== Elements =====
     const navHome = $("navHome");
     const navRecords = $("navRecords");
     const navBookmarks = $("navBookmarks");
@@ -945,117 +1102,114 @@
     const viewBookmarks = $("viewBookmarks");
     const viewProfile = $("viewProfile");
 
-    // auth UI
-    const btnLogin = $("btnLogin");
-    const btnLogout = $("btnLogout");
-    const gateLoginBtn = $("gateLoginBtn");
     const loginGate = $("loginGate");
+    const gateLoginBtn = $("gateLoginBtn");
+
     const userName = $("userName");
     const userSmall = $("userSmall");
     const userAvatar = $("userAvatar");
 
-    // name modal
+    const sideActiveList = $("sideActiveList");
+
+    // Home
+    const todayDoneBadge = $("todayDoneBadge");
+    const countShown = $("countShown");
+    const feed = $("feed");
+    const qInput = $("q");
+    const categoryFilter = $("categoryFilter");
+    const sortBy = $("sortBy");
+    const btnClearTag = $("btnClearTag");
+    const rankReco = $("rankReco");
+    const rankTop = $("rankTop");
+    const recoHint = $("recoHint");
+    const topHint = $("topHint");
+
+    // Bottom
+    const openPost = $("openPost");
+
+    // Post modal
+    const postBg = $("postBg");
+    const postClose = $("postClose");
+    const btnPost = $("btnPost");
+    const newTitle = $("newTitle");
+    const newAction = $("newAction");
+    const newTags = $("newTags");
+    const newCategory = $("newCategory");
+    const postCounter = $("postCounter");
+
+    // Name modal
     const nameBg = $("nameBg");
     const nameInput = $("nameInput");
     const nameSave = $("nameSave");
 
-    // home
-    const qInput = $("q");
-    const categoryFilter = $("categoryFilter");
-    const sortBy = $("sortBy");
-    const chipsRecommend = $("chipsRecommend");
-    const chipsTop = $("chipsTop");
-    const btnClearTag = $("btnClearTag");
-    const feed = $("feed");
-    const countShown = $("countShown");
-    const myCategory = $("myCategory");
-    const btnChangeMyCategory = $("btnChangeMyCategory");
-    const activeCount = $("activeCount");
-
-    // toast
-    const toastWrap = $("toastWrap");
-    const plusOne = $("plusOne");
-
-    // composer
-    const newTitle = $("newTitle");
-    const newTags = $("newTags");
-    const newCategory = $("newCategory");
-    const newAction = $("newAction");
-    const counterAction = $("counterAction");
-    const btnPost = $("btnPost");
-
-    // records/profile/bookmarks
-    const recordList = $("recordList");
-    const profileList = $("profileList");
-    const bmFeed = $("bmFeed");
-    const bmCount = $("bmCount");
-
-    // category modal
-    const modalBg = $("modalBg");
+    // Category modal
+    const catBg = $("catBg");
     const catList = $("catList");
-    const modalSkip = $("modalSkip");
-    const modalSave = $("modalSave");
+    const catClose = $("catClose");
+    const catSave = $("catSave");
 
-    // difficulty modal
+    // Difficulty
     const diffBg = $("diffBg");
     const diffTitle = $("diffTitle");
     const diffClose = $("diffClose");
 
-    // rating modal
+    // Records/bookmarks/profile
+    const recordList = $("recordList");
+    const bmFeed = $("bmFeed");
+    const bmCount = $("bmCount");
+    const profileList = $("profileList");
+
+    // Profile auth buttons
+    const btnLogin = $("btnLogin");
+    const btnLogout = $("btnLogout");
+
+    // Rating
     const ratingBg = $("ratingBg");
-    const ratingClose = $("ratingClose");
-    const ratingHabitTitle = $("ratingHabitTitle");
+    const ratingTitle = $("ratingTitle");
     const starsRow = $("starsRow");
     const likeToggle = $("likeToggle");
     const myRankEl = $("myRank");
     const commentBox = $("commentBox");
+    const ratingClose = $("ratingClose");
     const ratingSave = $("ratingSave");
-    const ratingDelete = $("ratingDelete");
     const reviewList = $("reviewList");
 
-    // reviews view-only modal
-    const reviewsBg = $("reviewsBg");
-    const reviewsTitle = $("reviewsTitle");
-    const reviewsList = $("reviewsList");
-    const reviewsClose = $("reviewsClose");
-
-    // edit modal
+    // Edit
     const editBg = $("editBg");
     const editTitle = $("editTitle");
     const editNewTitle = $("editNewTitle");
+    const editNewAction = $("editNewAction");
     const editNewTags = $("editNewTags");
     const editNewCategory = $("editNewCategory");
-    const editNewAction = $("editNewAction");
+    const editClose = $("editClose");
     const btnSaveEdit = $("btnSaveEdit");
     const btnDerive = $("btnDerive");
-    const editClose = $("editClose");
     const versionsList = $("versionsList");
+    const editCounter = $("editCounter");
+
+    const plusOne = $("plusOne");
+
+    // ===== State =====
+    const CATS = ["メンタル","睡眠","運動","健康","生活","勉強","英語","仕事","その他"];
 
     let currentUser = null;
     let myProfile = null;
 
     let selectedTag = "";
-    let selectedTopTags = [];
-    let selectedRecoTags = [];
+    let cachedFavCreators = new Set();
+    let cachedBookmarks = new Set();
 
-    // challenge state for difficulty modal
     let diffTargetChallenge = null;
 
-    // rating state
     let ratingTargetHabit = null;
     let ratingStars = 0;
-    let ratingLiked = false;
+    let ratingFollow = false; // ここでは「制作者フォロー」を評価モーダルに統合（要望）
+    let ratingReason = ""; // "retire" | "finish" | "manual"
+    let ratingAllowManual = false;
 
-    // edit state
     let editTargetHabit = null;
 
-    // caches
-    let cachedFavCreators = new Set(); // creatorUid
-    let cachedBookmarks = new Set();   // habitId
-
-    const CATS = ["メンタル","睡眠","運動","健康","生活","勉強","英語","仕事","その他"];
-    let modalSelected = "";
-
+    // ===== Helpers =====
     function showPlusOne(){
       plusOne.style.display = "block";
       plusOne.style.animation = "none";
@@ -1063,42 +1217,33 @@
       plusOne.style.animation = "floatUp .9s ease-out forwards";
       setTimeout(()=> plusOne.style.display = "none", 950);
     }
+    function showOnly(section){
+      viewHome.style.display = section==="home" ? "" : "none";
+      viewRecords.style.display = section==="records" ? "" : "none";
+      viewBookmarks.style.display = section==="bookmarks" ? "" : "none";
+      viewProfile.style.display = section==="profile" ? "" : "none";
 
-    function setView(which){
-      const home = which==="home";
-      const records = which==="records";
-      const bookmarks = which==="bookmarks";
-      const profile = which==="profile";
+      navHome.classList.toggle("active", section==="home");
+      navRecords.classList.toggle("active", section==="records");
+      navBookmarks.classList.toggle("active", section==="bookmarks");
+      navProfile.classList.toggle("active", section==="profile");
 
-      navHome.classList.toggle("active", home);
-      navRecords.classList.toggle("active", records);
-      navBookmarks.classList.toggle("active", bookmarks);
-      navProfile.classList.toggle("active", profile);
-
-      viewHome.classList.toggle("active", home);
-      viewRecords.classList.toggle("active", records);
-      viewBookmarks.classList.toggle("active", bookmarks);
-      viewProfile.classList.toggle("active", profile);
-
-      if(records) refreshRecords();
-      if(bookmarks) refreshBookmarksView();
-      if(profile) refreshProfile();
+      if(section==="records") refreshRecords();
+      if(section==="bookmarks") refreshBookmarksView();
+      if(section==="profile") refreshProfile();
     }
-    navHome.addEventListener("click", ()=> setView("home"));
-    navRecords.addEventListener("click", ()=> setView("records"));
-    navBookmarks.addEventListener("click", ()=> setView("bookmarks"));
-    navProfile.addEventListener("click", ()=> setView("profile"));
 
     // ===== Auth =====
     async function login(){
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
     }
-    btnLogin.addEventListener("click", async ()=>{ try{ await login(); }catch{ alert("ログイン失敗"); } });
+    async function logout(){
+      await signOut(auth);
+    }
     gateLoginBtn.addEventListener("click", async ()=>{ try{ await login(); }catch{ alert("ログイン失敗"); } });
-    btnLogout.addEventListener("click", async ()=>{
-      try{ await signOut(auth); }catch{ alert("ログアウト失敗"); }
-    });
+    btnLogin.addEventListener("click", async ()=>{ try{ await login(); }catch{ alert("ログイン失敗"); } });
+    btnLogout.addEventListener("click", async ()=>{ try{ await logout(); }catch{ alert("ログアウト失敗"); } });
 
     // ===== Name modal =====
     function openNameModal(){
@@ -1107,9 +1252,7 @@
       nameBg.classList.add("show");
     }
     function closeNameModal(){ nameBg.classList.remove("show"); }
-    nameInput.addEventListener("input", ()=>{
-      nameSave.disabled = nameInput.value.trim().length < 1;
-    });
+    nameInput.addEventListener("input", ()=>{ nameSave.disabled = nameInput.value.trim().length<1; });
     nameSave.addEventListener("click", async ()=>{
       const nm = nameInput.value.trim().slice(0,16);
       if(!nm) return;
@@ -1117,15 +1260,97 @@
       myProfile.name = nm;
       userName.textContent = nm;
       closeNameModal();
-      // 名前後：カテゴリ
-      const pref = myProfile?.preferredCategory || "";
-      if(!pref) openCategoryModal();
-      await warmCaches();
-      await autoRetireIfMissed();
+
+      // 次カテゴリ
+      if(!(myProfile?.preferredCategory||"")) openCategoryModal();
+      await afterLoginWarm();
+    });
+
+    // ===== Category modal =====
+    let catSelected = "";
+    function openCategoryModal(){
+      catSelected = "";
+      catSave.disabled = true;
+      catList.innerHTML = "";
+      for(const c of CATS){
+        const b = document.createElement("button");
+        b.className = "btn";
+        b.textContent = c;
+        b.addEventListener("click", ()=>{
+          catSelected = c;
+          [...catList.querySelectorAll(".btn")].forEach(x=>x.classList.remove("primary"));
+          b.classList.add("primary");
+          catSave.disabled = false;
+        });
+        catList.appendChild(b);
+      }
+      catBg.classList.add("show");
+    }
+    function closeCategoryModal(){ catBg.classList.remove("show"); }
+    catClose.addEventListener("click", closeCategoryModal);
+    catSave.addEventListener("click", async ()=>{
+      if(!catSelected) return;
+      await updateDoc(doc(db,"users",currentUser.uid), { preferredCategory: catSelected, updatedAt: serverTimestamp() });
+      myProfile.preferredCategory = catSelected;
+      closeCategoryModal();
+
+      // ★「全ての設定で変更したらそのカテゴリーだけ表示」
+      categoryFilter.value = catSelected;
       await refreshHome();
-      await refreshRecords();
-      await refreshProfile();
-      await refreshBookmarksView();
+    });
+
+    // ===== Post modal =====
+    function openPostModal(){
+      newTitle.value = "";
+      newTags.value = "";
+      newCategory.value = "";
+      newAction.value = "";
+      updatePostCounter();
+      postBg.classList.add("show");
+    }
+    function closePostModal(){ postBg.classList.remove("show"); }
+    openPost.addEventListener("click", ()=> openPostModal());
+    postClose.addEventListener("click", closePostModal);
+    postBg.addEventListener("click", (e)=>{ if(e.target===postBg) closePostModal(); });
+
+    function updatePostCounter(){ postCounter.textContent = `${newAction.value.length} / 40`; }
+    newAction.addEventListener("input", updatePostCounter);
+
+    btnPost.addEventListener("click", async ()=>{
+      const title = newTitle.value.trim();
+      const action = newAction.value.trim();
+      const tags = newTags.value.split(",").map(s=>s.trim()).filter(Boolean).slice(0,8);
+      const category = String(newCategory.value||"").trim();
+
+      if(title.length<2){ alert("タイトル短い"); return; }
+      if(action.length<2){ alert("やること短い"); return; }
+      if(action.length>40){ alert("40文字以内"); return; }
+
+      try{
+        await addDoc(collection(db, "habits"), {
+          title, action, tags, category,
+          creatorUid: currentUser.uid,
+          creatorName: myProfile?.name || (currentUser.displayName || "作成者"),
+          creatorPhoto: currentUser.photoURL || "",
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+
+          avgRating: 0,
+          ratingCount: 0,
+          participantsCount: 0,
+          avgDays: 0,
+          successRate: 0,
+
+          // ver
+          baseHabitId: "",
+          version: 1,
+        });
+        closePostModal();
+        await refreshHome();
+        await refreshProfile();
+      }catch{
+        alert("投稿失敗");
+      }
     });
 
     // ===== Profile doc =====
@@ -1134,7 +1359,7 @@
       const snap = await getDoc(ref);
       if(!snap.exists()){
         const initial = {
-          name: "", // ★必ず入力させる
+          name: "",
           photoURL: currentUser.photoURL || "",
           preferredCategory: "",
           createdAt: serverTimestamp(),
@@ -1151,6 +1376,42 @@
       myRankEl.textContent = String(myProfile?.ratingRank || 1);
     }
 
+    async function warmCaches(){
+      cachedFavCreators = new Set();
+      cachedBookmarks = new Set();
+
+      // creator favs
+      {
+        const qs = await getDocs(query(
+          collection(db, "userCreatorFavs", currentUser.uid, "items"),
+          orderBy("createdAt","desc"),
+          limit(300)
+        ));
+        qs.forEach(s=> cachedFavCreators.add(s.id));
+      }
+      // bookmarks
+      {
+        const qs = await getDocs(query(
+          collection(db, "userBookmarks", currentUser.uid, "items"),
+          orderBy("createdAt","desc"),
+          limit(500)
+        ));
+        qs.forEach(s=> cachedBookmarks.add(s.id));
+      }
+    }
+
+    async function afterLoginWarm(){
+      await warmCaches();
+      await autoRetireIfMissed();
+      await ensureDailyStatsDoc();
+      await refreshDailyDoneCount();
+      await refreshSideActive();
+      await refreshHome();
+      await refreshRecords();
+      await refreshBookmarksView();
+      await refreshProfile();
+    }
+
     onAuthStateChanged(auth, async (user)=>{
       currentUser = user || null;
 
@@ -1160,16 +1421,20 @@
 
         userName.textContent = "—";
         userSmall.textContent = "—";
-        userAvatar.innerHTML = "👤";
+        userAvatar.textContent = "□";
+        userAvatar.innerHTML = "□";
 
+        sideActiveList.innerHTML = "";
         feed.innerHTML = "";
-        toastWrap.innerHTML = "";
         recordList.innerHTML = "";
-        profileList.innerHTML = "";
         bmFeed.innerHTML = "";
         bmCount.textContent = "0";
+        profileList.innerHTML = "";
+
         cachedFavCreators = new Set();
         cachedBookmarks = new Set();
+
+        showOnly("home");
         return;
       }
 
@@ -1184,178 +1449,283 @@
         img.alt = "avatar";
         userAvatar.appendChild(img);
       }else{
-        userAvatar.textContent = "👤";
+        userAvatar.textContent = "□";
       }
 
       await ensureProfile();
 
-      // UI name
       const nm = (myProfile?.name || "").trim();
       userName.textContent = nm || "—";
-
-      // 名前が未設定ならここで止める（名前→カテゴリ→ホーム）
       if(!nm){
         openNameModal();
         return;
       }
 
-      // カテゴリ
-      const pref = myProfile?.preferredCategory || "";
-      myCategory.textContent = pref || "未設定";
-      if(!pref) openCategoryModal();
-
-      await warmCaches();
-      await autoRetireIfMissed();
-
-      await refreshHome();
-      await refreshRecords();
-      await refreshProfile();
-      await refreshBookmarksView();
-    });
-
-    // ===== Category modal =====
-    function openCategoryModal(){
-      modalSelected = "";
-      modalSave.disabled = true;
-      catList.innerHTML = "";
-      for(const c of CATS){
-        const b = document.createElement("button");
-        b.className = "catBtn";
-        b.textContent = c;
-        b.addEventListener("click", ()=>{
-          modalSelected = c;
-          [...catList.querySelectorAll(".catBtn")].forEach(x=>x.classList.remove("active"));
-          b.classList.add("active");
-          modalSave.disabled = false;
-        });
-        catList.appendChild(b);
+      if(!(myProfile?.preferredCategory||"")){
+        openCategoryModal();
+      }else{
+        // 初期：カテゴリは自分のカテゴリに自動セット（要望）
+        categoryFilter.value = myProfile.preferredCategory;
       }
-      modalBg.classList.add("show");
-    }
-    function closeCategoryModal(){ modalBg.classList.remove("show"); }
-    btnChangeMyCategory.addEventListener("click", openCategoryModal);
-    modalSkip.addEventListener("click", closeCategoryModal);
-    modalSave.addEventListener("click", async ()=>{
-      if(!modalSelected) return;
-      await updateDoc(doc(db,"users",currentUser.uid), {
-        preferredCategory: modalSelected,
-        updatedAt: serverTimestamp()
-      });
-      myProfile.preferredCategory = modalSelected;
-      myCategory.textContent = modalSelected;
-      closeCategoryModal();
-      await refreshHome();
+
+      await afterLoginWarm();
     });
 
-    // ===== Composer =====
-    function updateCounter(){
-      counterAction.textContent = `${newAction.value.length} / 40`;
-    }
-    newAction.addEventListener("input", updateCounter);
-    updateCounter();
+    // ===== Navigation =====
+    navHome.addEventListener("click", ()=> showOnly("home"));
+    navRecords.addEventListener("click", ()=> showOnly("records"));
+    navBookmarks.addEventListener("click", ()=> showOnly("bookmarks"));
+    navProfile.addEventListener("click", ()=> showOnly("profile"));
 
-    btnPost.addEventListener("click", async ()=>{
-      const title = newTitle.value.trim();
-      const tags = newTags.value.split(",").map(s=>s.trim()).filter(Boolean).slice(0,8);
-      const category = String(newCategory.value || "").trim();
-      const action = newAction.value.trim();
-
-      if(title.length < 2 || action.length < 2){ alert("短すぎ"); return; }
-      if(action.length > 40){ alert("40文字以内"); return; }
-
-      const data = {
-        title, action, tags, category,
-        creatorUid: currentUser.uid,
-        creatorName: myProfile?.name || (currentUser.displayName || "作成者"),
-        creatorPhoto: currentUser.photoURL || "",
-        createdAt: serverTimestamp(),
-
-        // 集計（土台）
-        avgRating: 0,
-        ratingCount: 0,
-        participantsCount: 0,
-        avgDays: 0,
-        successRate: 0,
-        feelEasy: 0,
-        feelMid: 0,
-        feelHard: 0,
-
-        // versioning
-        baseHabitId: "",
-        version: 1,
-        updatedAt: serverTimestamp()
-      };
-
-      try{
-        await addDoc(collection(db, "habits"), data);
-
-        newTitle.value = "";
-        newTags.value = "";
-        newCategory.value = "";
-        newAction.value = "";
-        updateCounter();
-
-        await refreshHome();
-        await refreshProfile();
-      }catch{
-        alert("投稿失敗");
-      }
-    });
-
-    // ===== Filters =====
-    function setSelectedTag(tag){
-      selectedTag = tag || "";
-      [...document.querySelectorAll(".chip")].forEach(ch=>{
-        ch.classList.toggle("active", ch.dataset.tag === selectedTag);
-      });
-      refreshHome();
-    }
-    btnClearTag.addEventListener("click", ()=> setSelectedTag(""));
+    // ===== Search/filters =====
     qInput.addEventListener("keydown", (e)=>{ if(e.key==="Enter") refreshHome(); });
-    categoryFilter.addEventListener("change", refreshHome);
+    categoryFilter.addEventListener("change", async ()=>{
+      // 変更したらそのカテゴリだけ表示
+      await refreshHome();
+    });
     sortBy.addEventListener("change", refreshHome);
+    btnClearTag.addEventListener("click", async ()=>{
+      selectedTag = "";
+      highlightRankChips();
+      await refreshHome();
+    });
 
-    function renderChips(container, tags){
+    // ===== Daily stats (本日達成人数) =====
+    function dailyDocId(){
+      return fmtYMD(nowLocal());
+    }
+    async function ensureDailyStatsDoc(){
+      const ref = doc(db, "dailyStats", dailyDocId());
+      const snap = await getDoc(ref);
+      if(!snap.exists()){
+        await setDoc(ref, { doneCount: 0, date: dailyDocId(), updatedAt: serverTimestamp() });
+      }
+    }
+    async function refreshDailyDoneCount(){
+      try{
+        const ref = doc(db, "dailyStats", dailyDocId());
+        const snap = await getDoc(ref);
+        const done = snap.exists() ? Number(snap.data().doneCount||0) : 0;
+        todayDoneBadge.textContent = `本日 ${done} 人が達成`;
+      }catch{
+        todayDoneBadge.textContent = `本日 0 人が達成`;
+      }
+    }
+    async function incDailyDoneCount(){
+      await runTransaction(db, async (tx)=>{
+        const ref = doc(db, "dailyStats", dailyDocId());
+        const snap = await tx.get(ref);
+        if(!snap.exists()){
+          tx.set(ref, { doneCount: 1, date: dailyDocId(), updatedAt: serverTimestamp() });
+        }else{
+          tx.update(ref, { doneCount: increment(1), updatedAt: serverTimestamp() });
+        }
+      });
+      showPlusOne();
+      await refreshDailyDoneCount();
+    }
+
+    // ===== Home =====
+    async function refreshHome(){
+      if(!currentUser) return;
+
+      const keyword = qInput.value.trim().toLowerCase();
+      const cat = categoryFilter.value.trim();
+      const sort = sortBy.value;
+
+      let habits = [];
+      const qs = await getDocs(query(collection(db,"habits"), orderBy("createdAt","desc"), limit(240)));
+      qs.forEach(s=> habits.push({ id:s.id, ...s.data() }));
+
+      // tag ranking
+      const tagCounts = new Map();
+      for(const h of habits){
+        (h.tags||[]).forEach(t=>{
+          const k = String(t||"").trim();
+          if(!k) return;
+          tagCounts.set(k, (tagCounts.get(k)||0)+1);
+        });
+      }
+
+      const top3 = [...tagCounts.entries()].sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
+
+      // reco：自分のカテゴリ優先（なければ全体）
+      const pref = (myProfile?.preferredCategory||"").trim();
+      const pool = pref ? habits.filter(h => String(h.category||"").trim() === pref) : habits;
+      const recoCounts = new Map();
+      for(const h of pool){
+        (h.tags||[]).forEach(t=>{
+          const k = String(t||"").trim();
+          if(!k) return;
+          recoCounts.set(k, (recoCounts.get(k)||0)+1);
+        });
+      }
+      const reco3 = [...recoCounts.entries()].sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
+
+      recoHint.textContent = pref ? `カテゴリ=${pref}` : "—";
+      topHint.textContent = "—";
+
+      renderRank(rankReco, reco3);
+      renderRank(rankTop, top3);
+      highlightRankChips();
+
+      // filter
+      let filtered = habits.filter(h=>{
+        const hCat = String(h.category||"").trim();
+        if(cat && hCat !== cat) return false;
+        if(selectedTag && !(h.tags||[]).includes(selectedTag)) return false;
+        if(keyword){
+          const blob = [h.title, h.action, (h.tags||[]).join(" "), h.category, h.creatorName].join(" ").toLowerCase();
+          if(!blob.includes(keyword)) return false;
+        }
+        if(sort==="favCreators"){
+          return cachedFavCreators.has(h.creatorUid);
+        }
+        return true;
+      });
+
+      // sort
+      filtered.sort((a,b)=>{
+        const ca = a.createdAt?.seconds ? a.createdAt.seconds : 0;
+        const cb = b.createdAt?.seconds ? b.createdAt.seconds : 0;
+        const ra = Number(a.avgRating||0);
+        const rb = Number(b.avgRating||0);
+        const sa = Number(a.successRate||0);
+        const sb = Number(b.successRate||0);
+        const da = Number(a.avgDays||0);
+        const dbb = Number(b.avgDays||0);
+
+        if(sort==="rating") return (rb-ra) || (cb-ca);
+        if(sort==="success") return (sb-sa) || (cb-ca);
+        if(sort==="days") return (dbb-da) || (cb-ca);
+        return (cb-ca);
+      });
+
+      countShown.textContent = String(filtered.length);
+
+      feed.innerHTML = "";
+      for(const h of filtered){
+        feed.appendChild(renderHabitCard(h));
+      }
+    }
+
+    function renderRank(container, tags){
       container.innerHTML = "";
-      for(const t of tags){
+      const list = (tags||[]).slice(0,3);
+      for(let i=0;i<list.length;i++){
+        const t = list[i];
         const chip = document.createElement("div");
-        chip.className = "chip";
+        chip.className = "rankChip";
         chip.dataset.tag = t;
-        chip.textContent = `#${t}`;
-        chip.addEventListener("click", ()=> setSelectedTag(t));
+        chip.innerHTML = `<span class="rk">${i+1}位</span><span class="tagName">#${escapeHtml(t)}</span>`;
+        chip.addEventListener("click", async ()=>{
+          selectedTag = t;
+          highlightRankChips();
+          await refreshHome();
+        });
         container.appendChild(chip);
       }
-      [...container.querySelectorAll(".chip")].forEach(ch=>{
-        ch.classList.toggle("active", ch.dataset.tag === selectedTag);
+      // 3個未満でも幅を埋めたい → 空ダミー
+      for(let i=list.length;i<3;i++){
+        const dummy = document.createElement("div");
+        dummy.className = "rankChip";
+        dummy.style.opacity = "0.25";
+        dummy.style.pointerEvents = "none";
+        dummy.innerHTML = `<span class="rk">${i+1}位</span><span class="tagName">—</span>`;
+        container.appendChild(dummy);
+      }
+    }
+    function highlightRankChips(){
+      document.querySelectorAll(".rankChip").forEach(el=>{
+        el.classList.toggle("active", (el.dataset.tag||"") === selectedTag);
       });
     }
 
-    // ===== Phase3 caches (no composite index) =====
-    async function warmCaches(){
-      cachedFavCreators = new Set();
-      cachedBookmarks = new Set();
+    function renderHabitCard(h){
+      const card = document.createElement("div");
+      card.className = "habitCard";
 
-      // fav creators
-      {
-        const qs = await getDocs(query(
-          collection(db, "userCreatorFavs", currentUser.uid, "items"),
-          orderBy("createdAt","desc"),
-          limit(300)
-        ));
-        qs.forEach(s=> cachedFavCreators.add(s.id));
-      }
+      const isMine = h.creatorUid === currentUser.uid;
+      const bookmarked = cachedBookmarks.has(h.id);
+      const creatorFav = cachedFavCreators.has(h.creatorUid);
 
-      // bookmarks
-      {
-        const qs = await getDocs(query(
-          collection(db, "userBookmarks", currentUser.uid, "items"),
-          orderBy("createdAt","desc"),
-          limit(500)
-        ));
-        qs.forEach(s=> cachedBookmarks.add(s.id));
-      }
+      const cat = String(h.category||"").trim();
+      const tags = (h.tags||[]).slice(0,2);
+
+      const avgRating = Number(h.avgRating||0);
+      const avgDays = Number(h.avgDays||0);
+      const successRate = Number(h.successRate||0);
+      const participants = Number(h.participantsCount||0);
+
+      card.innerHTML = `
+        <div class="cardTop">
+          <div class="creatorRow">
+            <div class="miniAva">${h.creatorPhoto ? `<img src="${escapeHtml(h.creatorPhoto)}" alt="">` : ""}</div>
+            <div class="creatorName">${escapeHtml(h.creatorName||"作成者")}</div>
+          </div>
+
+          <div class="topActions">
+            <button class="iconBtn ${creatorFav ? "on":""}" data-act="follow" data-tip="フォロー">F</button>
+            <button class="iconBtn ${bookmarked ? "on":""}" data-act="bookmark" data-tip="保存">B</button>
+
+            ${
+              isMine
+              ? `<button class="iconBtn" data-act="edit" data-tip="編集">E</button>`
+              : `<button class="iconBtn" data-act="join" data-tip="参加">参加</button>`
+            }
+          </div>
+        </div>
+
+        <div class="titleBlock">
+          <p class="habitTitle">${escapeHtml(h.title||"")}</p>
+          <p class="habitAction">${escapeHtml(h.action||"")}</p>
+        </div>
+
+        <div class="cardBottom">
+          <div class="metaLeft">
+            <div class="catTagRow">
+              ${cat ? `<span class="chipMini" data-cat="${escapeHtml(cat)}">C:${escapeHtml(cat)}</span>` : ""}
+              ${tags.map(t=>`<span class="chipMini" data-tag="${escapeHtml(t)}">T:#${escapeHtml(t)}</span>`).join("")}
+            </div>
+            <div class="statsRow">
+              <span class="statPill">参加者 ${participants}</span>
+              <span class="statPill">評価 ${avgRating ? avgRating.toFixed(1) : "—"}</span>
+              <span class="statPill">継続 ${avgDays ? avgDays.toFixed(1) : "—"}日</span>
+              <span class="statPill">成功 ${successRate ? successRate.toFixed(0) : "—"}%</span>
+            </div>
+          </div>
+        </div>
+      `;
+
+      card.querySelector('[data-act="bookmark"]').addEventListener("click", ()=> toggleBookmark(h.id));
+      card.querySelector('[data-act="follow"]').addEventListener("click", ()=> toggleCreatorFav(h.creatorUid));
+
+      const joinBtn = card.querySelector('[data-act="join"]');
+      if(joinBtn) joinBtn.addEventListener("click", ()=> startChallenge(h));
+
+      const editBtn = card.querySelector('[data-act="edit"]');
+      if(editBtn) editBtn.addEventListener("click", ()=> openEditModal(h));
+
+      card.querySelectorAll("[data-tag]").forEach(el=>{
+        el.addEventListener("click", async (e)=>{
+          selectedTag = el.dataset.tag || "";
+          highlightRankChips();
+          await refreshHome();
+          e.stopPropagation();
+        });
+      });
+      card.querySelectorAll("[data-cat]").forEach(el=>{
+        el.addEventListener("click", async (e)=>{
+          categoryFilter.value = el.dataset.cat || "";
+          await refreshHome();
+          e.stopPropagation();
+        });
+      });
+
+      return card;
     }
 
+    // ===== Phase3 toggles =====
     async function toggleCreatorFav(creatorUid){
       if(!creatorUid) return;
       const ref = doc(db, "userCreatorFavs", currentUser.uid, "items", creatorUid);
@@ -1366,8 +1736,8 @@
         await setDoc(ref, { createdAt: serverTimestamp() });
         cachedFavCreators.add(creatorUid);
       }
-      await refreshProfile();
       await refreshHome();
+      await refreshProfile();
     }
 
     async function toggleBookmark(habitId){
@@ -1380,278 +1750,147 @@
         await setDoc(ref, { createdAt: serverTimestamp() });
         cachedBookmarks.add(habitId);
       }
+      await refreshHome();
       await refreshBookmarksView();
-      await refreshHome(); // アイコン反映
       await refreshProfile();
     }
 
-    // ===== Home =====
-    async function refreshHome(){
-      if(!currentUser) return;
-
-      const keyword = qInput.value.trim().toLowerCase();
-      const cat = categoryFilter.value.trim();
-      const sort = sortBy.value;
-      const prefCat = myProfile?.preferredCategory || "";
-
-      myCategory.textContent = prefCat || "未設定";
-
-      // habits
-      let habits = [];
-      const qs = await getDocs(query(collection(db,"habits"), orderBy("createdAt","desc"), limit(220)));
-      qs.forEach(docSnap=> habits.push({ id: docSnap.id, ...docSnap.data() }));
-
-      // tag counts
-      const tagCounts = new Map();
-      for(const h of habits){
-        (h.tags || []).forEach(t=>{
-          const k = String(t || "").trim();
-          if(!k) return;
-          tagCounts.set(k, (tagCounts.get(k)||0)+1);
-        });
-      }
-      selectedTopTags = [...tagCounts.entries()].sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
-      renderChips(chipsTop, selectedTopTags);
-
-      const recoPool = habits.filter(h=>{
-        if(!prefCat) return true;
-        return (h.category || "").trim() === prefCat;
-      });
-      const recoCounts = new Map();
-      for(const h of recoPool){
-        (h.tags||[]).forEach(t=>{
-          const k = String(t||"").trim();
-          if(!k) return;
-          recoCounts.set(k, (recoCounts.get(k)||0)+1);
-        });
-      }
-      selectedRecoTags = [...recoCounts.entries()].sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
-      if(selectedRecoTags.length===0) selectedRecoTags = selectedTopTags;
-      renderChips(chipsRecommend, selectedRecoTags);
-
-      // filter
-      let filtered = habits.filter(h=>{
-        if(cat && (h.category || "").trim() !== cat) return false;
-        if(selectedTag && !(h.tags || []).includes(selectedTag)) return false;
-        if(keyword){
-          const blob = [h.title, h.action, (h.tags||[]).join(" "), h.category, h.creatorName].join(" ").toLowerCase();
-          if(!blob.includes(keyword)) return false;
-        }
-        // ❤️お気に入り中の人
-        if(sort === "favCreators"){
-          return cachedFavCreators.has(h.creatorUid);
-        }
-        return true;
-      });
-
-      // sort
-      filtered.sort((a,b)=>{
-        const ca = a.createdAt?.seconds ? a.createdAt.seconds : 0;
-        const cb = b.createdAt?.seconds ? b.createdAt.seconds : 0;
-
-        const ra = Number(a.avgRating||0);
-        const rb = Number(b.avgRating||0);
-        const sa = Number(a.successRate||0);
-        const sb = Number(b.successRate||0);
-        const da = Number(a.avgDays||0);
-        const dbb = Number(b.avgDays||0);
-
-        if(sort === "rating") return (rb - ra) || (cb - ca);
-        if(sort === "success") return (sb - sa) || (cb - ca);
-        if(sort === "days") return (dbb - da) || (cb - ca);
-        if(sort === "favCreators") return (cb - ca);
-        return (cb - ca);
-      });
-
-      countShown.textContent = String(filtered.length);
-
-      // active count
-      const actives = await loadActiveChallenges();
-      activeCount.textContent = String(actives.length);
-
-      // today toasts
-      await refreshTodayToasts();
-
-      // render
-      feed.innerHTML = "";
-      for(const h of filtered){
-        feed.appendChild(renderHabitCard(h));
-      }
-    }
-
-    function renderHabitCard(h){
-      const card = document.createElement("div");
-      card.className = "habitCard";
-
-      const tags = (h.tags || []).slice(0,3);
-      const cat = (h.category || "").trim();
-
-      const avgRating = Number(h.avgRating||0);
-      const avgDays = Number(h.avgDays||0);
-      const successRate = Number(h.successRate||0);
-
-      const isMine = h.creatorUid === currentUser.uid;
-      const creatorFav = cachedFavCreators.has(h.creatorUid);
-      const bookmarked = cachedBookmarks.has(h.id);
-
-      card.innerHTML = `
-        <div>
-          <div class="habitTop">
-            <div class="miniUser">
-              <div class="miniAva">${h.creatorPhoto ? `<img src="${escapeHtml(h.creatorPhoto)}" alt=""/>` : ""}</div>
-              <div class="miniName">${escapeHtml(h.creatorName || "作成者")}</div>
-            </div>
-            <div class="badgeRow">
-              ${cat ? `<span class="badge cat" data-cat="${escapeHtml(cat)}">${escapeHtml(cat)}</span>` : ""}
-              ${tags.map(t=>`<span class="badge tag" data-tag="${escapeHtml(t)}">${escapeHtml(t)}</span>`).join("")}
-            </div>
-          </div>
-
-          <div class="habitTitle">${escapeHtml(h.title || "")}</div>
-          <p class="habitDesc">${escapeHtml(h.action || "")}</p>
-        </div>
-
-        <div>
-          <div class="stats">
-            <div class="stat">⭐ ${avgRating ? avgRating.toFixed(1) : "—"}</div>
-            <div class="stat">📅 ${avgDays ? avgDays.toFixed(1) : "—"}</div>
-            <div class="stat">🎯 ${successRate ? successRate.toFixed(0) + "%" : "—"}</div>
-          </div>
-
-          <div class="actions">
-            <button class="iconBtn ${bookmarked ? "ok":""}" data-act="bookmark" data-tip="保存">🔖</button>
-            <button class="iconBtn ${creatorFav ? "ok":""}" data-act="creatorFav" data-tip="作成者">👤</button>
-            <button class="iconBtn primary" data-act="rate" data-tip="評価">⭐</button>
-            <button class="iconBtn" data-act="reviews" data-tip="口コミ">💬</button>
-            ${isMine ? `<button class="iconBtn warn" data-act="edit" data-tip="編集">🛠️</button>` : ""}
-            <button class="iconBtn tryBtn" data-act="try" data-tip="挑戦">▶</button>
-          </div>
-        </div>
-      `;
-
-      card.querySelector('[data-act="try"]').addEventListener("click", ()=> startChallenge(h));
-      card.querySelector('[data-act="rate"]').addEventListener("click", ()=> openRatingModal(h));
-      card.querySelector('[data-act="reviews"]').addEventListener("click", ()=> openReviewsModal(h));
-      card.querySelector('[data-act="bookmark"]').addEventListener("click", ()=> toggleBookmark(h.id));
-      card.querySelector('[data-act="creatorFav"]').addEventListener("click", ()=> toggleCreatorFav(h.creatorUid));
-
-      const editBtn = card.querySelector('[data-act="edit"]');
-      if(editBtn) editBtn.addEventListener("click", ()=> openEditModal(h));
-
-      card.querySelectorAll(".badge.tag").forEach(el=>{
-        el.addEventListener("click", (e)=>{
-          setSelectedTag(el.dataset.tag || el.textContent.trim());
-          e.stopPropagation();
-        });
-      });
-      card.querySelectorAll(".badge.cat").forEach(el=>{
-        el.addEventListener("click", (e)=>{
-          categoryFilter.value = el.dataset.cat || el.textContent.trim();
-          refreshHome();
-          e.stopPropagation();
-        });
-      });
-
-      return card;
-    }
-
-    // ===== Challenge (★複合インデックス不要版) =====
-    async function loadActiveChallenges(){
-      // orderByのみ → インデックス不要
+    // ===== Challenges (インデックス不要) =====
+    async function loadChallenges(limitN=200){
       const qs = await getDocs(query(
         collection(db, "userChallenges", currentUser.uid, "items"),
         orderBy("updatedAt","desc"),
-        limit(50)
+        limit(limitN)
       ));
       const arr = [];
-      qs.forEach(s=> arr.push(s.data()));
-      return arr.filter(x => x.status === "active").slice(0, 10);
+      qs.forEach(s=> arr.push({ id:s.id, ...s.data() }));
+      return arr;
+    }
+    async function loadActiveChallenges(){
+      const all = await loadChallenges(200);
+      return all.filter(x => x.status === "active").slice(0, 50);
+    }
+
+    // 1日1回制限（同日二度押し防止）
+    function canActToday(ch){
+      const today = fmtYMD(nowLocal());
+      const last = String(ch.lastActionYMD||"").slice(0,10);
+      return last !== today;
     }
 
     async function startChallenge(h){
-      const maxActive = 3;
       const actives = await loadActiveChallenges();
-      if(actives.length >= maxActive){ alert("依頼は最大3"); return; }
+      if(actives.length >= 3){ alert("依頼は最大3"); return; }
+      if(h.creatorUid === currentUser.uid){ return; }
 
-      const start = fmtDate(nowLocal());
+      const today = fmtYMD(nowLocal());
+      const ref = doc(db, "userChallenges", currentUser.uid, "items", h.id);
+      const snap = await getDoc(ref);
+      if(snap.exists() && snap.data()?.status === "active") return;
 
-      try{
-        const ref = doc(db, "userChallenges", currentUser.uid, "items", h.id);
-        const snap = await getDoc(ref);
-        if(snap.exists() && snap.data()?.status === "active") return;
+      await setDoc(ref, {
+        habitId: h.id,
+        habitTitle: h.title || "",
+        creatorUid: h.creatorUid || "",
+        status: "active",
+        startDate: today,
+        day: 1,
+        successDays: 0,
+        restDays: 0,
+        lastActionYMD: "",
+        streakMiss: 0,
+        difficulty: { easy:0, mid:0, hard:0 },
+        ratingSubmitted: false, // ★送信したら消す
+        updatedAt: serverTimestamp()
+      });
 
-        await setDoc(ref, {
-          habitId: h.id,
-          habitTitle: h.title || "",
-          status:"active",
-          startDate: start,
-          day: 1,
-          lastReportedDate: "",
-          streakMiss: 0,
-          successDays: 0,
-          restDays: 0,
-          difficulty: { easy:0, mid:0, hard:0 },
-          updatedAt: serverTimestamp()
-        });
+      // participants +1
+      await runTransaction(db, async (tx)=>{
+        const href = doc(db, "habits", h.id);
+        const hs = await tx.get(href);
+        if(!hs.exists()) return;
+        const cur = hs.data();
+        tx.update(href, { participantsCount: Number(cur.participantsCount||0)+1, updatedAt: serverTimestamp() });
+      });
 
-        // participantsCount +1
-        await runTransaction(db, async (tx)=>{
-          const href = doc(db, "habits", h.id);
-          const hs = await tx.get(href);
-          if(!hs.exists()) return;
-          const cur = hs.data();
-          const pc = Number(cur.participantsCount||0) + 1;
-          tx.update(href, { participantsCount: pc, updatedAt: serverTimestamp() });
-        });
+      // user totalChallenges +1
+      await runTransaction(db, async (tx)=>{
+        const uref = doc(db,"users",currentUser.uid);
+        const us = await tx.get(uref);
+        if(!us.exists()) return;
+        const u = us.data();
+        tx.update(uref, { totalChallenges: Number(u.totalChallenges||0)+1, updatedAt: serverTimestamp() });
+      });
 
-        // user stats
-        await runTransaction(db, async (tx)=>{
-          const uref = doc(db, "users", currentUser.uid);
-          const us = await tx.get(uref);
-          if(!us.exists()) return;
-          const cur = us.data();
-          tx.update(uref, { totalChallenges: Number(cur.totalChallenges||0)+1, updatedAt: serverTimestamp() });
-        });
-
-        await refreshTodayToasts();
-        await refreshRecords();
-        await refreshHome();
-        await refreshProfile();
-      }catch{
-        alert("挑戦失敗");
-      }
+      await refreshSideActive();
+      await refreshRecords();
+      await refreshHome();
+      await refreshProfile();
     }
 
-    async function refreshTodayToasts(){
-      toastWrap.innerHTML = "";
-      const actives = await loadActiveChallenges();
-      activeCount.textContent = String(actives.length);
-      if(actives.length === 0) return;
+    // ===== Side active list (左に全表示 + カウントダウン + いつでも評価枠) =====
+    let countdownTimer = null;
+    async function refreshSideActive(){
+      if(!currentUser) return;
 
-      for(const ch of actives.slice(0,3)){
-        const title = ch.habitTitle || "習慣";
-        const day = Number(ch.day||1);
-        const toast = document.createElement("div");
-        toast.className = "toast";
-        toast.innerHTML = `
-          <div class="left"><div class="main">🌱 ${escapeHtml(title)}（${day}日目）</div></div>
-          <div class="right">
-            <button class="iconBtn ok" data-act="done" data-tip="やった">✅</button>
-            <button class="iconBtn warn" data-act="rest" data-tip="休む">🛌</button>
-            <button class="iconBtn danger" data-act="retire" data-tip="リタイア">🏳️</button>
+      const actives = await loadActiveChallenges();
+      sideActiveList.innerHTML = "";
+
+      // タイマー更新（表示テキストだけ）
+      if(countdownTimer) clearInterval(countdownTimer);
+      countdownTimer = setInterval(()=>{
+        document.querySelectorAll("[data-next]").forEach(el=>{
+          const ms = msToMidnight();
+          el.textContent = `次まで ${fmtCountdown(ms)}`;
+        });
+        // 0時超えたら更新
+        if(msToMidnight() < 900){
+          // ベストエフォート
+          refreshSideActive();
+          refreshDailyDoneCount();
+        }
+      }, 1000);
+
+      for(const ch of actives){
+        const box = document.createElement("div");
+        box.className = "sideItem";
+
+        const can = canActToday(ch);
+        const next = `次まで ${fmtCountdown(msToMidnight())}`;
+
+        const allowRate = await canRate(ch.habitId, ch); // 実際に参加した人だけ
+
+        box.innerHTML = `
+          <div class="sideTop">
+            <div class="sideHabit">${escapeHtml(ch.habitTitle||"")}</div>
+            <div class="sideMeta">D${Number(ch.day||1)}</div>
+          </div>
+          <div class="sideTop" style="align-items:center">
+            <div class="sideMeta" data-next="1">${next}</div>
+            <div class="sideMeta">成功 ${Number(ch.successDays||0)} / 休 ${Number(ch.restDays||0)}</div>
+          </div>
+          <div class="sideBtns">
+            <button class="btn" data-act="done" ${can ? "" : "disabled"}>やった</button>
+            <button class="btn" data-act="rest" ${can ? "" : "disabled"}>休む</button>
+            <button class="btn" data-act="retire">リタイア</button>
+            <button class="btn" data-act="rate" ${(!allowRate || ch.ratingSubmitted) ? "disabled" : ""}>評価</button>
           </div>
         `;
-        toast.querySelector('[data-act="done"]').addEventListener("click", ()=> openDiffModal(ch));
-        toast.querySelector('[data-act="rest"]').addEventListener("click", ()=> applyReport(ch, { type:"rest" }));
-        toast.querySelector('[data-act="retire"]').addEventListener("click", async ()=>{
+
+        box.querySelector('[data-act="done"]').addEventListener("click", ()=> openDiffModal(ch));
+        box.querySelector('[data-act="rest"]').addEventListener("click", ()=> applyReport(ch, { type:"rest" }));
+        box.querySelector('[data-act="retire"]').addEventListener("click", async ()=>{
           if(!confirm("リタイア？")) return;
           await applyReport(ch, { type:"retire" });
         });
-        toastWrap.appendChild(toast);
+        box.querySelector('[data-act="rate"]').addEventListener("click", async ()=>{
+          await openRatingModalByChallenge(ch, "manual");
+        });
+
+        sideActiveList.appendChild(box);
       }
     }
 
-    // ===== Difficulty modal =====
     function openDiffModal(ch){
       diffTargetChallenge = ch;
       diffTitle.textContent = ch.habitTitle || "難易度";
@@ -1663,116 +1902,101 @@
     }
     diffClose.addEventListener("click", closeDiffModal);
     diffBg.addEventListener("click", (e)=>{ if(e.target===diffBg) closeDiffModal(); });
-    diffBg.querySelectorAll(".diffBtn").forEach(btn=>{
+    diffBg.querySelectorAll("[data-diff]").forEach(btn=>{
       btn.addEventListener("click", async ()=>{
         if(!diffTargetChallenge) return;
-        const diff = btn.dataset.diff;
-        await applyReport(diffTargetChallenge, { type:"done", diff });
+        await applyReport(diffTargetChallenge, { type:"done", diff: btn.dataset.diff });
         closeDiffModal();
       });
     });
 
+    // ===== Apply report =====
     async function applyReport(ch, payload){
-      const today = fmtDate(nowLocal());
+      const today = fmtYMD(nowLocal());
+      const ref = doc(db, "userChallenges", currentUser.uid, "items", ch.habitId);
+      const snap = await getDoc(ref);
+      if(!snap.exists()) return;
+      const cur = snap.data();
 
-      try{
-        const ref = doc(db, "userChallenges", currentUser.uid, "items", ch.habitId);
-        const snap = await getDoc(ref);
-        if(!snap.exists()) return;
-        const cur = snap.data();
+      // 同日多重を止める（done/rest）
+      if((payload.type==="done" || payload.type==="rest") && String(cur.lastActionYMD||"") === today){
+        return;
+      }
 
-        const update = {};
-        if(payload.type === "done"){
-          update.successDays = Number(cur.successDays||0) + 1;
-          update.lastReportedDate = today;
-          update.streakMiss = 0;
-          update.day = Number(cur.day||1) + 1;
+      const update = {};
+      if(payload.type==="done"){
+        update.successDays = Number(cur.successDays||0)+1;
+        update.day = Number(cur.day||1)+1;
+        update.lastActionYMD = today;
+        update.streakMiss = 0;
+        const d = cur.difficulty || {easy:0,mid:0,hard:0};
+        d[payload.diff] = Number(d[payload.diff]||0)+1;
+        update.difficulty = d;
 
-          const diffObj = cur.difficulty || {easy:0,mid:0,hard:0};
-          diffObj[payload.diff] = Number(diffObj[payload.diff]||0) + 1;
-          update.difficulty = diffObj;
+        // 本日達成 +1（リアルカウント）
+        await incDailyDoneCount();
 
-          showPlusOne();
-        }else if(payload.type === "rest"){
-          update.restDays = Number(cur.restDays||0) + 1;
-          update.lastReportedDate = today + "（休）";
-          update.streakMiss = 0;
-          update.day = Number(cur.day||1) + 1;
-        }else if(payload.type === "retire"){
-          update.status = "retired";
-          update.lastReportedDate = today + "（リタイア）";
-        }
+      }else if(payload.type==="rest"){
+        update.restDays = Number(cur.restDays||0)+1;
+        update.day = Number(cur.day||1)+1;
+        update.lastActionYMD = today;
+        update.streakMiss = 0;
 
+      }else if(payload.type==="retire"){
+        update.status = "retired";
         update.updatedAt = serverTimestamp();
         await updateDoc(ref, update);
 
-        // 7日制：成功5でクリア（done時だけ確認）
-        if(payload.type === "done" && cur.status === "active"){
-          const nextSuccess = Number(cur.successDays||0)+1;
-          const nextDay = Number(cur.day||1)+1;
-          if(nextSuccess >= 5 && nextDay >= 7){
-            if(confirm("クリアにする？")){
-              await updateDoc(ref, { status:"cleared", lastReportedDate: today + "（クリア）", updatedAt: serverTimestamp() });
-              await runTransaction(db, async (tx)=>{
-                const uref = doc(db, "users", currentUser.uid);
-                const us = await tx.get(uref);
-                if(!us.exists()) return;
-                const u = us.data();
-                tx.update(uref, { clearCount: Number(u.clearCount||0)+1, updatedAt: serverTimestamp() });
-              });
-            }
-          }
-        }
-
-        // 習慣側の最低限集計（本番はCloud Functions推奨）
-        await recomputeHabitStatsFromActions(ch.habitId, payload);
-
-        await refreshTodayToasts();
+        // リタイア時：評価（未送信なら）
+        await maybePromptRating(cur.habitId || ch.habitId, { ...cur, habitId: ch.habitId }, "retire");
+        await refreshSideActive();
         await refreshRecords();
         await refreshHome();
         await refreshProfile();
-      }catch{
-        alert("失敗");
+        return;
       }
-    }
 
-    async function recomputeHabitStatsFromActions(habitId, payload){
-      try{
-        await runTransaction(db, async (tx)=>{
-          const href = doc(db, "habits", habitId);
-          const hs = await tx.get(href);
-          if(!hs.exists()) return;
-          const h = hs.data();
+      update.updatedAt = serverTimestamp();
+      await updateDoc(ref, update);
 
-          let feelEasy = Number(h.feelEasy||0);
-          let feelMid  = Number(h.feelMid||0);
-          let feelHard = Number(h.feelHard||0);
+      // 7日後チェック（7日目の行動をした直後：dayが8になるので、直前が7だったかで判定）
+      if(payload.type==="done"){
+        const beforeDay = Number(cur.day||1);
+        const afterDay = beforeDay + 1;
+        const afterSuccess = Number(cur.successDays||0)+1;
 
-          let successRate = Number(h.successRate||0);
-          let avgDays = Number(h.avgDays||0);
-          const participants = Math.max(1, Number(h.participantsCount||0));
-
-          if(payload.type === "done"){
-            if(payload.diff === "easy") feelEasy++;
-            if(payload.diff === "mid") feelMid++;
-            if(payload.diff === "hard") feelHard++;
-
-            const totalFeel = feelEasy + feelMid + feelHard;
-            successRate = totalFeel ? (totalFeel / totalFeel) * 100 : successRate; // 最低限(表示用)
-            avgDays = totalFeel ? (totalFeel / participants) : avgDays;
+        if(beforeDay >= 7){
+          // すでに7超えは何もしない
+        }else if(afterDay === 8){
+          // 7日目をやった直後
+          // 7日のうち5日達成でクリア（成功ベース）
+          if(afterSuccess >= 5){
+            await updateDoc(ref, { status:"cleared", updatedAt: serverTimestamp() });
+            await runTransaction(db, async (tx)=>{
+              const uref = doc(db, "users", currentUser.uid);
+              const us = await tx.get(uref);
+              if(!us.exists()) return;
+              const u = us.data();
+              tx.update(uref, { clearCount: Number(u.clearCount||0)+1, updatedAt: serverTimestamp() });
+            });
+          }else{
+            await updateDoc(ref, { status:"finished", updatedAt: serverTimestamp() });
           }
 
-          tx.update(href, {
-            feelEasy, feelMid, feelHard,
-            successRate: Number.isFinite(successRate) ? successRate : 0,
-            avgDays: Number.isFinite(avgDays) ? avgDays : 0,
-            updatedAt: serverTimestamp()
-          });
-        });
-      }catch{}
+          // 終了時：評価（未送信なら）
+          const finalSnap = await getDoc(ref);
+          const finalCh = finalSnap.exists() ? finalSnap.data() : cur;
+          await maybePromptRating(ch.habitId, { ...finalCh, habitId: ch.habitId }, "finish");
+        }
+      }
+
+      await refreshSideActive();
+      await refreshRecords();
+      await refreshHome();
+      await refreshProfile();
     }
 
-    // ===== Auto retire (★複合インデックス不要版) =====
+    // ===== Auto retire (3日未報告) =====
     async function autoRetireIfMissed(){
       const today = nowLocal();
       const qs = await getDocs(query(
@@ -1786,7 +2010,7 @@
         if(ch.status !== "active") return;
 
         const startD = parseYMD(ch.startDate);
-        const lastD = parseYMD(ch.lastReportedDate);
+        const lastD = parseYMD(ch.lastActionYMD);
 
         let miss = 0;
         if(lastD){
@@ -1802,7 +2026,6 @@
           updates.push(updateDoc(ref, {
             status:"retired",
             streakMiss: miss,
-            lastReportedDate: fmtDate(today) + "（自動リタイア）",
             updatedAt: serverTimestamp()
           }));
         }else{
@@ -1814,162 +2037,69 @@
 
     // ===== Records =====
     async function refreshRecords(){
+      if(!currentUser) return;
       const qs = await getDocs(query(
         collection(db, "userChallenges", currentUser.uid, "items"),
         orderBy("updatedAt","desc"),
-        limit(120)
+        limit(150)
       ));
       const items = [];
       qs.forEach(s=> items.push(s.data()));
 
-      const order = (st)=> st==="active"?0 : st==="cleared"?1 : 2;
-      items.sort((a,b)=> order(a.status)-order(b.status));
-
       recordList.innerHTML = "";
       for(const ch of items){
-        recordList.appendChild(renderRecordRow(ch));
-      }
-    }
-
-    function renderRecordRow(ch){
-      const card = document.createElement("div");
-      card.className = "simpleRow";
-
-      const st = ch.status;
-      const stBadge = st==="active" ? "✅" : st==="cleared" ? "🏁" : "🏳️";
-      const day = Number(ch.day||1);
-      const success = Number(ch.successDays||0);
-      const rest = Number(ch.restDays||0);
-
-      card.innerHTML = `
-        <div class="rowTop">
-          <div>
-            <p class="rowTitle">${stBadge} ${escapeHtml(ch.habitTitle||"")}</p>
-            <div class="rowSub">${escapeHtml(ch.startDate||"—")} / ${day}日目 / 成功:${success} / 休:${rest}<br>${escapeHtml(ch.lastReportedDate||"")}</div>
+        const row = document.createElement("div");
+        row.className = "review";
+        row.innerHTML = `
+          <div class="reviewTop">
+            <div class="reviewName">${escapeHtml(ch.habitTitle||"")}</div>
+            <div class="reviewMeta">${escapeHtml(String(ch.status||""))}</div>
           </div>
-          <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end">
-            ${st==="active"
-              ? `<button class="btn small danger" data-act="retire">リタイア</button>`
-              : `<button class="btn small" data-act="restart">再挑戦</button>`}
-          </div>
-        </div>
-      `;
-
-      const btnRet = card.querySelector('[data-act="retire"]');
-      if(btnRet){
-        btnRet.addEventListener("click", async ()=>{
-          if(!confirm("リタイア？")) return;
-          await applyReport(ch, { type:"retire" });
-        });
+          <div class="reviewText">D${Number(ch.day||1)} / 成功 ${Number(ch.successDays||0)} / 休 ${Number(ch.restDays||0)} / 未報告 ${Number(ch.streakMiss||0)}</div>
+        `;
+        recordList.appendChild(row);
       }
-      const btnRestart = card.querySelector('[data-act="restart"]');
-      if(btnRestart){
-        btnRestart.addEventListener("click", async ()=>{
-          if(!confirm("再挑戦？")) return;
-          await restartChallenge(ch);
-        });
-      }
-      return card;
     }
 
-    async function restartChallenge(ch){
-      const today = fmtDate(nowLocal());
-      const ref = doc(db, "userChallenges", currentUser.uid, "items", ch.habitId);
-      await updateDoc(ref, {
-        status:"active",
-        startDate: today,
-        day:1,
-        lastReportedDate:"",
-        streakMiss:0,
-        successDays:0,
-        restDays:0,
-        difficulty:{easy:0,mid:0,hard:0},
-        updatedAt: serverTimestamp()
-      });
-      await refreshTodayToasts();
-      await refreshRecords();
-      await refreshHome();
-      await refreshProfile();
-    }
-
-    // ===== Bookmarks view (Phase3) =====
+    // ===== Bookmarks =====
     async function refreshBookmarksView(){
       if(!currentUser) return;
-      bmFeed.innerHTML = "";
       bmCount.textContent = String(cachedBookmarks.size);
-
+      bmFeed.innerHTML = "";
       if(cachedBookmarks.size === 0) return;
 
-      // habitsをまとめて取って表示（最新のみ）
-      const qs = await getDocs(query(collection(db,"habits"), orderBy("createdAt","desc"), limit(250)));
+      const qs = await getDocs(query(collection(db,"habits"), orderBy("createdAt","desc"), limit(260)));
       const habits = [];
-      qs.forEach(s=> habits.push({id:s.id, ...s.data()}));
+      qs.forEach(s=> habits.push({ id:s.id, ...s.data() }));
       const filtered = habits.filter(h => cachedBookmarks.has(h.id));
-
       bmCount.textContent = String(filtered.length);
       for(const h of filtered){
         bmFeed.appendChild(renderHabitCard(h));
       }
     }
 
-    // ===== Profile (Phase3) =====
+    // ===== Profile =====
     async function refreshProfile(){
-      const u = myProfile || {};
+      if(!currentUser) return;
 
-      // counts
-      const myPostsCount = await countMyPosts();
-      const favCreatorsCount = cachedFavCreators.size;
-      const bookmarksCount = cachedBookmarks.size;
-
-      // active count
       const actives = await loadActiveChallenges();
+      const myPosts = await countMyPosts();
 
       profileList.innerHTML = `
-        <div class="simpleRow">
-          <div class="rowTop">
-            <div>
-              <p class="rowTitle">👤 ${escapeHtml(u.name || "—")}</p>
-              <div class="rowSub">
-                🔥 クリア ${Number(u.clearCount||0)} / 🌱 挑戦中 ${actives.length} / 📅 総挑戦 ${Number(u.totalChallenges||0)}<br>
-                ❤️ 作成者 ${favCreatorsCount} / 🔖 保存 ${bookmarksCount} / 🧩 投稿 ${myPostsCount}<br>
-                ⭐ 評価ランク R${Number(u.ratingRank||1)}
-              </div>
-            </div>
-            <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end">
-              <button class="btn small" id="rankUp">R+1</button>
-              <button class="btn small danger" id="rankDown">R-1</button>
-              <button class="btn small" id="rename">名前変更</button>
-            </div>
+        <div class="review">
+          <div class="reviewTop">
+            <div class="reviewName">${escapeHtml(myProfile?.name||"—")}</div>
+            <div class="reviewMeta">R${Number(myProfile?.ratingRank||1)}</div>
+          </div>
+          <div class="reviewText">
+            クリア ${Number(myProfile?.clearCount||0)} / 挑戦中 ${actives.length} / 総挑戦 ${Number(myProfile?.totalChallenges||0)}\n
+            フォロー ${cachedFavCreators.size} / 保存 ${cachedBookmarks.size} / 投稿 ${myPosts}
           </div>
         </div>
       `;
-
-      const rankUp = $("rankUp");
-      const rankDown = $("rankDown");
-      const rename = $("rename");
-
-      rankUp.addEventListener("click", async ()=>{
-        const next = Math.min(3, Number(myProfile.ratingRank||1)+1);
-        await updateDoc(doc(db,"users",currentUser.uid), { ratingRank: next, updatedAt: serverTimestamp() });
-        myProfile.ratingRank = next;
-        myRankEl.textContent = String(next);
-        await refreshProfile();
-      });
-      rankDown.addEventListener("click", async ()=>{
-        const next = Math.max(1, Number(myProfile.ratingRank||1)-1);
-        await updateDoc(doc(db,"users",currentUser.uid), { ratingRank: next, updatedAt: serverTimestamp() });
-        myProfile.ratingRank = next;
-        myRankEl.textContent = String(next);
-        await refreshProfile();
-      });
-      rename.addEventListener("click", ()=>{
-        openNameModal();
-      });
     }
-
     async function countMyPosts(){
-      // インデックス不要にするため、最新からざっくりカウント（簡易）
-      const qs = await getDocs(query(collection(db,"habits"), orderBy("createdAt","desc"), limit(400)));
+      const qs = await getDocs(query(collection(db,"habits"), orderBy("createdAt","desc"), limit(450)));
       let c = 0;
       qs.forEach(s=>{
         const h = s.data();
@@ -1978,44 +2108,60 @@
       return c;
     }
 
-    // ===== Ratings (Phase2) =====
-    function openRatingModal(h){
-      ratingTargetHabit = h;
+    // ===== Rating rules (要望) =====
+    // - リタイア or 7日後(終了)で自動表示（未送信の場合）
+    // - 実際に参加した人だけ（successDays + restDays > 0 か、未報告で7日経過でもOK）
+    // - 左の「評価」ボタンでいつでも開ける（ただし参加実績が必要）
+    // - 送信したらそのチャレンジの「評価」ボタンは消える（ratingSubmitted=true）
+    async function canRate(habitId, ch){
+      const didAny = (Number(ch.successDays||0) + Number(ch.restDays||0)) > 0;
+      // 全サボりでも「7日が終わってる」ならログイン時に出す、の要望 → statusがfinished/cleared/retired ならOK
+      const finishedLike = ["cleared","finished","retired"].includes(String(ch.status||""));
+      return didAny || finishedLike;
+    }
+
+    async function maybePromptRating(habitId, ch, reason){
+      // すでに送信済みなら何もしない
+      const ref = doc(db, "userChallenges", currentUser.uid, "items", habitId);
+      const snap = await getDoc(ref);
+      if(snap.exists() && snap.data()?.ratingSubmitted) return;
+
+      // 参加条件
+      if(!(await canRate(habitId, ch))) return;
+
+      // もし既にhabits/{id}/ratings に自分のdocがあるなら出さない（要望）
+      const rref = doc(db, "habits", habitId, "ratings", currentUser.uid);
+      const rsnap = await getDoc(rref);
+      if(rsnap.exists()) {
+        // チャレンジ側も送信済みにしてボタン消す
+        await updateDoc(ref, { ratingSubmitted: true, updatedAt: serverTimestamp() });
+        return;
+      }
+
+      await openRatingModalByChallenge(ch, reason);
+    }
+
+    // ===== Rating modal =====
+    function openRatingModal(){
       ratingStars = 0;
-      ratingLiked = false;
+      ratingFollow = false;
       commentBox.value = "";
-      ratingHabitTitle.textContent = `⭐ ${h.title || ""}`;
-      myRankEl.textContent = String(myProfile?.ratingRank || 1);
-
       renderStars();
+
       likeToggle.classList.remove("active");
+      likeToggle.textContent = "フォロー";
       likeToggle.onclick = ()=>{
-        ratingLiked = !ratingLiked;
-        likeToggle.classList.toggle("active", ratingLiked);
-      };
-
-      ratingDelete.onclick = async ()=>{
-        if(!confirm("削除？")) return;
-        await deleteMyRating(h.id);
-        await recomputeRatingAgg(h.id);
-        await loadRatingsList(h.id, reviewList);
-        await refreshHome();
-      };
-
-      ratingSave.onclick = async ()=>{
-        if(ratingStars < 1){ alert("⭐"); return; }
-        await saveMyRating(h.id);
-        await recomputeRatingAgg(h.id);
-        await loadRatingsList(h.id, reviewList);
-        await refreshHome();
+        ratingFollow = !ratingFollow;
+        likeToggle.classList.toggle("active", ratingFollow);
       };
 
       ratingBg.classList.add("show");
-      loadMyRating(h.id).then(()=> loadRatingsList(h.id, reviewList));
     }
     function closeRatingModal(){
       ratingBg.classList.remove("show");
       ratingTargetHabit = null;
+      ratingReason = "";
+      ratingAllowManual = false;
     }
     ratingClose.addEventListener("click", closeRatingModal);
     ratingBg.addEventListener("click", (e)=>{ if(e.target===ratingBg) closeRatingModal(); });
@@ -2023,9 +2169,9 @@
     function renderStars(){
       starsRow.innerHTML = "";
       for(let i=1;i<=5;i++){
-        const b = document.createElement("button");
+        const b = document.createElement("div");
         b.className = "starBtn" + (i===ratingStars ? " active" : "");
-        b.textContent = `⭐ ${i}`;
+        b.textContent = String(i);
         b.addEventListener("click", ()=>{
           ratingStars = i;
           renderStars();
@@ -2034,49 +2180,65 @@
       }
     }
 
-    async function loadMyRating(habitId){
-      const ref = doc(db, "habits", habitId, "ratings", currentUser.uid);
-      const snap = await getDoc(ref);
-      if(!snap.exists()){
-        ratingStars = 0;
-        ratingLiked = false;
-        commentBox.value = "";
-        likeToggle.classList.remove("active");
-        renderStars();
-        return;
-      }
-      const data = snap.data();
-      ratingStars = Number(data.stars || 0);
-      ratingLiked = !!data.liked;
-      commentBox.value = String(data.comment || "");
-      likeToggle.classList.toggle("active", ratingLiked);
-      renderStars();
-    }
+    async function openRatingModalByChallenge(ch, reason){
+      ratingReason = reason;
+      ratingAllowManual = (reason === "manual");
+      ratingTargetHabit = ch.habitId;
 
-    async function saveMyRating(habitId){
-      const rank = Number(myProfile?.ratingRank || 1);
-      const weight = rank === 3 ? 3 : rank === 2 ? 2 : 1;
+      ratingTitle.textContent = reason==="retire" ? `評価（リタイア）` :
+                                reason==="finish" ? `評価（7日終了）` :
+                                `評価`;
 
-      const data = {
-        uid: currentUser.uid,
-        displayName: myProfile?.name || currentUser.displayName || "ユーザー",
-        photoURL: currentUser.photoURL || "",
-        stars: ratingStars,
-        liked: ratingLiked,
-        comment: (commentBox.value || "").trim().slice(0, 300),
-        rank,
-        weight,
-        updatedAt: serverTimestamp()
+      myRankEl.textContent = String(myProfile?.ratingRank || 1);
+
+      openRatingModal();
+      await loadRatingsList(ch.habitId);
+
+      ratingSave.onclick = async ()=>{
+        if(ratingStars < 1){ alert("星を選ぶ"); return; }
+
+        const habitId = ch.habitId;
+        const rank = Number(myProfile?.ratingRank || 1);
+        const weight = rank === 3 ? 3 : rank === 2 ? 2 : 1;
+
+        // rating doc
+        await setDoc(doc(db, "habits", habitId, "ratings", currentUser.uid), {
+          uid: currentUser.uid,
+          displayName: myProfile?.name || currentUser.displayName || "ユーザー",
+          photoURL: currentUser.photoURL || "",
+          stars: ratingStars,
+          followed: ratingFollow, // フォローの意思もここに入れておく（要望）
+          comment: (commentBox.value || "").trim().slice(0, 300),
+          rank,
+          weight,
+          updatedAt: serverTimestamp()
+        }, { merge:true });
+
+        // 送信したらチャレンジ側フラグ（表示消える）
+        await updateDoc(doc(db, "userChallenges", currentUser.uid, "items", habitId), {
+          ratingSubmitted: true,
+          updatedAt: serverTimestamp()
+        });
+
+        // フォロー反映
+        if(ratingFollow && ch.creatorUid){
+          const cref = doc(db, "userCreatorFavs", currentUser.uid, "items", ch.creatorUid);
+          await setDoc(cref, { createdAt: serverTimestamp() }, { merge:true });
+          cachedFavCreators.add(ch.creatorUid);
+        }
+
+        // 集計（本番はFunctions推奨 / ここは簡易）
+        await recomputeRatingAgg(habitId);
+
+        closeRatingModal();
+        await refreshSideActive();
+        await refreshHome();
+        await refreshProfile();
       };
-      await setDoc(doc(db, "habits", habitId, "ratings", currentUser.uid), data, { merge:true });
     }
 
-    async function deleteMyRating(habitId){
-      await deleteDoc(doc(db, "habits", habitId, "ratings", currentUser.uid));
-    }
-
-    async function loadRatingsList(habitId, container){
-      container.innerHTML = "";
+    async function loadRatingsList(habitId){
+      reviewList.innerHTML = "";
       const qs = await getDocs(query(
         collection(db, "habits", habitId, "ratings"),
         orderBy("updatedAt","desc"),
@@ -2089,70 +2251,51 @@
         box.className = "review";
         box.innerHTML = `
           <div class="reviewTop">
-            <div class="reviewName">${escapeHtml(r.displayName || "ユーザー")}</div>
-            <div class="reviewMeta">⭐ ${Number(r.stars||0)} ${r.liked ? "❤️" : ""}（R${Number(r.rank||1)}）</div>
+            <div class="reviewName">${escapeHtml(r.displayName||"ユーザー")}</div>
+            <div class="reviewMeta">★${Number(r.stars||0)} R${Number(r.rank||1)}</div>
           </div>
-          <div class="reviewText">${escapeHtml(r.comment || "")}</div>
+          <div class="reviewText">${escapeHtml(r.comment||"")}</div>
         `;
-        container.appendChild(box);
+        reviewList.appendChild(box);
       }
     }
 
     async function recomputeRatingAgg(habitId){
-      await runTransaction(db, async (tx)=>{
-        const href = doc(db, "habits", habitId);
-        const hs = await tx.get(href);
-        if(!hs.exists()) return;
+      // 簡易：サブコレを読んで重み平均 → habitsへ反映
+      const rs = await getDocs(query(collection(db, "habits", habitId, "ratings"), limit(500)));
+      let wSum = 0;
+      let swSum = 0;
+      let count = 0;
+      rs.forEach(s=>{
+        const r = s.data();
+        const stars = Number(r.stars||0);
+        const w = Number(r.weight||1);
+        if(stars>=1 && stars<=5){
+          wSum += w;
+          swSum += stars*w;
+          count += 1;
+        }
+      });
+      const avg = wSum ? (swSum/wSum) : 0;
 
-        // ここは getDocs を使うので tx外扱いに近いが、最低限のために許容
-        // 本番は Functions 推奨
-        const rs = await getDocs(query(collection(db, "habits", habitId, "ratings"), limit(500)));
-        let wSum = 0;
-        let swSum = 0;
-        let ratingCount = 0;
-
-        rs.forEach(s=>{
-          const r = s.data();
-          const stars = Number(r.stars||0);
-          const w = Number(r.weight||1);
-          if(stars>=1 && stars<=5){
-            wSum += w;
-            swSum += stars*w;
-            ratingCount += 1;
-          }
-        });
-        const avgRating = wSum ? (swSum / wSum) : 0;
-
-        tx.update(href, {
-          ratingCount,
-          avgRating: Number.isFinite(avgRating) ? avgRating : 0,
-          updatedAt: serverTimestamp()
-        });
+      await updateDoc(doc(db, "habits", habitId), {
+        avgRating: Number.isFinite(avg) ? avg : 0,
+        ratingCount: count,
+        updatedAt: serverTimestamp()
       });
     }
 
-    // reviews view-only
-    function openReviewsModal(h){
-      reviewsTitle.textContent = `💬 ${h.title || ""}`;
-      reviewsList.innerHTML = "";
-      reviewsBg.classList.add("show");
-      loadRatingsList(h.id, reviewsList);
-    }
-    function closeReviewsModal(){ reviewsBg.classList.remove("show"); }
-    reviewsClose.addEventListener("click", closeReviewsModal);
-    reviewsBg.addEventListener("click", (e)=>{ if(e.target===reviewsBg) closeReviewsModal(); });
-
-    // ===== Edit (Phase2) ver1-3 + derive =====
+    // ===== Edit (自分だけ) ver履歴3件 =====
     function openEditModal(h){
       editTargetHabit = h;
-      editTitle.textContent = `🛠️ ${h.title || ""}`;
+      editTitle.textContent = `編集`;
       editNewTitle.value = h.title || "";
-      editNewTags.value = (h.tags || []).join(",");
-      editNewCategory.value = h.category || "";
       editNewAction.value = h.action || "";
+      editNewTags.value = (h.tags||[]).join(",");
+      editNewCategory.value = h.category || "";
+      updateEditCounter();
       versionsList.innerHTML = "";
       editBg.classList.add("show");
-
       loadVersions(h.id);
     }
     function closeEditModal(){
@@ -2161,6 +2304,8 @@
     }
     editClose.addEventListener("click", closeEditModal);
     editBg.addEventListener("click", (e)=>{ if(e.target===editBg) closeEditModal(); });
+    function updateEditCounter(){ editCounter.textContent = `${editNewAction.value.length} / 40`; }
+    editNewAction.addEventListener("input", updateEditCounter);
 
     async function loadVersions(habitId){
       versionsList.innerHTML = "";
@@ -2188,12 +2333,12 @@
       if(!editTargetHabit) return;
 
       const title = editNewTitle.value.trim();
+      const action = editNewAction.value.trim();
       const tags = editNewTags.value.split(",").map(s=>s.trim()).filter(Boolean).slice(0,8);
       const category = String(editNewCategory.value||"").trim();
-      const action = editNewAction.value.trim();
 
-      if(title.length < 2 || action.length < 2){ alert("短すぎ"); return; }
-      if(action.length > 40){ alert("40文字以内"); return; }
+      if(title.length<2 || action.length<2){ alert("短い"); return; }
+      if(action.length>40){ alert("40文字以内"); return; }
 
       const habitId = editTargetHabit.id;
 
@@ -2203,7 +2348,7 @@
         if(!hs.exists()) return;
         const cur = hs.data();
 
-        // versions に旧を保存
+        // versionsに旧保存
         const vref = doc(collection(db, "habits", habitId, "versions"));
         tx.set(vref, {
           version: Number(cur.version||1),
@@ -2214,23 +2359,17 @@
           createdAt: serverTimestamp()
         });
 
-        // verは最大3（表示はversions側で3件に制限）
-        const nextVer = Math.min(3, Number(cur.version||1) + 1);
-
-        tx.update(href, {
-          title, action, tags, category,
-          version: nextVer,
-          updatedAt: serverTimestamp()
-        });
+        const nextVer = Math.min(3, Number(cur.version||1)+1);
+        tx.update(href, { title, action, tags, category, version: nextVer, updatedAt: serverTimestamp() });
       });
 
-      // versionsが増えすぎたら古いのを消す（ベストエフォート）
+      // 古いの消す（ベストエフォート）
       try{
-        const qs = await getDocs(query(collection(db, "habits", habitId, "versions"), orderBy("createdAt","desc"), limit(10)));
+        const qs = await getDocs(query(collection(db,"habits",habitId,"versions"), orderBy("createdAt","desc"), limit(10)));
         const all = [];
-        qs.forEach(s=> all.push({ref:s.ref}));
-        const toDelete = all.slice(3);
-        await Promise.allSettled(toDelete.map(x=>deleteDoc(x.ref)));
+        qs.forEach(s=> all.push(s.ref));
+        const del = all.slice(3);
+        await Promise.allSettled(del.map(r=>deleteDoc(r)));
       }catch{}
 
       await loadVersions(habitId);
@@ -2239,50 +2378,47 @@
 
     btnDerive.addEventListener("click", async ()=>{
       if(!editTargetHabit) return;
-
       const title = editNewTitle.value.trim();
+      const action = editNewAction.value.trim();
       const tags = editNewTags.value.split(",").map(s=>s.trim()).filter(Boolean).slice(0,8);
       const category = String(editNewCategory.value||"").trim();
-      const action = editNewAction.value.trim();
 
-      if(title.length < 2 || action.length < 2){ alert("短すぎ"); return; }
-      if(action.length > 40){ alert("40文字以内"); return; }
+      if(title.length<2 || action.length<2){ alert("短い"); return; }
+      if(action.length>40){ alert("40文字以内"); return; }
 
-      await addDoc(collection(db, "habits"), {
+      await addDoc(collection(db,"habits"), {
         title, action, tags, category,
         creatorUid: currentUser.uid,
         creatorName: myProfile?.name || (currentUser.displayName || "作成者"),
         creatorPhoto: currentUser.photoURL || "",
         createdAt: serverTimestamp(),
-
+        updatedAt: serverTimestamp(),
         avgRating: 0,
         ratingCount: 0,
         participantsCount: 0,
         avgDays: 0,
         successRate: 0,
-        feelEasy: 0,
-        feelMid: 0,
-        feelHard: 0,
-
         baseHabitId: editTargetHabit.id,
-        version: 1,
-        updatedAt: serverTimestamp()
+        version: 1
       });
 
-      await refreshHome();
       closeEditModal();
+      await refreshHome();
       await refreshProfile();
     });
 
-    // ===== UI events =====
-    function setSelectedTagSafe(tag){ setSelectedTag(tag); }
-    btnClearTag.addEventListener("click", ()=> setSelectedTagSafe(""));
+    // ===== Startup UI =====
+    showOnly("home");
 
-    // ===== Init misc =====
-    function updateAuthButtons(){
-      btnLogout.disabled = !currentUser;
-    }
-    updateAuthButtons();
+    // 初回：投稿文字数表示
+    updatePostCounter();
+
+    // ===== Background refreshers =====
+    // （ログイン後に開始）
+    setInterval(()=>{
+      if(!currentUser) return;
+      refreshDailyDoneCount();
+    }, 30000);
 
   </script>
 </body>
