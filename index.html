@@ -1,0 +1,2090 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>習慣さがし｜つづく（Web版）</title>
+  <meta name="color-scheme" content="light dark" />
+  <style>
+    :root{
+      --bg1:#071a2b;
+      --bg2:#0b2b45;
+      --card:#0f2030cc;
+      --card2:#0f2030f2;
+      --text:#eaf6ff;
+      --muted:#b7d4e8;
+      --line:#24465f;
+      --accent:#57c7ff;
+      --accent2:#7cffa6;
+      --danger:#ff4d5e;
+      --warn:#ffc94d;
+
+      --radius:16px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", "Meiryo", sans-serif;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      overflow:hidden;
+      background: radial-gradient(1200px 700px at 10% 0%, #103e63 0%, transparent 55%),
+                  radial-gradient(900px 600px at 95% 30%, #083a5a 0%, transparent 55%),
+                  linear-gradient(160deg, var(--bg1), var(--bg2));
+    }
+
+    /* --- 背景の「ぼやけた魚」っぽい演出（CSSだけ） --- */
+    .bg-fish{
+      position:fixed; inset:0;
+      pointer-events:none;
+      filter: blur(0.5px);
+      opacity:.35;
+      mix-blend-mode:screen;
+    }
+    .fish{
+      position:absolute;
+      width:240px; height:90px;
+      background: radial-gradient(closest-side, rgba(120,220,255,.5), transparent 70%),
+                  radial-gradient(closest-side, rgba(90,255,180,.35), transparent 72%);
+      border-radius: 999px;
+      transform: translateX(-30vw);
+      animation: swim 16s linear infinite;
+      filter: blur(10px);
+    }
+    .fish::before{
+      content:"";
+      position:absolute;
+      right:-18px; top:26px;
+      width:40px; height:40px;
+      background: radial-gradient(circle at 30% 50%, rgba(120,220,255,.5), transparent 70%);
+      border-radius: 8px 999px 999px 8px;
+      transform: rotate(20deg);
+      filter: blur(6px);
+    }
+    .fish.f2{ top:18%; animation-duration: 22s; opacity:.25; transform: translateX(-40vw) scale(1.1);}
+    .fish.f3{ top:62%; animation-duration: 19s; opacity:.2; transform: translateX(-45vw) scale(.95);}
+    .fish.f1{ top:38%; animation-duration: 17s; opacity:.22; transform: translateX(-35vw) scale(1.2);}
+    @keyframes swim{
+      0%{ left:-35vw; transform: translateY(0) scale(1) }
+      30%{ transform: translateY(-10px) scale(1.02)}
+      60%{ transform: translateY(8px) scale(.99)}
+      100%{ left:120vw; transform: translateY(0) scale(1) }
+    }
+
+    /* --- レイアウト --- */
+    .app{
+      position:relative;
+      height:100%;
+      display:grid;
+      grid-template-columns: 280px 1fr; /* 左：固定、右：可変 */
+      gap:0;
+    }
+    @media (max-width: 980px){
+      body{overflow:auto}
+      .app{grid-template-columns: 88px 1fr; height:auto; min-height:100%}
+      .nav .label{display:none}
+      .nav{padding:10px 8px}
+      .nav .navBtn{justify-content:center}
+      .content{padding:14px}
+      .topbar{gap:10px}
+      .tagGrid{grid-template-columns: 1fr; }
+    }
+
+    /* --- 左ナビ --- */
+    .nav{
+      padding:18px 16px;
+      border-right:1px solid rgba(255,255,255,.06);
+      background: linear-gradient(180deg, rgba(10,35,55,.7), rgba(10,30,48,.35));
+      backdrop-filter: blur(10px);
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px;
+      padding:10px 10px 16px;
+    }
+    .logo{
+      width:40px; height:40px; border-radius:14px;
+      background: radial-gradient(circle at 30% 30%, #7fe3ff, #1a6f9b 55%, #07314d);
+      box-shadow: 0 12px 26px rgba(0,0,0,.35);
+    }
+    .brand h1{
+      font-size:16px; margin:0; line-height:1.1;
+      letter-spacing:.06em;
+    }
+    .brand .sub{font-size:12px; color:var(--muted); margin-top:3px}
+    .navSection{margin-top:10px}
+    .navBtn{
+      width:100%;
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+      color:var(--text);
+      border-radius:14px;
+      padding:12px 12px;
+      display:flex; align-items:center; gap:10px;
+      cursor:pointer;
+      margin:10px 0;
+      transition: .15s transform, .15s background, .15s border-color;
+    }
+    .navBtn:hover{transform: translateY(-1px); background: rgba(255,255,255,.06)}
+    .navBtn.active{
+      border-color: rgba(87,199,255,.45);
+      background: linear-gradient(180deg, rgba(87,199,255,.14), rgba(255,255,255,.04));
+      box-shadow: 0 14px 30px rgba(0,0,0,.22);
+    }
+    .navBtn .ico{font-size:20px; width:26px; text-align:center}
+    .navBtn .label{font-weight:700; letter-spacing:.04em}
+    .navFooter{
+      position:sticky; bottom:16px;
+      margin-top:18px;
+      padding-top:14px;
+      border-top:1px solid rgba(255,255,255,.08);
+    }
+    .userCard{
+      display:flex; align-items:center; gap:10px;
+      padding:10px;
+      border-radius:14px;
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .avatar{
+      width:34px; height:34px; border-radius:50%;
+      background: rgba(255,255,255,.08);
+      overflow:hidden;
+      flex: 0 0 auto;
+      display:grid; place-items:center;
+      border:1px solid rgba(255,255,255,.12);
+    }
+    .avatar img{width:100%; height:100%; object-fit:cover}
+    .userMeta{min-width:0}
+    .userName{font-size:13px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+    .userSmall{font-size:11px; color:var(--muted); margin-top:2px}
+    .authRow{display:flex; gap:10px; margin-top:10px}
+    .btn{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      border-radius:12px;
+      padding:10px 12px;
+      cursor:pointer;
+      font-weight:800;
+      letter-spacing:.03em;
+      transition:.15s transform, .15s background, .15s border-color;
+      user-select:none;
+    }
+    .btn:hover{transform:translateY(-1px); background: rgba(255,255,255,.08)}
+    .btn.primary{
+      border-color: rgba(87,199,255,.55);
+      background: linear-gradient(180deg, rgba(87,199,255,.18), rgba(255,255,255,.06));
+    }
+    .btn.danger{
+      border-color: rgba(255,77,94,.55);
+      background: linear-gradient(180deg, rgba(255,77,94,.16), rgba(255,255,255,.04));
+    }
+    .btn.small{padding:8px 10px; font-size:12px; border-radius:10px}
+    .btn.icon{display:flex; align-items:center; gap:8px}
+    .btn:disabled{opacity:.55; cursor:not-allowed; transform:none}
+
+    /* --- 右コンテンツ --- */
+    .content{
+      padding:18px 18px 12px;
+      overflow:auto;
+      height:100%;
+    }
+    .titleRow{
+      display:flex; align-items:flex-end; justify-content:space-between; gap:14px;
+      margin-bottom:14px;
+    }
+    .pageTitle{
+      margin:0;
+      font-size:20px;
+      letter-spacing:.06em;
+    }
+    .pageHint{
+      color:var(--muted);
+      font-size:12px;
+      margin-top:6px;
+    }
+
+    .panel{
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    /* --- ホーム：上部検索 --- */
+    .topbar{
+      display:grid;
+      grid-template-columns: 1fr auto auto;
+      gap:12px;
+      padding:14px;
+      align-items:center;
+    }
+    .searchBox{
+      display:flex; gap:10px; align-items:center;
+      padding:10px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.16);
+    }
+    .searchBox input{
+      width:100%;
+      border:none;
+      outline:none;
+      background:transparent;
+      color:var(--text);
+      font-size:14px;
+    }
+    .searchBox .kbd{
+      font-family:var(--mono);
+      font-size:11px;
+      color:rgba(255,255,255,.6);
+      border:1px solid rgba(255,255,255,.14);
+      padding:2px 6px;
+      border-radius:8px;
+    }
+    .select{
+      min-width: 170px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.16);
+      color:var(--text);
+      padding:10px 12px;
+      font-weight:700;
+      outline:none;
+    }
+
+    /* --- タグエリア --- */
+    .tagArea{
+      padding: 0 14px 14px;
+    }
+    .tagGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    .tagBlock{
+      padding:12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.12);
+      min-height:78px;
+    }
+    .tagBlock .head{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin-bottom:10px;
+    }
+    .tagBlock .ttl{font-size:12px; color:var(--muted); font-weight:800; letter-spacing:.06em}
+    .chips{display:flex; gap:8px; flex-wrap:wrap}
+    .chip{
+      border:1px solid rgba(87,199,255,.25);
+      background: rgba(87,199,255,.10);
+      color: var(--text);
+      padding:7px 10px;
+      border-radius: 999px;
+      cursor:pointer;
+      font-weight:800;
+      font-size:12px;
+      transition:.12s transform, .12s background;
+      user-select:none;
+    }
+    .chip:hover{transform: translateY(-1px); background: rgba(87,199,255,.14)}
+    .chip.active{
+      border-color: rgba(124,255,166,.55);
+      background: rgba(124,255,166,.14);
+    }
+
+    /* --- 投稿一覧 --- */
+    .feedHeader{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px;
+      padding: 12px 14px 0;
+    }
+    .feedMeta{
+      font-size:12px;
+      color: var(--muted);
+      display:flex; gap:10px; flex-wrap:wrap;
+    }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.14);
+    }
+    .feed{
+      padding: 12px 14px 14px;
+      display:flex; flex-direction:column; gap:12px;
+    }
+    .habitCard{
+      position:relative;
+      padding:12px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(0,0,0,.16), rgba(255,255,255,.03));
+      overflow:hidden;
+    }
+    .habitTop{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .miniUser{
+      display:flex; align-items:center; gap:8px; min-width:0;
+      opacity:.95;
+    }
+    .miniUser .miniAva{
+      width:24px; height:24px; border-radius:50%;
+      background: rgba(255,255,255,.08);
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.12);
+    }
+    .miniUser .miniAva img{width:100%; height:100%; object-fit:cover}
+    .miniUser .miniName{
+      font-size:12px; font-weight:800;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      max-width: 210px;
+    }
+    .badgeRow{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
+    .badge{
+      font-size:11px;
+      padding:5px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.14);
+      color: rgba(255,255,255,.85);
+      font-weight:800;
+    }
+    .badge.cat{border-color: rgba(255,201,77,.28); background: rgba(255,201,77,.12)}
+    .badge.tag{border-color: rgba(87,199,255,.28); background: rgba(87,199,255,.10)}
+    .habitTitle{
+      font-size:16px;
+      font-weight:900;
+      letter-spacing:.03em;
+      margin:2px 0 6px;
+    }
+    .habitDesc{
+      color: rgba(234,246,255,.92);
+      font-size:13px;
+      line-height:1.55;
+      margin:0 0 10px;
+      white-space:pre-wrap;
+    }
+    .habitBottom{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px; flex-wrap:wrap;
+    }
+    .stats{
+      display:flex; gap:10px; flex-wrap:wrap;
+      color: rgba(234,246,255,.9);
+      font-size:12px;
+      font-weight:800;
+    }
+    .stat{
+      display:flex; align-items:center; gap:7px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.14);
+    }
+    .actions{display:flex; gap:10px; flex-wrap:wrap}
+    .btnTry{
+      border:none;
+      background: linear-gradient(180deg, rgba(255,77,94,.95), rgba(255,77,94,.62));
+      color:#fff;
+      border-radius: 12px;
+      padding:10px 12px;
+      font-weight:950;
+      cursor:pointer;
+      box-shadow: 0 12px 26px rgba(255,77,94,.18);
+    }
+    .btnTry:hover{filter:brightness(1.03)}
+    .btnGhost{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.14);
+      color:var(--text);
+      border-radius: 12px;
+      padding:10px 12px;
+      font-weight:900;
+      cursor:pointer;
+    }
+    .btnGhost:hover{background: rgba(255,255,255,.06)}
+    .bookmarkMark{font-size:16px}
+
+    /* --- 今日の習慣通知（上から出る） --- */
+    .toastWrap{
+      position:sticky;
+      top:10px;
+      z-index:20;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      padding: 0 0 10px;
+    }
+    .toast{
+      border-radius: 16px;
+      border:1px solid rgba(124,255,166,.25);
+      background: linear-gradient(180deg, rgba(124,255,166,.14), rgba(0,0,0,.12));
+      padding:12px;
+      box-shadow: var(--shadow);
+      display:flex; gap:12px; align-items:center; justify-content:space-between;
+      animation: pop .18s ease-out;
+    }
+    @keyframes pop{from{transform: translateY(-6px); opacity:.0} to{transform: translateY(0); opacity:1}}
+    .toast .left{display:flex; flex-direction:column; gap:4px; min-width:0}
+    .toast .kicker{font-size:12px; color:rgba(255,255,255,.85); font-weight:900}
+    .toast .main{font-size:14px; font-weight:950; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+    .toast .sub{font-size:12px; color:var(--muted)}
+    .toast .right{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
+    .seg{
+      display:flex; gap:8px; flex-wrap:wrap;
+      margin-top:8px;
+    }
+    .emojiBtn{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.16);
+      border-radius: 12px;
+      padding:10px 12px;
+      cursor:pointer;
+      font-weight:900;
+      color:var(--text);
+      display:flex; align-items:center; gap:8px;
+    }
+    .emojiBtn:hover{background: rgba(255,255,255,.06)}
+    .emojiBtn.primary{border-color: rgba(124,255,166,.45); background: rgba(124,255,166,.12)}
+    .emojiBtn.danger{border-color: rgba(255,77,94,.45); background: rgba(255,77,94,.10)}
+    .emojiBtn.warn{border-color: rgba(255,201,77,.45); background: rgba(255,201,77,.10)}
+
+    /* --- 作成フォーム（下固定っぽく見せる） --- */
+    .composer{
+      position:sticky;
+      bottom: 12px;
+      z-index:10;
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(10,25,38,.78);
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow);
+    }
+    .composer .row{
+      display:grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 980px){
+      .composer .row{grid-template-columns: 1fr}
+    }
+    .field{
+      display:flex; flex-direction:column; gap:6px;
+    }
+    .field label{
+      font-size:11px; color:var(--muted); font-weight:900; letter-spacing:.06em;
+    }
+    .field input, .field textarea{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.16);
+      color:var(--text);
+      border-radius: 14px;
+      padding:10px 12px;
+      outline:none;
+      font-size:14px;
+    }
+    .field textarea{min-height: 74px; resize: vertical}
+    .hint{
+      font-size:11px; color: rgba(255,255,255,.65);
+      margin-top:6px;
+      line-height:1.5;
+    }
+    .composerFooter{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin-top:10px;
+      flex-wrap:wrap;
+    }
+    .counter{
+      font-family:var(--mono);
+      font-size:11px;
+      color: rgba(255,255,255,.7);
+      border:1px solid rgba(255,255,255,.12);
+      padding:6px 10px;
+      border-radius:999px;
+      background: rgba(0,0,0,.14);
+    }
+
+    /* --- 画面切り替え --- */
+    .view{display:none}
+    .view.active{display:block}
+
+    /* --- 達成記録 --- */
+    .recordGrid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+      padding:14px;
+    }
+    .recordCard{
+      padding:12px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.14);
+    }
+    .recordCard .rTop{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
+    }
+    .recordCard .rTitle{font-weight:950; font-size:14px; margin:0}
+    .recordCard .rSub{color:var(--muted); font-size:12px; margin-top:6px}
+    .stamps{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+    .stamp{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.12);
+      border-radius: 12px;
+      padding:8px 10px;
+      font-weight:900;
+      font-size:12px;
+    }
+    .stamp.easy{border-color: rgba(124,255,166,.35); background: rgba(124,255,166,.10)}
+    .stamp.mid{border-color: rgba(87,199,255,.35); background: rgba(87,199,255,.10)}
+    .stamp.hard{border-color: rgba(255,201,77,.40); background: rgba(255,201,77,.10)}
+    .stamp.fail{border-color: rgba(255,77,94,.40); background: rgba(255,77,94,.10)}
+    .smallNote{
+      font-size:11px; color: rgba(255,255,255,.65); margin-top:10px; line-height:1.5;
+    }
+
+    /* --- モーダル（初回カテゴリ選択） --- */
+    .modalBg{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.45);
+      display:none;
+      align-items:center; justify-content:center;
+      padding:18px;
+      z-index:50;
+    }
+    .modalBg.show{display:flex}
+    .modal{
+      width:min(720px, 100%);
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(10,25,38,.92);
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+      padding:16px;
+    }
+    .modal h2{margin:0; font-size:16px; letter-spacing:.06em}
+    .modal p{margin:8px 0 12px; color:var(--muted); font-size:12px; line-height:1.6}
+    .catList{display:flex; gap:10px; flex-wrap:wrap}
+    .catBtn{
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.14);
+      color:var(--text);
+      font-weight:900;
+      cursor:pointer;
+    }
+    .catBtn:hover{background: rgba(255,255,255,.06)}
+    .catBtn.active{border-color: rgba(87,199,255,.55); background: rgba(87,199,255,.12)}
+    .modalFooter{display:flex; gap:10px; justify-content:flex-end; margin-top:14px; flex-wrap:wrap}
+
+    /* --- 小さな「+1」演出 --- */
+    .plusOne{
+      position:fixed;
+      right:22px;
+      top: 92px;
+      z-index:60;
+      font-weight:1000;
+      font-size:14px;
+      padding:10px 12px;
+      border-radius: 999px;
+      border:1px solid rgba(124,255,166,.35);
+      background: rgba(124,255,166,.12);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      display:none;
+      animation: floatUp .9s ease-out forwards;
+    }
+    @keyframes floatUp{
+      0%{transform: translateY(8px); opacity:0}
+      15%{opacity:1}
+      100%{transform: translateY(-18px); opacity:0}
+    }
+
+    /* --- 非ログイン時の注意 --- */
+    .emptyState{
+      padding:14px;
+      color: var(--muted);
+      line-height:1.7;
+      font-size:13px;
+    }
+    .mono{font-family: var(--mono)}
+  </style>
+</head>
+
+<body>
+  <div class="bg-fish" aria-hidden="true">
+    <div class="fish f2"></div>
+    <div class="fish f1"></div>
+    <div class="fish f3"></div>
+  </div>
+
+  <div class="plusOne" id="plusOne">✨ +1 達成が反映されました</div>
+
+  <div class="app">
+    <!-- 左ナビ -->
+    <aside class="nav">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1>習慣さがし｜つづく</h1>
+          <div class="sub">みんなの口コミとデータで、習慣が進化する。</div>
+        </div>
+      </div>
+
+      <div class="navSection">
+        <button class="navBtn active" id="navHome">
+          <div class="ico">🏠</div>
+          <div class="label">ホーム</div>
+        </button>
+        <button class="navBtn" id="navRecords">
+          <div class="ico">📅</div>
+          <div class="label">達成記録</div>
+        </button>
+      </div>
+
+      <div class="navFooter">
+        <div class="userCard">
+          <div class="avatar" id="userAvatar">👤</div>
+          <div class="userMeta">
+            <div class="userName" id="userName">未ログイン</div>
+            <div class="userSmall" id="userSmall">Googleログインで保存されます</div>
+          </div>
+        </div>
+
+        <div class="authRow">
+          <button class="btn primary icon" id="btnLogin">
+            <span>🔑</span><span>Googleログイン</span>
+          </button>
+          <button class="btn danger icon" id="btnLogout" disabled>
+            <span>🚪</span><span>ログアウト</span>
+          </button>
+        </div>
+
+        <div class="hint" style="margin-top:10px">
+          Phase1：投稿 → 挑戦 → 記録 → ☆評価（簡易）<br/>
+          <span class="mono">Firebase</span>（Auth / Firestore）でデータ保存
+        </div>
+      </div>
+    </aside>
+
+    <!-- 右コンテンツ -->
+    <main class="content">
+      <!-- ========== HOME ========== -->
+      <section class="view active" id="viewHome">
+        <div class="titleRow">
+          <div>
+            <h2 class="pageTitle">ホーム</h2>
+            <div class="pageHint">検索・タグから「小さな習慣」を探して、まずは気軽に挑戦。</div>
+          </div>
+          <div class="pill" id="todayStatsPill">本日 <b id="todayDone">0</b> 人が任務達成</div>
+        </div>
+
+        <!-- 今日の習慣（通知っぽく上から） -->
+        <div class="toastWrap" id="toastWrap"></div>
+
+        <div class="panel">
+          <div class="topbar">
+            <div class="searchBox">
+              <span style="opacity:.85">🔎</span>
+              <input id="q" placeholder="習慣名 / 内容 / タグで検索（例：散歩 / 不安 / 英語）" />
+              <span class="kbd">Enter</span>
+            </div>
+
+            <select class="select" id="categoryFilter">
+              <option value="">カテゴリで検索（すべて）</option>
+              <option>健康</option>
+              <option>メンタル</option>
+              <option>勉強</option>
+              <option>仕事</option>
+              <option>生活</option>
+              <option>睡眠</option>
+              <option>運動</option>
+              <option>英語</option>
+              <option>その他</option>
+            </select>
+
+            <select class="select" id="sortBy">
+              <option value="new">🆕 新着順（基本）</option>
+              <option value="rating">⭐ 総合評価順</option>
+              <option value="success">🎯 成功率順</option>
+              <option value="days">📅 継続日数順</option>
+              <option value="favCreators">❤️ お気に入り中の人の</option>
+            </select>
+          </div>
+
+          <div class="tagArea">
+            <div class="tagGrid">
+              <div class="tagBlock">
+                <div class="head">
+                  <div class="ttl">おすすめタグ（あなたの傾向から）</div>
+                  <button class="btn small" id="btnClearTag">クリア</button>
+                </div>
+                <div class="chips" id="chipsRecommend"></div>
+              </div>
+
+              <div class="tagBlock">
+                <div class="head">
+                  <div class="ttl">トップタグ（投稿数・検索多め）</div>
+                  <span class="badge">TOP3</span>
+                </div>
+                <div class="chips" id="chipsTop"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="feedHeader">
+            <div class="feedMeta" id="feedMeta">
+              <span class="pill">表示件数：<b id="countShown">0</b></span>
+              <span class="pill">条件：<span id="filterLabel">なし</span></span>
+            </div>
+
+            <div class="feedMeta">
+              <span class="pill">あなたのカテゴリ：<b id="myCategory">未設定</b></span>
+              <button class="btn small" id="btnChangeMyCategory">変更</button>
+            </div>
+          </div>
+
+          <div class="feed" id="feed"></div>
+
+          <div class="emptyState" id="feedEmpty" style="display:none">
+            まだ投稿がありません。<br/>
+            まずは下の「投稿する」から、<b>40文字以内</b>の小さな習慣を置いてみてください。<br/>
+            例：<span class="mono">夜5分散歩 / 寝る前に水 / 目を休める1分</span>
+          </div>
+
+          <!-- 投稿フォーム（下固定っぽい） -->
+          <div class="composer" id="composer">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap">
+              <div style="font-weight:1000; letter-spacing:.06em">✍️ 習慣を投稿する（作成者）</div>
+              <div class="counter" id="counterAction">やること：0 / 40</div>
+            </div>
+
+            <div class="row" style="margin-top:10px">
+              <div class="field">
+                <label>タイトル（例：夜5分散歩）</label>
+                <input id="newTitle" placeholder="短く、分かりやすく" maxlength="40" />
+                <div class="hint">「ちょいオリジナル」OK。誰でも真似できる小さめ推奨。</div>
+              </div>
+
+              <div class="field">
+                <label>タグ（悩みタグ）例：不安, 寝つき, 集中</label>
+                <input id="newTags" placeholder="カンマ区切り（例：不安,寝つき）" />
+                <div class="hint">タグから検索され、評価順/成功率順/継続率順で表示されます。</div>
+              </div>
+
+              <div class="field">
+                <label>カテゴリ（任意）</label>
+                <input id="newCategory" placeholder="例：メンタル / 英語 / 睡眠" maxlength="20" />
+                <div class="hint">未入力でもOK。カテゴリ検索に引っかかります。</div>
+              </div>
+
+              <div class="field">
+                <label>5分でやること（40文字以内）</label>
+                <textarea id="newAction" placeholder="例：外に出て3分歩き、最後に深呼吸1回" maxlength="40"></textarea>
+                <div class="hint">ここが「実行のしやすさ」の核。短く・具体的に。</div>
+              </div>
+            </div>
+
+            <div class="composerFooter">
+              <div class="hint">
+                ログインしていない場合：投稿はできますが「保存」はされません（試運転用）。<br/>
+                ちゃんと運用するなら Googleログインをお願いします。
+              </div>
+              <div style="display:flex; gap:10px; flex-wrap:wrap">
+                <button class="btn" id="btnSeed">サンプル投稿を追加</button>
+                <button class="btn primary" id="btnPost">投稿する</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== RECORDS ========== -->
+      <section class="view" id="viewRecords">
+        <div class="titleRow">
+          <div>
+            <h2 class="pageTitle">達成記録（後のデータ基盤）</h2>
+            <div class="pageHint">挑戦中の習慣の記録・体感スタンプ（😊🙂😅）を保存。</div>
+          </div>
+          <div class="pill">現在の依頼：<b id="activeCount">0</b> / 3</div>
+        </div>
+
+        <div class="panel">
+          <div class="recordGrid" id="recordGrid"></div>
+
+          <div class="emptyState" id="recordEmpty" style="display:none">
+            まだ挑戦中の習慣がありません。<br/>
+            ホームから <b>「挑戦」</b> を押すと、ここに出ます。
+          </div>
+
+          <div class="hint" style="padding:0 14px 14px">
+            ※ Phase1の想定：<b>7日制</b>（7日のうち5日達成でクリア / 3日連続未報告でリタイア推奨）。<br/>
+            今はWeb版なので、まずは「続けやすい体験」を優先してシンプル運用にしています。
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- 初回カテゴリ選択モーダル -->
+  <div class="modalBg" id="modalBg">
+    <div class="modal">
+      <h2>最初に：どんな習慣をつけたい？（カテゴリ選択）</h2>
+      <p>
+        ここで選んだカテゴリを元に、最初のホーム一覧のおすすめが少し変わります。<br/>
+        （あとから変更できます）
+      </p>
+      <div class="catList" id="catList"></div>
+      <div class="modalFooter">
+        <button class="btn" id="modalSkip">あとで</button>
+        <button class="btn primary" id="modalSave" disabled>保存して進む</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase -->
+  <script type="module">
+    // ========= Firebase SDK =========
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-analytics.js";
+    import {
+      getAuth,
+      GoogleAuthProvider,
+      signInWithPopup,
+      signOut,
+      onAuthStateChanged,
+    } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      doc,
+      getDoc,
+      setDoc,
+      addDoc,
+      updateDoc,
+      deleteDoc,
+      getDocs,
+      query,
+      where,
+      orderBy,
+      limit,
+      serverTimestamp,
+      Timestamp
+    } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+    // ========= あなたのFirebase設定（ユーザー指定のもの） =========
+    const firebaseConfig = {
+      apiKey: "AIzaSyCvdaEW4o2y8rljlafXQJbGE-nuGQn9Q88",
+      authDomain: "zuzutomo-d8fa0.firebaseapp.com",
+      projectId: "zuzutomo-d8fa0",
+      storageBucket: "zuzutomo-d8fa0.firebasestorage.app",
+      messagingSenderId: "637121353766",
+      appId: "1:637121353766:web:dbfb13f85bfaf521616ee7",
+      measurementId: "G-C6K64YE13X"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    try { getAnalytics(app); } catch(e) { /* analyticsはローカル環境だと失敗することがあります */ }
+
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // ========= DOM =========
+    const $ = (id) => document.getElementById(id);
+
+    const navHome = $("navHome");
+    const navRecords = $("navRecords");
+    const viewHome = $("viewHome");
+    const viewRecords = $("viewRecords");
+
+    const btnLogin = $("btnLogin");
+    const btnLogout = $("btnLogout");
+
+    const userName = $("userName");
+    const userSmall = $("userSmall");
+    const userAvatar = $("userAvatar");
+
+    const qInput = $("q");
+    const categoryFilter = $("categoryFilter");
+    const sortBy = $("sortBy");
+
+    const chipsRecommend = $("chipsRecommend");
+    const chipsTop = $("chipsTop");
+    const btnClearTag = $("btnClearTag");
+
+    const feed = $("feed");
+    const feedEmpty = $("feedEmpty");
+    const countShown = $("countShown");
+    const filterLabel = $("filterLabel");
+    const myCategory = $("myCategory");
+    const btnChangeMyCategory = $("btnChangeMyCategory");
+
+    const toastWrap = $("toastWrap");
+    const plusOne = $("plusOne");
+
+    const newTitle = $("newTitle");
+    const newTags = $("newTags");
+    const newCategory = $("newCategory");
+    const newAction = $("newAction");
+    const counterAction = $("counterAction");
+    const btnPost = $("btnPost");
+    const btnSeed = $("btnSeed");
+
+    const recordGrid = $("recordGrid");
+    const recordEmpty = $("recordEmpty");
+    const activeCount = $("activeCount");
+
+    const todayDone = $("todayDone");
+
+    const modalBg = $("modalBg");
+    const catList = $("catList");
+    const modalSkip = $("modalSkip");
+    const modalSave = $("modalSave");
+
+    // ========= 状態 =========
+    let currentUser = null;
+    let myProfile = null;
+
+    // 画面のフィルタ状態
+    let selectedTag = "";
+    let selectedTopTags = []; // 表示用
+    let selectedRecoTags = []; // 表示用
+
+    // 「お気に入り中の人」(Phase3相当) ここでは最低限：creatorをお気に入りとして保存できるようにする
+    // 今回はPhase1の範囲内でも邪魔にならない最小要素として入れておく
+    let favCreatorsSet = new Set(); // uidの集合
+
+    // ========== ユーティリティ ==========
+    const nowJST = () => new Date(); // ブラウザローカルでOK（JST想定）
+    const fmtDate = (d) => {
+      const y = d.getFullYear();
+      const m = String(d.getMonth()+1).padStart(2,"0");
+      const day = String(d.getDate()).padStart(2,"0");
+      return `${y}-${m}-${day}`;
+    };
+    const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+
+    function showPlusOne(){
+      plusOne.style.display = "block";
+      plusOne.style.animation = "none";
+      // reflow
+      void plusOne.offsetWidth;
+      plusOne.style.animation = "floatUp .9s ease-out forwards";
+      setTimeout(()=> plusOne.style.display = "none", 950);
+    }
+
+    function setView(which){
+      const isHome = which === "home";
+      navHome.classList.toggle("active", isHome);
+      navRecords.classList.toggle("active", !isHome);
+      viewHome.classList.toggle("active", isHome);
+      viewRecords.classList.toggle("active", !isHome);
+      if(!isHome){
+        refreshRecords();
+      }
+    }
+
+    navHome.addEventListener("click", ()=> setView("home"));
+    navRecords.addEventListener("click", ()=> setView("records"));
+
+    // ========== 初回カテゴリ選択 ==========
+    const CATS = ["メンタル","睡眠","運動","健康","生活","勉強","英語","仕事","その他"];
+    let modalSelected = "";
+    function openCategoryModal(){
+      modalSelected = "";
+      modalSave.disabled = true;
+      catList.innerHTML = "";
+      for(const c of CATS){
+        const b = document.createElement("button");
+        b.className = "catBtn";
+        b.textContent = c;
+        b.addEventListener("click", ()=>{
+          modalSelected = c;
+          [...catList.querySelectorAll(".catBtn")].forEach(x=>x.classList.remove("active"));
+          b.classList.add("active");
+          modalSave.disabled = false;
+        });
+        catList.appendChild(b);
+      }
+      modalBg.classList.add("show");
+    }
+    function closeCategoryModal(){
+      modalBg.classList.remove("show");
+    }
+    modalSkip.addEventListener("click", ()=>{
+      closeCategoryModal();
+    });
+    modalSave.addEventListener("click", async ()=>{
+      if(!modalSelected) return;
+      if(!currentUser){
+        // 未ログインでもローカルに保存だけ
+        localStorage.setItem("myCategory", modalSelected);
+        myCategory.textContent = modalSelected;
+        closeCategoryModal();
+        await refreshHome();
+        return;
+      }
+      await ensureProfile();
+      await updateDoc(doc(db,"users",currentUser.uid), {
+        preferredCategory: modalSelected,
+        updatedAt: serverTimestamp()
+      });
+      myProfile.preferredCategory = modalSelected;
+      myCategory.textContent = modalSelected;
+      closeCategoryModal();
+      await refreshHome();
+    });
+
+    btnChangeMyCategory.addEventListener("click", openCategoryModal);
+
+    // ========== ログイン/ログアウト ==========
+    btnLogin.addEventListener("click", async ()=>{
+      const provider = new GoogleAuthProvider();
+      try{
+        await signInWithPopup(auth, provider);
+      }catch(e){
+        alert("ログインに失敗しました：\n" + (e?.message ?? e));
+      }
+    });
+
+    btnLogout.addEventListener("click", async ()=>{
+      try{
+        await signOut(auth);
+      }catch(e){
+        alert("ログアウトに失敗しました：\n" + (e?.message ?? e));
+      }
+    });
+
+    onAuthStateChanged(auth, async (user)=>{
+      currentUser = user || null;
+      btnLogout.disabled = !currentUser;
+
+      if(!currentUser){
+        userName.textContent = "未ログイン";
+        userSmall.textContent = "Googleログインで保存されます";
+        userAvatar.innerHTML = "👤";
+        myProfile = null;
+
+        // ローカルカテゴリ
+        const lc = localStorage.getItem("myCategory") || "未設定";
+        myCategory.textContent = lc;
+
+        // favCreatorsはローカル
+        try{
+          const raw = localStorage.getItem("favCreators");
+          favCreatorsSet = new Set(raw ? JSON.parse(raw) : []);
+        }catch{ favCreatorsSet = new Set(); }
+
+        await refreshHome();
+        await refreshRecords();
+        return;
+      }
+
+      // ユーザー表示
+      userName.textContent = currentUser.displayName || "ユーザー";
+      userSmall.textContent = currentUser.email || "";
+      userAvatar.innerHTML = "";
+      if(currentUser.photoURL){
+        const img = document.createElement("img");
+        img.src = currentUser.photoURL;
+        img.alt = "avatar";
+        userAvatar.appendChild(img);
+      }else{
+        userAvatar.textContent = "👤";
+      }
+
+      // プロフィールロード
+      await ensureProfile();
+
+      // favCreatorsロード
+      favCreatorsSet = new Set(myProfile?.favCreators || []);
+      localStorage.setItem("favCreators", JSON.stringify([...favCreatorsSet]));
+
+      // 初回カテゴリが無ければモーダル
+      const pref = myProfile?.preferredCategory || "";
+      myCategory.textContent = pref || "未設定";
+      if(!pref){
+        openCategoryModal();
+      }
+
+      await refreshHome();
+      await refreshRecords();
+    });
+
+    async function ensureProfile(){
+      if(!currentUser) return;
+      const ref = doc(db, "users", currentUser.uid);
+      const snap = await getDoc(ref);
+      if(!snap.exists()){
+        const initial = {
+          displayName: currentUser.displayName || "ユーザー",
+          photoURL: currentUser.photoURL || "",
+          preferredCategory: "",
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+          // Phase3相当の土台（最小）：好きな作成者
+          favCreators: [],
+          // 簡易プロフィール数値（将来の集計用）
+          clearCount: 0,
+          activeCount: 0,
+          totalChallenges: 0,
+          ratingRank: 1
+        };
+        await setDoc(ref, initial);
+        myProfile = initial;
+      }else{
+        myProfile = snap.data();
+      }
+    }
+
+    // ========== 入力カウンタ ==========
+    function updateCounter(){
+      counterAction.textContent = `やること：${newAction.value.length} / 40`;
+    }
+    newAction.addEventListener("input", updateCounter);
+    updateCounter();
+
+    // ========== データ設計（Phase1の最小） ==========
+    // habits（習慣投稿）
+    //  - title: string
+    //  - action: string (<=40)
+    //  - tags: string[]
+    //  - category: string
+    //  - creatorUid, creatorName, creatorPhoto
+    //  - createdAt
+    //
+    // challenges（ユーザーの挑戦）… userChallenges/{uid}/items/{habitId}
+    //  - habitId
+    //  - habitTitle
+    //  - status: "active" | "cleared" | "retired"
+    //  - startDate: "YYYY-MM-DD"
+    //  - day: number (継続日数)
+    //  - lastReportedDate: "YYYY-MM-DD" | ""
+    //  - streakMiss: number (連続未報告)
+    //  - successDays: number (やった回数)
+    //  - restDays: number (休んだ回数)
+    //  - difficulty: {easy,mid,hard}
+    //  - updatedAt
+    //
+    // ratings（簡易評価）… habits/{habitId}/ratings/{uid}
+    //  - stars: 1..5
+    //  - liked: boolean
+    //  - comment: string (短文)
+    //  - weightRank: 1..3（今は未実装。将来ここにランクを入れる）
+    //
+    // 集計（今は軽くクライアント側で計算し、表示用にhabitsにキャッシュしてもOK）
+    //  - avgRating, ratingCount, participantsCount, avgDays, successRate
+
+    // ========== 投稿作成 ==========
+    btnPost.addEventListener("click", async ()=>{
+      const title = newTitle.value.trim();
+      const tags = newTags.value.split(",").map(s=>s.trim()).filter(Boolean).slice(0,8);
+      const category = newCategory.value.trim();
+      const action = newAction.value.trim();
+
+      if(!title || !action){
+        alert("タイトルと「5分でやること」は必須です。");
+        return;
+      }
+      if(action.length > 40){
+        alert("「5分でやること」は40文字以内です。");
+        return;
+      }
+
+      const data = {
+        title,
+        action,
+        tags,
+        category,
+        creatorUid: currentUser?.uid || "guest",
+        creatorName: currentUser?.displayName || "ゲスト",
+        creatorPhoto: currentUser?.photoURL || "",
+        createdAt: serverTimestamp(),
+        // 表示用の初期集計
+        avgRating: 0,
+        ratingCount: 0,
+        participantsCount: 0,
+        avgDays: 0,
+        successRate: 0
+      };
+
+      try{
+        if(currentUser){
+          await addDoc(collection(db, "habits"), data);
+        }else{
+          // 未ログインはローカルに保存（試運転用）
+          const local = JSON.parse(localStorage.getItem("localHabits") || "[]");
+          local.unshift({ ...data, _localId: crypto.randomUUID(), createdAtLocal: Date.now() });
+          localStorage.setItem("localHabits", JSON.stringify(local));
+        }
+
+        newTitle.value = "";
+        newTags.value = "";
+        newCategory.value = "";
+        newAction.value = "";
+        updateCounter();
+
+        await refreshHome();
+      }catch(e){
+        alert("投稿に失敗しました：\n" + (e?.message ?? e));
+      }
+    });
+
+    // ========== サンプル投入 ==========
+    btnSeed.addEventListener("click", async ()=>{
+      const samples = [
+        { title:"夜5分散歩", action:"外に出て3分歩き、最後に深呼吸1回", tags:["不安","寝つき"], category:"メンタル" },
+        { title:"目を休める 1分", action:"遠くを見て、まばたき10回", tags:["集中","疲れ目"], category:"生活" },
+        { title:"英単語5つ", action:"単語帳で5単語だけ見る", tags:["英語","勉強"], category:"英語" },
+        { title:"寝る前に水", action:"コップ半分の水を飲む", tags:["睡眠","体調"], category:"睡眠" },
+      ];
+
+      try{
+        for(const s of samples){
+          const data = {
+            ...s,
+            creatorUid: currentUser?.uid || "guest",
+            creatorName: currentUser?.displayName || "ゲスト",
+            creatorPhoto: currentUser?.photoURL || "",
+            createdAt: serverTimestamp(),
+            avgRating: 4.2,
+            ratingCount: 12,
+            participantsCount: 54,
+            avgDays: 6.2,
+            successRate: 32
+          };
+          if(currentUser){
+            await addDoc(collection(db,"habits"), data);
+          }else{
+            const local = JSON.parse(localStorage.getItem("localHabits") || "[]");
+            local.unshift({ ...data, _localId: crypto.randomUUID(), createdAtLocal: Date.now() });
+            localStorage.setItem("localHabits", JSON.stringify(local));
+          }
+        }
+        await refreshHome();
+      }catch(e){
+        alert("サンプル追加に失敗しました：\n" + (e?.message ?? e));
+      }
+    });
+
+    // ========== 検索/フィルタ ==========
+    function setSelectedTag(tag){
+      selectedTag = tag || "";
+      // chip UI更新
+      [...document.querySelectorAll(".chip")].forEach(ch=>{
+        ch.classList.toggle("active", ch.dataset.tag === selectedTag);
+      });
+      refreshHome();
+    }
+
+    btnClearTag.addEventListener("click", ()=>{
+      setSelectedTag("");
+    });
+
+    qInput.addEventListener("keydown", (e)=>{
+      if(e.key === "Enter"){
+        refreshHome();
+      }
+    });
+    categoryFilter.addEventListener("change", refreshHome);
+    sortBy.addEventListener("change", refreshHome);
+
+    // ========== 今日達成者数（簡易演出） ==========
+    // 本番は集計基盤が必要。今は「ローカルでそれっぽく」動かす。
+    function loadTodayDone(){
+      const key = "todayDone_" + fmtDate(nowJST());
+      const v = Number(localStorage.getItem(key) || "32"); // 初期32っぽく
+      localStorage.setItem(key, String(v));
+      todayDone.textContent = String(v);
+      return v;
+    }
+    function incTodayDone(){
+      const key = "todayDone_" + fmtDate(nowJST());
+      const v = Number(localStorage.getItem(key) || "32") + 1;
+      localStorage.setItem(key, String(v));
+      todayDone.textContent = String(v);
+      showPlusOne();
+    }
+    loadTodayDone();
+
+    // ========== Home表示（一覧） ==========
+    async function refreshHome(){
+      const keyword = qInput.value.trim().toLowerCase();
+      const cat = categoryFilter.value.trim();
+      const sort = sortBy.value;
+
+      // 個人カテゴリ（おすすめに使う）
+      const prefCat = (currentUser ? (myProfile?.preferredCategory || "") : (localStorage.getItem("myCategory") || "")) || "";
+      myCategory.textContent = prefCat || "未設定";
+
+      // 1) 投稿一覧をロード（Firestore + ローカル投稿）
+      let habits = [];
+
+      // Firestore分
+      try{
+        const qs = await getDocs(query(collection(db,"habits"), orderBy("createdAt","desc"), limit(120)));
+        qs.forEach(docSnap=>{
+          habits.push({ id: docSnap.id, ...docSnap.data(), _source:"remote" });
+        });
+      }catch(e){
+        // ローカル運用やCORS等で失敗しても、ローカルだけ表示できるようにする
+        console.warn("habits load error", e);
+      }
+
+      // ローカル分（ゲスト投稿）
+      try{
+        const local = JSON.parse(localStorage.getItem("localHabits") || "[]");
+        habits = habits.concat(local.map(x=>({ ...x, id: x._localId, _source:"local" })));
+      }catch{}
+
+      // 2) トップタグ / おすすめタグ を作る
+      const tagCounts = new Map();
+      const catCounts = new Map();
+      for(const h of habits){
+        (h.tags || []).forEach(t=>{
+          const k = String(t || "").trim();
+          if(!k) return;
+          tagCounts.set(k, (tagCounts.get(k)||0)+1);
+        });
+        const c = (h.category || "").trim();
+        if(c) catCounts.set(c, (catCounts.get(c)||0)+1);
+      }
+
+      // topタグ（投稿数上位）
+      selectedTopTags = [...tagCounts.entries()].sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
+      renderChips(chipsTop, selectedTopTags);
+
+      // recoタグ（あなたのカテゴリや検索傾向をざっくり反映：prefCat関連の投稿からタグ抽出）
+      const recoPool = habits.filter(h=>{
+        if(!prefCat) return true;
+        return (h.category || "").trim() === prefCat;
+      });
+      const recoCounts = new Map();
+      for(const h of recoPool){
+        (h.tags||[]).forEach(t=>{
+          const k = String(t||"").trim();
+          if(!k) return;
+          recoCounts.set(k, (recoCounts.get(k)||0)+1);
+        });
+      }
+      selectedRecoTags = [...recoCounts.entries()].sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
+      if(selectedRecoTags.length === 0){
+        // fallback
+        selectedRecoTags = ["不安","集中","寝つき"].filter(t=>tagCounts.has(t)).slice(0,3);
+        if(selectedRecoTags.length === 0) selectedRecoTags = selectedTopTags;
+      }
+      renderChips(chipsRecommend, selectedRecoTags);
+
+      // 3) フィルタ適用
+      let filtered = habits.filter(h=>{
+        // カテゴリ
+        if(cat){
+          if((h.category || "").trim() !== cat) return false;
+        }
+        // タグ
+        if(selectedTag){
+          if(!(h.tags || []).includes(selectedTag)) return false;
+        }
+        // キーワード（title/action/tags/category）
+        if(keyword){
+          const blob = [
+            h.title, h.action, (h.tags||[]).join(" "), h.category, h.creatorName
+          ].join(" ").toLowerCase();
+          if(!blob.includes(keyword)) return false;
+        }
+        return true;
+      });
+
+      // 4) 並び替え
+      filtered.sort((a,b)=>{
+        const ca = a.createdAt?.seconds ? a.createdAt.seconds : (a.createdAtLocal ? Math.floor(a.createdAtLocal/1000) : 0);
+        const cb = b.createdAt?.seconds ? b.createdAt.seconds : (b.createdAtLocal ? Math.floor(b.createdAtLocal/1000) : 0);
+
+        const ra = Number(a.avgRating||0);
+        const rb = Number(b.avgRating||0);
+        const sa = Number(a.successRate||0);
+        const sb = Number(b.successRate||0);
+        const da = Number(a.avgDays||0);
+        const dbb = Number(b.avgDays||0);
+
+        if(sort === "rating") return (rb - ra) || (cb - ca);
+        if(sort === "success") return (sb - sa) || (cb - ca);
+        if(sort === "days") return (dbb - da) || (cb - ca);
+        if(sort === "favCreators"){
+          const af = favCreatorsSet.has(a.creatorUid) ? 1 : 0;
+          const bf = favCreatorsSet.has(b.creatorUid) ? 1 : 0;
+          return (bf - af) || (cb - ca);
+        }
+        // new
+        return (cb - ca);
+      });
+
+      // 5) メタ表示
+      countShown.textContent = String(filtered.length);
+      const fl = [];
+      if(keyword) fl.push(`検索「${keyword}」`);
+      if(cat) fl.push(`カテゴリ:${cat}`);
+      if(selectedTag) fl.push(`タグ:${selectedTag}`);
+      filterLabel.textContent = fl.length ? fl.join(" / ") : "なし";
+
+      // 6) 描画
+      feed.innerHTML = "";
+      if(filtered.length === 0){
+        feedEmpty.style.display = habits.length ? "block" : "block";
+      }else{
+        feedEmpty.style.display = "none";
+      }
+
+      // 今日の習慣トースト（挑戦中を上から出す）
+      await refreshTodayToasts();
+
+      for(const h of filtered){
+        feed.appendChild(renderHabitCard(h));
+      }
+    }
+
+    function renderChips(container, tags){
+      container.innerHTML = "";
+      for(const t of tags){
+        const chip = document.createElement("div");
+        chip.className = "chip";
+        chip.dataset.tag = t;
+        chip.textContent = `#${t}`;
+        chip.addEventListener("click", ()=> setSelectedTag(t));
+        container.appendChild(chip);
+      }
+      // active状態反映
+      [...container.querySelectorAll(".chip")].forEach(ch=>{
+        ch.classList.toggle("active", ch.dataset.tag === selectedTag);
+      });
+    }
+
+    function renderHabitCard(h){
+      const card = document.createElement("div");
+      card.className = "habitCard";
+
+      const tags = (h.tags || []).slice(0,4);
+      const cat = (h.category || "").trim();
+
+      // 表示値（未集計でも破綻しないように）
+      const avgRating = Number(h.avgRating||0);
+      const avgDays = Number(h.avgDays||0);
+      const successRate = Number(h.successRate||0);
+
+      card.innerHTML = `
+        <div class="habitTop">
+          <div class="miniUser">
+            <div class="miniAva">${h.creatorPhoto ? `<img src="${h.creatorPhoto}" alt=""/>` : ""}</div>
+            <div class="miniName">${escapeHtml(h.creatorName || "作成者")}</div>
+          </div>
+          <div class="badgeRow">
+            ${cat ? `<span class="badge cat">${escapeHtml(cat)}</span>` : ""}
+            ${tags.map(t=>`<span class="badge tag">${escapeHtml(t)}</span>`).join("")}
+          </div>
+        </div>
+
+        <div class="habitTitle">${escapeHtml(h.title || "")}</div>
+        <p class="habitDesc">${escapeHtml(h.action || "")}</p>
+
+        <div class="habitBottom">
+          <div class="stats">
+            <div class="stat">⭐ ${avgRating ? avgRating.toFixed(1) : "—"}</div>
+            <div class="stat">📅 ${avgDays ? avgDays.toFixed(1) + "日" : "—"}</div>
+            <div class="stat">🎯 ${successRate ? successRate.toFixed(0) + "%" : "—"}</div>
+          </div>
+
+          <div class="actions">
+            <button class="btnGhost" data-act="bookmark"><span class="bookmarkMark">🔖</span> 保存</button>
+            <button class="btnGhost" data-act="favCreator">❤️ 作成者</button>
+            <button class="btnTry" data-act="try">▶ 挑戦</button>
+          </div>
+        </div>
+      `;
+
+      // ボタン動作
+      const btnTry = card.querySelector('[data-act="try"]');
+      const btnBm = card.querySelector('[data-act="bookmark"]');
+      const btnFav = card.querySelector('[data-act="favCreator"]');
+
+      btnTry.addEventListener("click", ()=> startChallenge(h));
+      btnBm.addEventListener("click", ()=> bookmarkHabit(h));
+      btnFav.addEventListener("click", ()=> toggleFavCreator(h.creatorUid));
+
+      // バッジ（カテゴリ/タグ）を押したらフィルタに反映（あなたの指定）
+      card.querySelectorAll(".badge.tag").forEach(el=>{
+        el.addEventListener("click", (e)=>{
+          const t = el.textContent.trim();
+          const raw = t.startsWith("#") ? t.slice(1) : t;
+          setSelectedTag(raw);
+          e.stopPropagation();
+        });
+      });
+      card.querySelectorAll(".badge.cat").forEach(el=>{
+        el.addEventListener("click", (e)=>{
+          categoryFilter.value = el.textContent.trim();
+          refreshHome();
+          e.stopPropagation();
+        });
+      });
+
+      return card;
+    }
+
+    function escapeHtml(s){
+      return String(s ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#39;");
+    }
+
+    // ========== 保存（Phase3の最小：非公開リスト1つだけ） ==========
+    async function bookmarkHabit(h){
+      // 今回：非公開リスト only（あなたの指定）
+      // userBookmarks/{uid}/items/{habitId}
+      if(!currentUser){
+        // ゲスト：ローカル
+        const key = "localBookmarks";
+        const arr = JSON.parse(localStorage.getItem(key) || "[]");
+        if(!arr.includes(h.id)){
+          arr.push(h.id);
+          localStorage.setItem(key, JSON.stringify(arr));
+          alert("🔖 非公開リストに保存しました（ローカル）");
+        }else{
+          alert("すでに保存済みです（ローカル）");
+        }
+        return;
+      }
+      try{
+        const ref = doc(db, "userBookmarks", currentUser.uid, "items", h.id);
+        const snap = await getDoc(ref);
+        if(!snap.exists()){
+          await setDoc(ref, {
+            habitId: h.id,
+            title: h.title || "",
+            createdAt: serverTimestamp(),
+            visibility: "private",
+            listName: "非公開リスト"
+          });
+          alert("🔖 非公開リストに保存しました");
+        }else{
+          // もう一度押したら解除でもいいが、今回は「保存確認」でOK
+          alert("すでに保存済みです");
+        }
+      }catch(e){
+        alert("保存に失敗しました：\n" + (e?.message ?? e));
+      }
+    }
+
+    // ========== 作成者お気に入り（Phase3土台） ==========
+    async function toggleFavCreator(creatorUid){
+      if(!creatorUid) return;
+      if(!currentUser){
+        // ローカル
+        if(favCreatorsSet.has(creatorUid)) favCreatorsSet.delete(creatorUid);
+        else favCreatorsSet.add(creatorUid);
+        localStorage.setItem("favCreators", JSON.stringify([...favCreatorsSet]));
+        await refreshHome();
+        alert(favCreatorsSet.has(creatorUid) ? "❤️ 作成者をお気に入り" : "💤 お気に入り解除");
+        return;
+      }
+      try{
+        await ensureProfile();
+        if(favCreatorsSet.has(creatorUid)) favCreatorsSet.delete(creatorUid);
+        else favCreatorsSet.add(creatorUid);
+
+        await updateDoc(doc(db,"users",currentUser.uid), {
+          favCreators: [...favCreatorsSet],
+          updatedAt: serverTimestamp()
+        });
+        myProfile.favCreators = [...favCreatorsSet];
+        localStorage.setItem("favCreators", JSON.stringify([...favCreatorsSet]));
+        await refreshHome();
+        alert(favCreatorsSet.has(creatorUid) ? "❤️ 作成者をお気に入り" : "💤 お気に入り解除");
+      }catch(e){
+        alert("お気に入り更新に失敗：\n" + (e?.message ?? e));
+      }
+    }
+
+    // ========== 挑戦開始 ==========
+    async function startChallenge(h){
+      // 最大3つ（あなたの指定）
+      const maxActive = 3;
+
+      // まず現在の挑戦数を数える
+      const actives = await loadActiveChallenges();
+      if(actives.length >= maxActive){
+        alert("現在の依頼が上限（3件）です。達成記録から完了/リタイアして空きを作ってください。");
+        return;
+      }
+
+      const start = fmtDate(nowJST());
+
+      if(!currentUser){
+        // ゲストはローカル
+        const key = "localChallenges";
+        const items = JSON.parse(localStorage.getItem(key) || "[]");
+        const exists = items.find(x => x.habitId === h.id && x.status === "active");
+        if(exists){
+          alert("すでに挑戦中です（ローカル）");
+          return;
+        }
+        items.unshift({
+          id: crypto.randomUUID(),
+          habitId: h.id,
+          habitTitle: h.title || "",
+          status:"active",
+          startDate:start,
+          day:1,
+          lastReportedDate:"",
+          streakMiss:0,
+          successDays:0,
+          restDays:0,
+          difficulty:{easy:0,mid:0,hard:0},
+          updatedAt: Date.now(),
+          // 表示用にタグ/カテゴリも少し持つ
+          category: h.category || "",
+          tags: h.tags || []
+        });
+        localStorage.setItem(key, JSON.stringify(items));
+        alert("▶ 挑戦を開始しました（ローカル）");
+        await refreshTodayToasts();
+        await refreshRecords();
+        return;
+      }
+
+      try{
+        // userChallenges/{uid}/items/{habitId}
+        const ref = doc(db, "userChallenges", currentUser.uid, "items", h.id);
+        const snap = await getDoc(ref);
+        if(snap.exists() && (snap.data()?.status === "active")){
+          alert("すでに挑戦中です。");
+          return;
+        }
+
+        await setDoc(ref, {
+          habitId: h.id,
+          habitTitle: h.title || "",
+          status:"active",
+          startDate: start,
+          day: 1,
+          lastReportedDate: "",
+          streakMiss: 0,
+          successDays: 0,
+          restDays: 0,
+          difficulty: { easy:0, mid:0, hard:0 },
+          category: h.category || "",
+          tags: h.tags || [],
+          updatedAt: serverTimestamp()
+        });
+
+        // 作成者側の participantsCount を増やす（本番はCloud Function推奨、今は簡易）
+        // 失敗しても致命ではないので try-catch で握る
+        try{
+          if(h._source === "remote"){
+            const href = doc(db, "habits", h.id);
+            const hs = await getDoc(href);
+            if(hs.exists()){
+              const cur = hs.data();
+              const pc = Number(cur.participantsCount||0) + 1;
+              await updateDoc(href, { participantsCount: pc });
+            }
+          }
+        }catch{}
+
+        alert("▶ 挑戦を開始しました");
+        await refreshTodayToasts();
+        await refreshRecords();
+      }catch(e){
+        alert("挑戦の開始に失敗しました：\n" + (e?.message ?? e));
+      }
+    }
+
+    // ========== 今日の習慣トースト（通知） ==========
+    async function refreshTodayToasts(){
+      toastWrap.innerHTML = "";
+      const actives = await loadActiveChallenges();
+
+      if(actives.length === 0) return;
+
+      // その日の始まりに上から通知みたいに出す：アクティブ全部出す（最大3）
+      for(const ch of actives.slice(0,3)){
+        const title = ch.habitTitle || "習慣";
+        const day = Number(ch.day||1);
+        const last = ch.lastReportedDate || "未報告";
+        const toast = document.createElement("div");
+        toast.className = "toast";
+        toast.innerHTML = `
+          <div class="left">
+            <div class="kicker">🌱 今日の習慣</div>
+            <div class="main">${escapeHtml(title)}（${day}日目）</div>
+            <div class="sub">前回：${escapeHtml(last)}</div>
+          </div>
+          <div class="right">
+            <button class="emojiBtn primary" data-act="done">✅ やった</button>
+            <button class="emojiBtn warn" data-act="rest">🛌 今日は休む</button>
+            <button class="emojiBtn danger" data-act="retire">🏳️ リタイア</button>
+          </div>
+        `;
+
+        toast.querySelector('[data-act="done"]').addEventListener("click", ()=> reportDone(ch, "done"));
+        toast.querySelector('[data-act="rest"]').addEventListener("click", ()=> reportDone(ch, "rest"));
+        toast.querySelector('[data-act="retire"]').addEventListener("click", ()=> reportDone(ch, "retire"));
+
+        toastWrap.appendChild(toast);
+      }
+    }
+
+    // ========== 報告（やった / 休む / リタイア） ==========
+    async function reportDone(ch, mode){
+      // mode: "done" | "rest" | "retire"
+      // やった場合：難易度選択（😊🙂😅）
+      if(mode === "done"){
+        const choice = prompt("今日の難易度はどうでしたか？\n😊=楽 / 🙂=ちょうどいい / 😅=大変\n（絵文字を入力：😊🙂😅）");
+        const d = (choice || "").trim();
+        const map = { "😊":"easy", "🙂":"mid", "😅":"hard" };
+        if(!map[d]){
+          alert("😊🙂😅 のどれかを入力してください。");
+          return;
+        }
+        await applyReport(ch, { type:"done", diff: map[d] });
+        return;
+      }
+      if(mode === "rest"){
+        await applyReport(ch, { type:"rest" });
+        return;
+      }
+      if(mode === "retire"){
+        const ok = confirm("リタイアしますか？（あとから再挑戦はできます）");
+        if(!ok) return;
+        await applyReport(ch, { type:"retire" });
+        return;
+      }
+    }
+
+    async function applyReport(ch, payload){
+      const today = fmtDate(nowJST());
+
+      if(!currentUser){
+        // ローカル更新
+        const key = "localChallenges";
+        const items = JSON.parse(localStorage.getItem(key) || "[]");
+        const idx = items.findIndex(x => x.habitId === ch.habitId && x.status === "active");
+        if(idx === -1) return;
+
+        const cur = items[idx];
+        if(payload.type === "done"){
+          cur.successDays = Number(cur.successDays||0) + 1;
+          cur.lastReportedDate = today;
+          cur.streakMiss = 0;
+          cur.day = Number(cur.day||1) + 1;
+          cur.difficulty = cur.difficulty || {easy:0,mid:0,hard:0};
+          cur.difficulty[payload.diff] = Number(cur.difficulty[payload.diff]||0) + 1;
+          incTodayDone();
+        }else if(payload.type === "rest"){
+          cur.restDays = Number(cur.restDays||0) + 1;
+          cur.lastReportedDate = today + "（休）";
+          cur.streakMiss = 0;
+          cur.day = Number(cur.day||1) + 1;
+        }else if(payload.type === "retire"){
+          cur.status = "retired";
+          cur.lastReportedDate = today + "（リタイア）";
+        }
+
+        // 7日制：7日のうち5日達成でクリア（簡易）
+        if(cur.status === "active"){
+          if(Number(cur.successDays||0) >= 5 && Number(cur.day||1) >= 7){
+            const done = confirm("🎉 クリア判定！この依頼は完了として終了しますか？\n（OKでクリア / キャンセルで続行）");
+            if(done){
+              cur.status = "cleared";
+              cur.lastReportedDate = today + "（クリア）";
+            }
+          }
+        }
+
+        cur.updatedAt = Date.now();
+        items[idx] = cur;
+        localStorage.setItem(key, JSON.stringify(items));
+
+        await refreshTodayToasts();
+        await refreshRecords();
+        return;
+      }
+
+      try{
+        const ref = doc(db, "userChallenges", currentUser.uid, "items", ch.habitId);
+        const snap = await getDoc(ref);
+        if(!snap.exists()) return;
+        const cur = snap.data();
+
+        const update = {};
+        if(payload.type === "done"){
+          update.successDays = Number(cur.successDays||0) + 1;
+          update.lastReportedDate = today;
+          update.streakMiss = 0;
+          update.day = Number(cur.day||1) + 1;
+          const diffObj = cur.difficulty || {easy:0,mid:0,hard:0};
+          diffObj[payload.diff] = Number(diffObj[payload.diff]||0) + 1;
+          update.difficulty = diffObj;
+          incTodayDone();
+        }else if(payload.type === "rest"){
+          update.restDays = Number(cur.restDays||0) + 1;
+          update.lastReportedDate = today + "（休）";
+          update.streakMiss = 0;
+          update.day = Number(cur.day||1) + 1;
+        }else if(payload.type === "retire"){
+          update.status = "retired";
+          update.lastReportedDate = today + "（リタイア）";
+        }
+
+        update.updatedAt = serverTimestamp();
+        await updateDoc(ref, update);
+
+        // 7日制：7日のうち5日達成でクリア（簡易）
+        if((payload.type === "done" || payload.type === "rest") && (cur.status === "active")){
+          const nextSuccess = (payload.type === "done") ? (Number(cur.successDays||0)+1) : Number(cur.successDays||0);
+          const nextDay = Number(cur.day||1)+1;
+          if(nextSuccess >= 5 && nextDay >= 7){
+            const done = confirm("🎉 クリア判定！この依頼は完了として終了しますか？\n（OKでクリア / キャンセルで続行）");
+            if(done){
+              await updateDoc(ref, { status:"cleared", lastReportedDate: today + "（クリア）", updatedAt: serverTimestamp() });
+            }
+          }
+        }
+
+        await refreshTodayToasts();
+        await refreshRecords();
+      }catch(e){
+        alert("記録に失敗しました：\n" + (e?.message ?? e));
+      }
+    }
+
+    // ========== 挑戦中ロード ==========
+    async function loadActiveChallenges(){
+      // status==="active" のみ
+      if(!currentUser){
+        const items = JSON.parse(localStorage.getItem("localChallenges") || "[]");
+        return items.filter(x => x.status === "active");
+      }
+      try{
+        const qs = await getDocs(query(
+          collection(db, "userChallenges", currentUser.uid, "items"),
+          where("status","==","active"),
+          orderBy("updatedAt","desc"),
+          limit(10)
+        ));
+        const arr = [];
+        qs.forEach(s=> arr.push(s.data()));
+        return arr;
+      }catch(e){
+        console.warn("active challenges load error", e);
+        return [];
+      }
+    }
+
+    // ========== 達成記録画面 ==========
+    async function refreshRecords(){
+      const items = await loadAllChallengesForRecords();
+
+      const actives = items.filter(x=>x.status==="active");
+      activeCount.textContent = String(actives.length);
+
+      recordGrid.innerHTML = "";
+      if(items.length === 0){
+        recordEmpty.style.display = "block";
+        return;
+      }
+      recordEmpty.style.display = "none";
+
+      // 表示：アクティブ→クリア→リタイア
+      const order = (st)=> st==="active"?0 : st==="cleared"?1 : 2;
+      items.sort((a,b)=> order(a.status)-order(b.status));
+
+      for(const ch of items){
+        recordGrid.appendChild(renderRecordCard(ch));
+      }
+    }
+
+    async function loadAllChallengesForRecords(){
+      if(!currentUser){
+        const items = JSON.parse(localStorage.getItem("localChallenges") || "[]");
+        return items;
+      }
+      try{
+        const qs = await getDocs(query(
+          collection(db, "userChallenges", currentUser.uid, "items"),
+          orderBy("updatedAt","desc"),
+          limit(60)
+        ));
+        const arr = [];
+        qs.forEach(s=> arr.push(s.data()));
+        return arr;
+      }catch(e){
+        console.warn("records load error", e);
+        return [];
+      }
+    }
+
+    function renderRecordCard(ch){
+      const card = document.createElement("div");
+      card.className = "recordCard";
+
+      const st = ch.status;
+      const stLabel = st==="active" ? "進行中" : st==="cleared" ? "クリア" : "リタイア";
+      const stBadge = st==="active" ? "✅" : st==="cleared" ? "🏁" : "🏳️";
+
+      const diff = ch.difficulty || {easy:0,mid:0,hard:0};
+      const totalFeel = (diff.easy||0)+(diff.mid||0)+(diff.hard||0);
+      const easyP = totalFeel ? Math.round((diff.easy||0)/totalFeel*100) : 0;
+      const midP  = totalFeel ? Math.round((diff.mid||0)/totalFeel*100) : 0;
+      const hardP = totalFeel ? Math.round((diff.hard||0)/totalFeel*100) : 0;
+
+      const miss = Number(ch.streakMiss||0);
+      const last = ch.lastReportedDate || "未報告";
+
+      card.innerHTML = `
+        <div class="rTop">
+          <div>
+            <p class="rTitle">${stBadge} ${escapeHtml(ch.habitTitle || "習慣")} <span style="opacity:.7">（${escapeHtml(stLabel)}）</span></p>
+            <div class="rSub">
+              開始：${escapeHtml(ch.startDate || "—")} / 日数：${Number(ch.day||1)} / 成功：${Number(ch.successDays||0)} / 休み：${Number(ch.restDays||0)}
+              <br/>前回：${escapeHtml(last)}
+            </div>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end">
+            ${st==="active" ? `<button class="btn small danger" data-act="retire">リタイア</button>` : ""}
+            ${st!=="active" ? `<button class="btn small" data-act="restart">再挑戦</button>` : ""}
+            ${currentUser && st!=="active" ? `<button class="btn small" data-act="remove">削除</button>` : ""}
+          </div>
+        </div>
+
+        <div class="stamps">
+          <div class="stamp easy">😊 楽 ${easyP}%</div>
+          <div class="stamp mid">🙂 ちょうどい ${midP}%</div>
+          <div class="stamp hard">😅 大変 ${hardP}%</div>
+          ${st==="retired" ? `<div class="stamp fail">🏳️ リタイア</div>` : ""}
+        </div>
+
+        <div class="smallNote">
+          推奨：3日連続未報告でリタイア（今は簡易。将来は自動判定）。<br/>
+          ※ ここにカレンダー表示（スタンプ反映 / 期間選択振り返り）をPhase5で追加できます。
+        </div>
+      `;
+
+      // actions
+      const btnRet = card.querySelector('[data-act="retire"]');
+      if(btnRet){
+        btnRet.addEventListener("click", async ()=>{
+          const ok = confirm("リタイアしますか？");
+          if(!ok) return;
+          await applyReport(ch, { type:"retire" });
+        });
+      }
+
+      const btnRestart = card.querySelector('[data-act="restart"]');
+      if(btnRestart){
+        btnRestart.addEventListener("click", async ()=>{
+          // 再挑戦は startChallenge で作り直すのが本筋だが、Phase1なので「activeに戻す」でもOK
+          const ok = confirm("再挑戦しますか？（進行中に戻します）");
+          if(!ok) return;
+          await restartChallenge(ch);
+        });
+      }
+
+      const btnRemove = card.querySelector('[data-act="remove"]');
+      if(btnRemove){
+        btnRemove.addEventListener("click", async ()=>{
+          const ok = confirm("この記録を削除しますか？（元に戻せません）");
+          if(!ok) return;
+          await removeChallenge(ch);
+        });
+      }
+
+      return card;
+    }
+
+    async function restartChallenge(ch){
+      const today = fmtDate(nowJST());
+      if(!currentUser){
+        const key="localChallenges";
+        const items = JSON.parse(localStorage.getItem(key) || "[]");
+        const idx = items.findIndex(x=>x.habitId===ch.habitId);
+        if(idx<0) return;
+        items[idx].status="active";
+        items[idx].startDate=today;
+        items[idx].day=1;
+        items[idx].lastReportedDate="";
+        items[idx].streakMiss=0;
+        items[idx].successDays=0;
+        items[idx].restDays=0;
+        items[idx].difficulty={easy:0,mid:0,hard:0};
+        items[idx].updatedAt=Date.now();
+        localStorage.setItem(key, JSON.stringify(items));
+        await refreshTodayToasts();
+        await refreshRecords();
+        return;
+      }
+      try{
+        const ref = doc(db, "userChallenges", currentUser.uid, "items", ch.habitId);
+        await updateDoc(ref, {
+          status:"active",
+          startDate: today,
+          day:1,
+          lastReportedDate:"",
+          streakMiss:0,
+          successDays:0,
+          restDays:0,
+          difficulty:{easy:0,mid:0,hard:0},
+          updatedAt: serverTimestamp()
+        });
+        await refreshTodayToasts();
+        await refreshRecords();
+      }catch(e){
+        alert("再挑戦に失敗：\n" + (e?.message ?? e));
+      }
+    }
+
+    async function removeChallenge(ch){
+      if(!currentUser){
+        const key="localChallenges";
+        const items = JSON.parse(localStorage.getItem(key) || "[]");
+        const next = items.filter(x=>x.habitId!==ch.habitId);
+        localStorage.setItem(key, JSON.stringify(next));
+        await refreshTodayToasts();
+        await refreshRecords();
+        return;
+      }
+      try{
+        await deleteDoc(doc(db, "userChallenges", currentUser.uid, "items", ch.habitId));
+        await refreshTodayToasts();
+        await refreshRecords();
+      }catch(e){
+        alert("削除に失敗：\n" + (e?.message ?? e));
+      }
+    }
+
+    // ========== 起動時 ==========
+    // 最初のおすすめカテゴリが未設定の場合、ローカルから拾う
+    myCategory.textContent = localStorage.getItem("myCategory") || "未設定";
+
+    // 最初の描画
+    refreshHome();
+    refreshRecords();
+
+    // ヒント：チップクリックが分かりやすいように、初期は空なら何も選ばない
+  </script>
+</body>
+</html>
