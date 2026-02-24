@@ -2716,43 +2716,7 @@
       }
     }
 
-    async function openRatingModalByChallenge(ch, reason){
-      ratingTargetHabit = ch.habitId;
-
-      ratingTitle.textContent = reason==="retire" ? `評価（リタイア）` :
-                                reason==="finish" ? `評価（7日終了）` :
-                                `評価`;
-
-      openRatingModal();
-      await loadRatingsList(ch.habitId);
-
-      ratingSave.onclick = async ()=>{
-        if(ratingStars < 1){ alert("星を選ぶ"); return; }
-
-        const habitId = ch.habitId;
-
-        await setDoc(doc(db, "habits", habitId, "ratings", currentUser.uid), {
-          uid: currentUser.uid,
-          displayName: myProfile?.name || currentUser.displayName || "ユーザー",
-          photoURL: currentUser.photoURL || "",
-          stars: ratingStars,
-          comment: (commentBox.value || "").trim().slice(0, 300),
-          updatedAt: serverTimestamp()
-        }, { merge:true });
-
-        await updateDoc(doc(db, "userChallenges", currentUser.uid, "items", habitId), {
-          ratingSubmitted: true,
-          updatedAt: serverTimestamp()
-        });
-
-        await recomputeRatingAgg(habitId);
-
-        closeRatingModal();
-        await refreshSideActive();
-        await refreshHome();
-        await refreshProfile();
-      };
-    }
+  
 
     async function loadRatingsList(habitId){
       reviewList.innerHTML = "";
