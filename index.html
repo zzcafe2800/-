@@ -1,2289 +1,2395 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>習慣さがし</title>
-  <style>
-    :root{
-      --bg:#071a2b;
-      --panel: rgba(255,255,255,.04);
-      --panel2: rgba(0,0,0,.14);
-      --line: rgba(255,255,255,.12);
-      --text:#eaf6ff;
-      --muted: rgba(234,246,255,.75);
-      --accent:#57c7ff;
-      --ok:#7cffa6;
-      --danger:#ff4d5e;
-      --warn:#ffc94d;
-      --r:16px;
-      --gap:10px;
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", "Meiryo", sans-serif;
-      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:var(--sans);
-      color:var(--text);
-      overflow:hidden;
-      background:
-        radial-gradient(1200px 700px at 10% 0%, #103e63 0%, transparent 55%),
-        radial-gradient(900px 600px at 95% 30%, #083a5a 0%, transparent 55%),
-        linear-gradient(160deg, #061827, #0b2b45);
-    }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>仮想飲食システム</title>
+<meta name="format-detection" content="telephone=no">
 
-    /* 背景(薄い魚) */
-    .bg{position:fixed; inset:0; pointer-events:none; opacity:.28; mix-blend-mode:screen}
-    .fish{
-      position:absolute; top:35%;
-      width:240px; height:90px;
-      background: radial-gradient(closest-side, rgba(120,220,255,.5), transparent 70%),
-                  radial-gradient(closest-side, rgba(90,255,180,.35), transparent 72%);
-      border-radius: 999px;
-      filter: blur(10px);
-      animation: swim 18s linear infinite;
-    }
-    .fish::before{
-      content:""; position:absolute; right:-18px; top:26px;
-      width:40px; height:40px;
-      background: radial-gradient(circle at 30% 50%, rgba(120,220,255,.5), transparent 70%);
-      border-radius: 8px 999px 999px 8px;
-      transform: rotate(20deg);
-      filter: blur(6px);
-    }
-    .fish.f2{top:18%; animation-duration:22s; opacity:.25}
-    .fish.f3{top:62%; animation-duration:19s; opacity:.2}
-    @keyframes swim{0%{left:-35vw}100%{left:120vw}}
+<style>
+  :root{
+    --bg:#f7efe7; --accent:#b33; --paper:#fff8ef; --dark:#3a2b20; --muted:#8b6d5c;
+    --card-skin:#fff2e6;
+  }
+  html,body{height:100%;margin:0;font-family:"Hiragino Kaku Gothic ProN",Meiryo,sans-serif;background:url("https://raw.githubusercontent.com/zzcafe2800/reiji_cafe/main/3739270_l.jpg") center center / cover no-repeat;}
+  body{min-height:100vh;display:flex;align-items:center;justify-content:center;}
 
-    .app{
-      position:relative;
-      height:100%;
-      display:grid;
-      grid-template-columns: 260px 1fr;
-    }
-    @media (max-width: 980px){
-      body{overflow:auto}
-      .app{grid-template-columns: 84px 1fr; height:auto; min-height:100%}
-      .nav{padding:10px 8px}
-      .nav .label{display:none}
-      .nav .navBtn{justify-content:center}
-      .content{padding:14px}
-      .topbar{grid-template-columns: 1fr; }
-      .feedGrid{grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));}
-      .composerGrid{grid-template-columns: 1fr}
-    }
+  .container{width:100%;max-width:420px;margin:0;position:relative;perspective:2000px;aspect-ratio:3/5;}
+  .book{position:relative;width:100%;height:100%;}
+  .page{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;}
 
-    .nav{
-      padding:16px 14px;
-      border-right:1px solid rgba(255,255,255,.06);
-      background: linear-gradient(180deg, rgba(10,35,55,.65), rgba(10,30,48,.30));
-      backdrop-filter: blur(10px);
-    }
-    .brand{display:flex; align-items:center; gap:10px; padding:8px 8px 14px}
-    .logo{
-      width:38px; height:38px; border-radius:14px;
-      background: radial-gradient(circle at 30% 30%, #7fe3ff, #1a6f9b 55%, #07314d);
-      box-shadow: 0 12px 26px rgba(0,0,0,.35);
-      flex:0 0 auto;
-    }
-    .brand h1{font-size:15px; margin:0; letter-spacing:.06em}
+  /* ✅ 開くモーション復活（cover flip） */
+  .cover{
+    background:url("https://raw.githubusercontent.com/zzcafe2800/reiji_cafe/main/menuh1.png") center/cover no-repeat;
+    transform-origin:right center; z-index:2; pointer-events:auto;
+  }
+  .cover.open{animation:flip 7.2s ease-in-out forwards; pointer-events:none;}
+  .cover.open.finished{display:none;}
+  @keyframes flip{
+    0%{transform:rotateY(0deg);box-shadow:0 20px 40px rgba(0,0,0,.25);}
+    40%{transform:rotateY(-55deg);}
+    70%{transform:rotateY(-130deg);}
+    100%{transform:rotateY(-180deg);box-shadow:none;}
+  }
 
-    .navBtn{
-      width:100%;
-      border:1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.04);
-      color:var(--text);
-      border-radius:14px;
-      padding:12px 12px;
-      display:flex; align-items:center; gap:10px;
-      cursor:pointer;
-      margin:10px 0;
-      transition: .12s transform, .12s background, .12s border-color;
-    }
-    .navBtn:hover{transform: translateY(-1px); background: rgba(255,255,255,.06)}
-    .navBtn.active{
-      border-color: rgba(87,199,255,.45);
-      background: linear-gradient(180deg, rgba(87,199,255,.14), rgba(255,255,255,.04));
-      box-shadow: 0 14px 30px rgba(0,0,0,.22);
-    }
-    .navBtn .ico{font-size:20px; width:26px; text-align:center}
-    .navBtn .label{font-weight:900; letter-spacing:.04em}
+  .inner{
+    position:absolute; inset:0;
+    background:url("https://raw.githubusercontent.com/zzcafe2800/reiji_cafe/main/menuh.png") center / cover no-repeat;
+    box-shadow:0 6px 20px rgba(0,0,0,0.15);
+    border-radius:10px;
+    outline:6px solid var(--accent);
+    outline-offset:-6px;
+    z-index:1;
+    display:flex;flex-direction:column;overflow:hidden;
+  }
 
-    .navFooter{
-      position:sticky; bottom:14px;
-      margin-top:14px;
-      padding-top:12px;
-      border-top:1px solid rgba(255,255,255,.08);
-    }
-    .userCard{
-      display:flex; align-items:center; gap:10px;
-      padding:10px;
-      border-radius:14px;
-      background: rgba(255,255,255,.04);
-      border:1px solid rgba(255,255,255,.08);
-    }
-    .avatar{
-      width:34px; height:34px; border-radius:50%;
-      background: rgba(255,255,255,.08);
-      overflow:hidden;
-      flex:0 0 auto;
-      display:grid; place-items:center;
-      border:1px solid rgba(255,255,255,.12);
-    }
-    .avatar img{width:100%; height:100%; object-fit:cover}
-    .userMeta{min-width:0}
-    .userName{font-size:13px; font-weight:1000; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-    .userSmall{font-size:11px; color:var(--muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:12px;color:var(--dark);
+  }
+  header h1{font-size:16px;margin:0;opacity:.9}
 
-    .authRow{display:flex; gap:10px; margin-top:10px}
-    .btn{
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      color:var(--text);
-      border-radius:12px;
-      padding:10px 12px;
-      cursor:pointer;
-      font-weight:1000;
-      letter-spacing:.03em;
-      transition:.12s transform, .12s background, .12s border-color;
-      user-select:none;
-    }
-    .btn:hover{transform:translateY(-1px); background: rgba(255,255,255,.08)}
-    .btn.primary{border-color: rgba(87,199,255,.55); background: rgba(87,199,255,.14)}
-    .btn.danger{border-color: rgba(255,77,94,.55); background: rgba(255,77,94,.14)}
-    .btn.small{padding:8px 10px; font-size:12px; border-radius:10px}
-    .btn:disabled{opacity:.55; cursor:not-allowed; transform:none}
+  @media (min-width:768px){.container{width:94vw;margin:12px auto;aspect-ratio:3/5;}}
+  .content{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:12px;flex:1;position:relative;}
+  .order-block{width:100%;max-width:520px;display:flex;flex-direction:column;align-items:center;gap:10px;}
+  .status-line{font-weight:700;background:rgba(255,255,255,0.92);padding:8px 12px;border-radius:8px;border:2px solid #f0c6c6;text-align:center;}
 
-    .content{
-      padding:16px;
-      overflow:auto;
-      height:100%;
-    }
-    .panel{
-      background: var(--panel);
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: var(--r);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(10px);
-    }
+  .order-row{width:100%;display:flex;gap:8px;align-items:stretch;justify-content:center;}
+  .order-btn{
+    background:linear-gradient(180deg,#ffd4c4,#ffb38a);
+    border:4px solid var(--accent);
+    color:var(--dark);
+    padding:14px 18px;border-radius:12px;
+    cursor:pointer;box-shadow:0 6px 0 #913;user-select:none;
+    width:100%;max-width:120px;aspect-ratio:5/3;
+    font-size:clamp(16px,4vw,30px);
+    display:flex;align-items:center;justify-content:center;text-align:center;
+    flex:1;
+  }
+  .order-btn.disabled{opacity:0.4;cursor:not-allowed;box-shadow:none;}
 
-    .topbar{
-      display:grid;
-      grid-template-columns: 1fr auto auto auto;
-      gap:var(--gap);
-      padding:12px;
-      align-items:center;
-    }
-    .searchBox{
-      display:flex; gap:10px; align-items:center;
-      padding:10px 12px;
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.16);
-    }
-    .searchBox input{
-      width:100%;
-      border:none; outline:none;
-      background:transparent;
-      color:var(--text);
-      font-size:14px;
-    }
-    .select{
-      min-width: 160px;
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.16);
-      color:var(--text);
-      padding:10px 12px;
-      font-weight:900;
-      outline:none;
-    }
+  .offline-order{
+    flex:0 0 33%;
+    max-width:80px;
+    aspect-ratio:5/3;
+    background: linear-gradient(180deg, #ffe8de, #ffbfa5);
+    border: 3px dashed #e6b2a3;
+    color: #5a2e1e;
+    font-size:12px;font-weight:700;line-height:1.2;
+    border-radius:14px;
+    box-shadow: 0 4px 0 #a35a42;
+    cursor:pointer;
+    display:none;
+    align-items:center;justify-content:center;text-align:center;
+  }
+  .offline-order span{font-size:10px;font-weight:600;opacity:0.9;}
 
-    .tagArea{padding: 0 12px 12px;}
-    .tagGrid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:var(--gap);
-    }
-    .tagBlock{
-      padding:10px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.12);
-      min-height:56px;
-    }
-    .chips{display:flex; gap:8px; flex-wrap:wrap}
-    .chip{
-      border:1px solid rgba(87,199,255,.25);
-      background: rgba(87,199,255,.10);
-      color: var(--text);
-      padding:7px 10px;
-      border-radius: 999px;
-      cursor:pointer;
-      font-weight:1000;
-      font-size:12px;
-      transition:.12s transform, .12s background;
-      user-select:none;
-    }
-    .chip:hover{transform: translateY(-1px); background: rgba(87,199,255,.14)}
-    .chip.active{border-color: rgba(124,255,166,.55); background: rgba(124,255,166,.14)}
+  .small-pass{position:fixed;left:12px;bottom:12px;background:rgba(255,255,255,0.95);padding:6px;border-radius:6px;border:1px dashed #c66;display:flex;align-items:center;gap:6px;z-index:60;}
+  .small-pass input{width:110px;padding:4px;}
+  button.small{padding:6px 10px;border-radius:8px;border:1px solid #d4c0b8;background:#fff;cursor:pointer;}
+  button.btn-red{padding:10px 14px;border-radius:10px;border:2px solid var(--accent);background:linear-gradient(180deg,#ffb3b3,#ff7a7a);cursor:pointer;font-weight:800;}
+  button.btn-green{padding:10px 14px;border-radius:10px;border:2px solid #2b8f4a;background:linear-gradient(180deg,#6b3,#2b8f4a);color:#fff;cursor:pointer;font-weight:800;}
 
-    .feedHeader{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:10px;
-      padding: 8px 12px 0;
-      flex-wrap:wrap;
-    }
-    .pill{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.14);
-      font-size:12px;
-      color: rgba(255,255,255,.88);
-      font-weight:1000;
-    }
-    .pill b{font-weight:1100}
+  .guest-mini{position:fixed;right:12px;bottom:12px;background:var(--paper);padding:8px;border-radius:8px;border:1px solid #e6d6cc;font-size:13px;box-shadow:0 6px 12px rgba(0,0,0,0.08);}
 
-    /* ★ 正方形・余白最小グリッド */
-    .feedGrid{
-      padding: 12px;
-      display:grid;
-      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-      gap: var(--gap);
-      align-items:stretch;
-    }
-    .habitCard{
-      position:relative;
-      padding:10px;
-      border-radius: 16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: linear-gradient(180deg, rgba(0,0,0,.16), rgba(255,255,255,.03));
-      overflow:hidden;
-      aspect-ratio: 1 / 1; /* ★ 正方形 */
-      display:flex;
-      flex-direction:column;
-      justify-content:space-between;
-      min-height:0;
-    }
-    .habitTop{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:10px; margin-bottom:8px; min-width:0;
-    }
-    .miniUser{display:flex; align-items:center; gap:8px; min-width:0}
-    .miniAva{
-      width:24px; height:24px; border-radius:50%;
-      background: rgba(255,255,255,.08);
-      overflow:hidden;
-      border:1px solid rgba(255,255,255,.12);
-      flex:0 0 auto;
-    }
-    .miniAva img{width:100%; height:100%; object-fit:cover}
-    .miniName{
-      font-size:12px; font-weight:1000;
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-      max-width: 140px;
-    }
-    .badgeRow{display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end}
-    .badge{
-      font-size:11px;
-      padding:5px 8px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.14);
-      color: rgba(255,255,255,.86);
-      font-weight:1000;
-      cursor:pointer;
-    }
-    .badge.cat{border-color: rgba(255,201,77,.28); background: rgba(255,201,77,.12)}
-    .badge.tag{border-color: rgba(87,199,255,.28); background: rgba(87,199,255,.10)}
+  .staff-full{position:fixed;inset:0;background:linear-gradient(180deg,#fff8f2,#fff3ec);padding:18px;z-index:90;display:none;flex-direction:column;overflow:auto;}
+  .staff-full.show{display:flex;}
+  .staff-top{display:flex;justify-content:space-between;align-items:center;gap:8px;}
+  .big-toggle{display:flex;gap:8px;align-items:center;margin-top:8px;}
+  .big-toggle button{flex:1;padding:12px;border-radius:8px;font-size:16px;border:2px solid #c6b3b3;cursor:pointer;}
+  .big-toggle .on{background:#2b8f4a;color:#fff;border-color:#2b8f4a;}
+  .big-toggle .off{background:#f0f0f0;color:#666;}
+  .staff-body{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;}
+  .staff-panel{flex:1;min-width:280px;background:var(--paper);padding:12px;border-radius:8px;border:1px solid #e6d6cc;max-height:520px;overflow:auto;}
+  .order-item{padding:8px;border-bottom:1px dashed #e6d0c6;display:flex;justify-content:space-between;align-items:center;gap:8px;}
 
-    .habitTitle{
-      font-size:15px; font-weight:1100;
-      letter-spacing:.03em;
-      margin:2px 0 6px;
-      line-height:1.25;
-      display:-webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow:hidden;
-    }
-    .habitDesc{
-      color: rgba(234,246,255,.92);
-      font-size:13px;
-      line-height:1.45;
-      margin:0 0 10px;
-      white-space:pre-wrap;
-      display:-webkit-box;
-      -webkit-line-clamp: 4;
-      -webkit-box-orient: vertical;
-      overflow:hidden;
-      opacity:.95;
-    }
+  .menu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+  .menu-item{padding:8px;border:2px solid #e0bdb5;background:#fff;border-radius:8px;text-align:center;cursor:pointer;}
+  img.menu-thumb{width:100%;height:120px;object-fit:cover;border-radius:6px;}
 
-    .stats{display:flex; gap:8px; flex-wrap:wrap; font-size:12px; font-weight:1000}
-    .stat{
-      display:flex; align-items:center; gap:7px;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.14);
-    }
+  .modal-back{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:100;}
+  .modal{background:#fff;padding:16px;border-radius:10px;width:780px;max-width:95%;box-shadow:0 8px 30px rgba(0,0,0,0.4);border:6px solid var(--accent);}
 
-    .actions{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-      margin-top:8px;
-    }
+  .small-info{font-size:12px;color:var(--muted);}
+  .status-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:120;flex-direction:column;color:#111;}
+  .status-card{width:80%;max-width:720px;background:rgba(255,255,255,0.98);padding:28px;border-radius:12px;border:4px solid var(--accent);text-align:center;font-size:26px;font-weight:700;}
+  .status-sub{font-size:14px;color:#444;margin-top:8px;}
 
-    /* アイコンボタン（ホバーで名前） */
-    .iconBtn{
-      position:relative;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.14);
-      color:var(--text);
-      border-radius: 12px;
-      padding:10px 10px;
-      font-weight:1100;
-      cursor:pointer;
-      display:flex; align-items:center; justify-content:center;
-      min-width: 42px;
-      user-select:none;
-    }
-    .iconBtn:hover{background: rgba(255,255,255,.06)}
-    .iconBtn.danger{border-color: rgba(255,77,94,.45)}
-    .iconBtn.ok{border-color: rgba(124,255,166,.45)}
-    .iconBtn.warn{border-color: rgba(255,201,77,.45)}
-    .iconBtn.primary{border-color: rgba(87,199,255,.45)}
-    .iconBtn[data-tip]::after{
-      content: attr(data-tip);
-      position:absolute;
-      bottom: calc(100% + 8px);
-      left:50%;
-      transform: translateX(-50%);
-      background: rgba(0,0,0,.72);
-      border:1px solid rgba(255,255,255,.16);
-      color: rgba(255,255,255,.92);
-      padding:6px 8px;
-      border-radius: 10px;
-      font-size:11px;
-      font-weight:1000;
-      white-space:nowrap;
-      opacity:0;
-      pointer-events:none;
-      transition: opacity .12s ease, transform .12s ease;
-    }
-    .iconBtn:hover::after{opacity:1; transform: translateX(-50%) translateY(-2px)}
+  .bgm-btn{font-size:12px;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,0.95);border:1px solid #e6d0c6;cursor:pointer;}
 
-    .tryBtn{
-      background: linear-gradient(180deg, rgba(255,77,94,.95), rgba(255,77,94,.62));
-      border:none;
-      color:#fff;
-      box-shadow: 0 12px 26px rgba(255,77,94,.18);
-    }
-    .tryBtn:hover{filter:brightness(1.03)}
-    .tryBtn[data-tip]::after{ border-color: rgba(255,77,94,.25); }
+  .sound-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:200;background:rgba(0,0,0,0.6);color:#fff;flex-direction:column;}
+  .sound-panel{background:#fff;padding:18px;border-radius:12px;color:#111;border:3px solid var(--accent);width:360px;text-align:center;}
 
-    /* 今日の進行中（通知風） */
-    .toastWrap{
-      position:sticky;
-      top:10px;
-      z-index:20;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      padding: 0 0 10px;
-    }
-    .toast{
-      border-radius: 16px;
-      border:1px solid rgba(124,255,166,.25);
-      background: linear-gradient(180deg, rgba(124,255,166,.14), rgba(0,0,0,.12));
-      padding:12px;
-      box-shadow: var(--shadow);
-      display:flex; gap:12px; align-items:center; justify-content:space-between;
-      animation: pop .18s ease-out;
-    }
-    @keyframes pop{from{transform: translateY(-6px); opacity:.0} to{transform: translateY(0); opacity:1}}
-    .toast .left{display:flex; flex-direction:column; gap:4px; min-width:0}
-    .toast .main{font-size:14px; font-weight:1100; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-    .toast .right{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
+  /* ✅ アート枠：黒縁→白縁（白い縁取りに変更） */
+  .art-area{position:relative;width:240px;height:240px;border-radius:10px;overflow:hidden;border:2px solid rgba(255,255,255,0.95);background:#b36e3c;box-shadow: inset 0 0 0 2px rgba(255,255,255,0.35);}
+  .art-area canvas{position:absolute;left:0;top:0;width:240px;height:240px;}
 
-    .plusOne{
-      position:fixed;
-      right:22px;
-      top: 92px;
-      z-index:60;
-      font-weight:1100;
-      font-size:14px;
-      padding:10px 12px;
-      border-radius: 999px;
-      border:1px solid rgba(124,255,166,.35);
-      background: rgba(124,255,166,.12);
-      backdrop-filter: blur(10px);
-      box-shadow: var(--shadow);
-      display:none;
-      animation: floatUp .9s ease-out forwards;
-    }
-    @keyframes floatUp{
-      0%{transform: translateY(8px); opacity:0}
-      15%{opacity:1}
-      100%{transform: translateY(-18px); opacity:0}
-    }
+  .card-canvas{border:1px solid #e6d0c6;background:var(--card-skin);border-radius:8px;}
 
-    /* composer */
-    .composer{
-      position:sticky;
-      bottom: 12px;
-      z-index:10;
-      margin-top: 12px;
-      padding: 12px;
-      border-radius: 18px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(10,25,38,.78);
-      backdrop-filter: blur(12px);
-      box-shadow: var(--shadow);
-    }
-    .composerGrid{
-      display:grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap:var(--gap);
-    }
-    .field{display:flex; flex-direction:column; gap:6px;}
-    .field input, .field textarea, .field select{
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.16);
-      color:var(--text);
-      border-radius: 14px;
-      padding:10px 12px;
-      outline:none;
-      font-size:14px;
-    }
-    .field textarea{min-height: 74px; resize: vertical}
-    .composerFooter{
-      display:flex; align-items:center; justify-content:flex-end; gap:10px;
-      margin-top:10px;
-      flex-wrap:wrap;
-    }
-    .counter{
-      font-family:var(--mono);
-      font-size:11px;
-      color: rgba(255,255,255,.7);
-      border:1px solid rgba(255,255,255,.12);
-      padding:6px 10px;
-      border-radius:999px;
-      background: rgba(0,0,0,.14);
-      margin-right:auto;
-    }
-
-    .view{display:none}
-    .view.active{display:block}
-
-    /* list screens */
-    .listWrap{padding:12px}
-    .simpleRow{
-      padding:12px;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.14);
-      margin:10px 0;
-    }
-    .rowTop{display:flex; align-items:flex-start; justify-content:space-between; gap:12px}
-    .rowTitle{font-weight:1100; font-size:14px; margin:0}
-    .rowSub{color:var(--muted); font-size:12px; margin-top:6px; line-height:1.6}
-
-    /* modals */
-    .modalBg{
-      position:fixed; inset:0;
-      background: rgba(0,0,0,.45);
-      display:none;
-      align-items:center; justify-content:center;
-      padding:18px;
-      z-index:50;
-    }
-    .modalBg.show{display:flex}
-    .modal{
-      width:min(720px, 100%);
-      border-radius: 18px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(10,25,38,.92);
-      backdrop-filter: blur(14px);
-      box-shadow: var(--shadow);
-      padding:16px;
-    }
-    .modal h2{margin:0; font-size:16px; letter-spacing:.06em}
-    .modalFooter{display:flex; gap:10px; justify-content:flex-end; margin-top:14px; flex-wrap:wrap}
-
-    .catList{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
-    .catBtn{
-      padding:10px 12px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.14);
-      color:var(--text);
-      font-weight:1000;
-      cursor:pointer;
-    }
-    .catBtn:hover{background: rgba(255,255,255,.06)}
-    .catBtn.active{border-color: rgba(87,199,255,.55); background: rgba(87,199,255,.12)}
-
-    .list{
-      margin-top:12px;
-      border-top:1px solid rgba(255,255,255,.10);
-      padding-top:12px;
-      display:flex; flex-direction:column; gap:10px;
-      max-height: 320px;
-      overflow:auto;
-    }
-    .review{
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.14);
-      border-radius: 14px;
-      padding:10px 12px;
-    }
-    .reviewTop{display:flex; align-items:center; justify-content:space-between; gap:10px}
-    .reviewName{font-weight:1000; font-size:12px; opacity:.95}
-    .reviewMeta{font-size:12px; opacity:.9}
-    .reviewText{margin-top:8px; font-size:13px; line-height:1.55; opacity:.95; white-space:pre-wrap}
-
-    .starsRow{display:flex; gap:8px; flex-wrap:wrap; margin:12px 0}
-    .starBtn{
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.16);
-      border-radius: 12px;
-      padding:10px 12px;
-      cursor:pointer;
-      font-weight:1100;
-      color:var(--text);
-      display:flex; align-items:center; gap:8px;
-    }
-    .starBtn.active{border-color: rgba(255,201,77,.55); background: rgba(255,201,77,.14)}
-
-    .toggle{
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.16);
-      border-radius: 12px;
-      padding:10px 12px;
-      cursor:pointer;
-      font-weight:1000;
-      color:var(--text);
-      display:flex; align-items:center; gap:8px;
-      user-select:none;
-    }
-    .toggle.active{border-color: rgba(255,77,94,.55); background: rgba(255,77,94,.14)}
-    .commentBox{
-      width:100%;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.16);
-      color:var(--text);
-      border-radius: 14px;
-      padding:10px 12px;
-      outline:none;
-      font-size:14px;
-      margin-top:10px;
-      min-height: 88px;
-      resize: vertical;
-    }
-
-    /* difficulty modal */
-    .diffRow{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
-    .diffBtn{
-      flex:1 1 120px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.16);
-      border-radius: 14px;
-      padding:14px 12px;
-      cursor:pointer;
-      font-weight:1100;
-      color:var(--text);
-      display:flex; align-items:center; justify-content:center; gap:10px;
-      font-size:18px;
-    }
-    .diffBtn:hover{background: rgba(255,255,255,.06)}
-    .diffBtn.easy{border-color: rgba(124,255,166,.35); background: rgba(124,255,166,.10)}
-    .diffBtn.mid{border-color: rgba(87,199,255,.35); background: rgba(87,199,255,.10)}
-    .diffBtn.hard{border-color: rgba(255,201,77,.40); background: rgba(255,201,77,.10)}
-
-    /* login gate */
-    .gate{
-      position:fixed; inset:0;
-      display:none;
-      align-items:center; justify-content:center;
-      z-index:100;
-      background: rgba(0,0,0,.55);
-      backdrop-filter: blur(10px);
-      padding:18px;
-    }
-    .gate.show{display:flex}
-    .gateCard{
-      width:min(520px, 100%);
-      border-radius: 18px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(10,25,38,.92);
-      box-shadow: var(--shadow);
-      padding:16px;
-    }
-    .gateTitle{margin:0; font-size:16px; font-weight:1100; letter-spacing:.06em}
-    .gateActions{display:flex; justify-content:flex-end; gap:10px; margin-top:14px; flex-wrap:wrap}
-  </style>
+  /* ✅ ホームに「新メニューの提供」ボタン */
+  #newMenuBtn{
+    position:absolute;
+    left:50%;
+    bottom:62px;
+    transform:translateX(-50%);
+    padding:8px 12px;
+    border-radius:10px;
+    border:1px solid #e6d0c6;
+    background:rgba(255,255,255,0.9);
+    cursor:pointer;
+    font-size:12px;
+    box-shadow:0 6px 12px rgba(0,0,0,0.12);
+    z-index:20;
+  }
+</style>
 </head>
 
 <body>
-  <div class="bg" aria-hidden="true">
-    <div class="fish f2"></div>
-    <div class="fish"></div>
-    <div class="fish f3"></div>
-  </div>
+<div class="container">
+  <div class="book">
+    <div class="page cover" id="coverPage"></div>
 
-  <div class="plusOne" id="plusOne">✨ +1</div>
+    <div class="page inner">
+      <header>
+        <h1 id="siteTitle">仮想飲食システム</h1>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="small-info">時刻: <span id="nowtime">--:--:--</span></div>
+          <button id="bgmBtn" class="bgm-btn" title="Xへ">X</button>
+        </div>
+      </header>
 
-  <!-- ログイン必須ゲート -->
-  <div class="gate" id="loginGate">
-    <div class="gateCard">
-      <p class="gateTitle">ログイン</p>
-      <div class="gateActions">
-        <button class="btn primary" id="gateLoginBtn">Googleログイン</button>
+      <div class="content">
+        <div class="order-block">
+          <div id="shiftShort" class="status-line">読み込み中...</div>
+
+          <div class="order-row">
+            <button id="orderBtn" class="order-btn disabled">注文</button>
+
+            <button id="offlineOrderBtn" class="offline-order" style="display:none;">
+              <span>アート<br>なし版</span>
+            </button>
+          </div>
+
+          <div class="small-info" id="helperSmall">実際の支払いはありません</div>
+          <div class="small-info" id="busyInfo" style="background:rgba(255,255,255,0.85);padding:6px 10px;border-radius:8px;border:1px solid #e6d0c6;">混み具合: --</div>
+        </div>
+
+        <button id="newMenuBtn">新メニューの提供</button>
       </div>
     </div>
   </div>
+</div>
 
-  <div class="app">
-    <aside class="nav">
-      <div class="brand">
-        <div class="logo"></div>
-        <div><h1>習慣さがし</h1></div>
-      </div>
+<div class="guest-mini" id="guestMini">
+  <div id="guestRole"><strong>あなた：客</strong></div>
+  <div class="small-info" style="margin-top:6px">目的：注文</div>
+</div>
 
-      <div class="navSection">
-        <button class="navBtn active" id="navHome"><div class="ico">🏠</div><div class="label">ホーム</div></button>
-        <button class="navBtn" id="navRecords"><div class="ico">📅</div><div class="label">達成記録</div></button>
-        <button class="navBtn" id="navBookmarks"><div class="ico">🔖</div><div class="label">保存</div></button>
-        <button class="navBtn" id="navProfile"><div class="ico">👤</div><div class="label">プロフィール</div></button>
-      </div>
+<div class="small-pass">
+  <label style="font-size:12px;margin:0">店員用</label>
+  <input id="staffPass" placeholder="　" />
+  <button id="passOk" class="small">OK</button>
+</div>
 
-      <div class="navFooter">
-        <div class="userCard">
-          <div class="avatar" id="userAvatar">👤</div>
-          <div class="userMeta">
-            <div class="userName" id="userName">—</div>
-            <div class="userSmall" id="userSmall">—</div>
+<!-- ===== Staff ===== -->
+<div id="staffFull" class="staff-full" aria-hidden="true">
+  <div class="staff-top">
+    <div>
+      <strong id="staffBadge">店員</strong>
+      <div class="small-info">店員控室</div>
+    </div>
+    <div>
+      <button id="logoutStaff" class="small">退室</button>
+    </div>
+  </div>
+
+  <div style="margin-top:8px;">
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <label>シフト開始</label><input id="shiftStart" type="time" />
+      <label>終了</label><input id="shiftEnd" type="time" />
+      <button id="saveShift" class="small">保存</button>
+      <button id="orderToggleBtn" class="small">設定</button>
+    </div>
+
+    <div class="big-toggle" style="margin-top:8px;">
+      <button id="shiftBtn" class="off">シフト中</button>
+      <button id="breakBtn" class="off">休憩中</button>
+    </div>
+  </div>
+
+  <div class="staff-body">
+    <div class="staff-panel">
+      <strong>全員のシフト一覧</strong>
+      <div id="shiftList" class="small-info" style="margin-top:8px">読み込み中…</div>
+    </div>
+
+    <div class="staff-panel">
+      <strong>注文一覧 <span id="pendingTasksSmall" class="small-info"></span></strong>
+      <div id="staffOrderList" class="order-list" style="margin-top:8px"></div>
+    </div>
+
+    <!-- ✅ 新メニュー提案（スタッフ側） -->
+    <div class="staff-panel">
+      <strong>新メニュー提案</strong>
+      <div class="small-info" style="margin-top:6px;">お客様の投稿。消すまで表示され続けます。</div>
+      <div id="submissionList" style="margin-top:8px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Sound permission overlay ===== -->
+<div id="soundOverlay" class="sound-overlay" style="display:none;">
+  <div class="sound-panel">
+    <h3>効果音など流しますか？</h3>
+    <p style="font-size:12px;">音声、効果音が流れます</p>
+    <div style="display:flex;gap:8px;justify-content:center;margin-top:12px;">
+      <button id="enableSoundBtn" class="btn-green">OK</button>
+      <button id="disableSoundBtn" class="small">NO</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Client status overlay ===== -->
+<div id="orderStatusOverlay" class="status-overlay">
+  <div class="status-card" id="orderStatusCard">
+    <div id="orderStatusMain">状態</div>
+    <div id="orderStatusSub" class="status-sub">対応されない場合再度注文</div>
+  </div>
+</div>
+
+<!-- ===== Name modal (guest & staff shared) ===== -->
+<div id="modalName" class="modal-back" style="display:none;align-items:center;justify-content:center;">
+  <div class="modal">
+    <h3>ゲーム内の名前</h3>
+    <input id="orderName" placeholder="名前を入力" style="width: 300px; height: 60px; font-size:18px;" />
+    <div style="margin-top:10px;text-align:right;">
+      <button id="cancelOrderName" class="small">キャンセル</button>
+      <button id="okOrderName" class="btn-red">決定</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Menu modal ===== -->
+<div id="modalMenu" class="modal-back" style="display:none;align-items:center;justify-content:center;">
+  <div class="modal">
+    <h3>メニューを選択『１日１品まで』</h3>
+    <div class="menu-grid" id="menuGrid"></div>
+    <div style="margin-top:10px;text-align:right;">
+      <button id="backMenu" class="small">戻る</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Make modal ===== -->
+<div id="modalMakeLatte" class="modal-back" style="display:none;align-items:flex-start;overflow:auto;">
+  <div class="modal" style="width:95%;max-width:920px;">
+    <h3 id="makeTitle">制作（担当：<span id="makerName"></span>）</h3>
+
+    <div style="display:flex;flex-wrap:wrap;gap:12px;">
+      <div style="flex:1;min-width:280px;">
+        <div style="height:220px;display:flex;align-items:center;justify-content:center;">
+          <div style="width:180px;height:180px;border-radius:12px;background:#fff8f2;display:flex;align-items:center;justify-content:center;border:2px solid #d2b6ab;position:relative;">
+            <div style="position:absolute;left:8px;top:8px;right:8px;bottom:8px;display:flex;align-items:center;justify-content:center;flex-direction:column;">
+              <div id="espressoCup" style="width:120px;height:120px;border-radius:60px;overflow:hidden;position:relative;background:#6b3b24;">
+                <canvas id="latteCanvas" width="120" height="120" style="display:block;"></canvas>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="authRow">
-          <button class="btn primary" id="btnLogin">Googleログイン</button>
-          <button class="btn danger" id="btnLogout" disabled>ログアウト</button>
+        <div style="margin-top:8px;">
+          <label id="espressoLabel">エスプレッソ注ぎ</label>
+          <div style="background:#eee;border-radius:6px;padding:6px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <button id="startEsp" class="small">注ぐ（押し続け）</button>
+              <div style="flex:1;position:relative;">
+                <div style="height:16px;background:#fff;border-radius:8px;border:1px solid #d4c0b8;overflow:hidden;position:relative;">
+                  <div id="espBar" style="height:100%;width:0%;background:linear-gradient(90deg,#a7552b,#6b3);"></div>
+                </div>
+              </div>
+              <div id="espPct" style="width:48px;text-align:right;font-weight:700;">0%</div>
+            </div>
+            <div class="small-info">合格ゾーン: 95%〜105%</div>
+          </div>
+        </div>
+
+        <div style="margin-top:8px;">
+          <label id="milkLabel">フームドミルク注ぎ</label>
+          <div style="background:#eee;border-radius:6px;padding:6px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <button id="startMilk" class="small" disabled>注ぐ（押し続け）</button>
+              <div style="flex:1;position:relative;">
+                <div style="height:16px;background:#fff;border-radius:8px;border:1px solid #d4c0b8;overflow:hidden;position:relative;">
+                  <div id="milkBar" style="height:100%;width:0%;background:linear-gradient(90deg,#fff,#eee);"></div>
+                </div>
+              </div>
+              <div id="milkPct" style="width:48px;text-align:right;font-weight:700;">0%</div>
+            </div>
+            <div class="small-info">合格ゾーン: 95%〜105%</div>
+          </div>
         </div>
       </div>
-    </aside>
 
-    <main class="content">
-      <section class="view active" id="viewHome">
-        <div class="toastWrap" id="toastWrap"></div>
+      <div style="flex:1;min-width:300px;">
+        <div style="background:#fff8ef;padding:8px;border-radius:8px;border:1px solid #e0c7bb;">
+          <strong id="latteArtLabel">アート（似顔絵など）</strong>
+          <div style="margin-top:8px;">
+            <div class="art-area" id="artArea">
+              <canvas id="artBg" width="240" height="240"></canvas>
+              <canvas id="artLayer" width="240" height="240"></canvas>
+            </div>
+            <div style="margin-top:8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+              <label>ツール</label>
+              <select id="penMode"><option value="draw">描く</option><option value="erase">消しゴム</option></select>
+              <label>太さ</label>
+              <select id="penSize"><option value="2">小</option><option value="6" selected>中</option><option value="12">大</option></select>
+              <button id="clearArt" class="small">クリア</button>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;margin-top:6px;flex-wrap:wrap;">
+              <label style="font-size:12px;">背景色</label><input id="artBgColor" type="color" value="#6b3b24"/>
+              <label style="font-size:12px;">ペン色</label><input id="artPenColor" type="color" value="#ffffff"/>
+            </div>
+            <div style="margin-top:8px;text-align:right;">
+              <button id="saveArt" class="btn-green" disabled>アート保存</button>
+            </div>
+          </div>
+        </div>
 
-        <div class="panel">
-          <div class="topbar">
-            <div class="searchBox">
-              <span style="opacity:.85">🔎</span>
-              <input id="q" placeholder="検索" />
+        <div style="margin-top:10px;background:#fff8ef;padding:8px;border-radius:8px;border:1px solid #e0c7bb;">
+          <strong>メッセージカード</strong>
+          <div style="margin-top:6px;">
+            <canvas id="cardCanvas" class="card-canvas" width="320" height="120"></canvas>
+          </div>
+          <div style="margin-top:6px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+            <label>ツール</label>
+            <select id="cardMode"><option value="draw">描く</option><option value="erase">消しゴム</option></select>
+            <label>太さ</label>
+            <select id="cardSize"><option value="2">小</option><option value="6" selected>中</option><option value="12">大</option></select>
+            <button id="clearCard" class="small">クリア</button>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;margin-top:6px;flex-wrap:wrap;">
+            <label style="font-size:12px;">背景色</label><input id="cardBgColor" type="color" value="#fff2e6"/>
+            <label style="font-size:12px;">ペン色</label><input id="cardPenColor" type="color" value="#000000"/>
+          </div>
+          <div style="margin-top:8px;text-align:right;">
+            <button id="saveCard" class="small" disabled>保存</button>
+          </div>
+        </div>
+
+        <div style="margin-top:8px;display:flex;justify-content:flex-end;align-items:center;gap:8px;">
+          <div id="taskStatusSmall" class="small-info" style="margin-right:auto"></div>
+          <button id="completeMake" class="btn-red" disabled>提供する</button>
+          <button id="cancelMake" class="small">中止</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Eat modal（✅ ポロドーモ復活 / 画像クリックで設定） ===== -->
+<div id="modalEat" class="modal-back" style="display:none;align-items:center;justify-content:center;">
+  <style>
+    #modalEat .modal{
+      width:95%;
+      max-width:960px;
+      background:url("https://raw.githubusercontent.com/zzcafe2800/reiji_cafe/main/3739270_l.jpg") center center / cover no-repeat;
+      border-radius:14px;
+      padding:14px;
+      box-shadow:0 12px 30px rgba(0,0,0,0.25);
+    }
+    #modalEat h3{font-size:14px;color:#fff;opacity:.7;margin:0 0 6px 6px;font-weight:500;}
+    .photo-folder{background:#f6efe7;border-radius:12px;padding:10px;box-shadow: inset 0 2px 4px rgba(0,0,0,.1);}
+    .photo-frame{background:#fff;border:10px solid #e8dccd;border-bottom:16px solid #d7c6b2;border-radius:6px;box-shadow:0 6px 14px rgba(0,0,0,.25);padding:6px;position:relative;transform:rotate(-1deg);}
+    #eatMainWrap{width:100%;height:520px;border-radius:12px;background:#fffdf8;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;box-shadow:inset 0 0 12px rgba(0,0,0,.15);}
+    #servedImage{max-width:100%;max-height:100%;border-radius:8px;cursor:pointer;}
+    #eatSoundInfo{font-weight:600;padding:.6em .9em;background:#fff;border-radius:14px;box-shadow:0 3px 10px rgba(0,0,0,.15);position:relative;}
+    #eatSoundInfo:after{content:"";position:absolute;left:16px;bottom:-8px;border:8px solid transparent;border-top-color:#fff;}
+    .wood-btn{background:linear-gradient(#c9a57a,#a67c52);color:#fff;border:none;border-radius:10px;padding:6px 12px;font-weight:600;box-shadow:0 3px 6px rgba(0,0,0,.25);cursor:pointer;}
+    .wood-btn.small{ font-size:12px; }
+    .side-card{background:rgba(255,255,255,.92);border-radius:12px;padding:8px;box-shadow:0 4px 12px rgba(0,0,0,.15);}
+    .photo-stack{display:flex;gap:8px;justify-content:center;margin-top:8px;}
+    .mini-frame{background:#fff;border:6px solid #e8dccd;border-bottom:10px solid #d7c6b2;border-radius:4px;padding:4px;box-shadow:0 4px 10px rgba(0,0,0,.2);}
+
+    /* ✅ ポロドーモタイマー（復活） */
+    #pomodoroPanel{
+      position:absolute;
+      bottom:8px;
+      right:8px;
+      width:230px;
+      aspect-ratio:1 / 1;
+      background:#fff7e9;
+      border-radius:14px;
+      padding:10px;
+      box-shadow:0 8px 18px rgba(0,0,0,.3);
+      transform:scale(0.85);
+      transform-origin:bottom right;
+      overflow:auto;
+      display:none;
+      cursor:grab;
+      border:2px solid var(--accent);
+    }
+    #pomodoroPanel.show{display:block;}
+    .pomo-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:12px;}
+    .pomo-number{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid #e6d0c6;padding:6px;border-radius:6px;flex:1;}
+    .pomo-number input{border:none;width:56px;font-weight:700;text-align:center;}
+    .pomo-btn{width:28px;height:28px;border-radius:6px;border:1px solid #ccc;background:#fafafa;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;user-select:none;}
+    .pomo-timer{font-family:monospace;font-size:26px;text-align:center;background:#222;color:#7cff7c;padding:6px;border-radius:6px;letter-spacing:2px;}
+    .pomo-controls{display:flex;gap:6px;margin-top:6px;}
+    .pomo-controls button{flex:1;padding:8px;border-radius:8px;border:1px solid #d4c0b8;background:#fff;cursor:pointer;}
+    .pomo-progress{height:10px;background:#eee;border-radius:6px;overflow:hidden;width:100%;margin-top:6px;}
+    .pomo-progress > i{display:block;height:100%;background:linear-gradient(90deg,#ffd4c4,#ffb38a);width:0%;}
+    @media(max-width:700px){ #pomodoroPanel{ transform:scale(0.75);} }
+  </style>
+
+  <div class="modal">
+    <h3>飲食</h3>
+
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:420px;" class="photo-folder">
+        <div class="photo-frame">
+          <div id="eatMainWrap">
+            <img id="servedImage" src="" alt="商品画像" />
+
+            <div id="pomodoroPanel" aria-hidden="false">
+              <div id="pomoSettings">
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;">
+                  <div>ポロドーモタイマー</div>
+                  <div id="pomoCountDisplay">1 / 1</div>
+                </div>
+
+                <div class="pomo-row">
+                  <div style="width:58px;">ループ</div>
+                  <div class="pomo-number">
+                    <button class="pomo-btn" id="loopDown">-</button>
+                    <input id="loopCount" type="number" value="2" min="1" max="10"/>
+                    <button class="pomo-btn" id="loopUp">+</button>
+                  </div>
+                </div>
+
+                <div class="pomo-row">
+                  <div style="width:58px;">作業</div>
+                  <div class="pomo-number">
+                    <button class="pomo-btn" id="workDown">-</button>
+                    <input id="workMin" type="number" value="1" min="1" max="200"/>
+                    <button class="pomo-btn" id="workUp">+</button>
+                  </div>
+                </div>
+
+                <div class="pomo-row">
+                  <div style="width:58px;">休憩</div>
+                  <div class="pomo-number">
+                    <button class="pomo-btn" id="breakDown">-</button>
+                    <input id="breakMin" type="number" value="5" min="1" max="200"/>
+                    <button class="pomo-btn" id="breakUp">+</button>
+                  </div>
+                </div>
+
+                <div style="text-align:right;margin-top:8px;">
+                  <button id="startPomoBtn" class="wood-btn">再生 ▶</button>
+                </div>
+              </div>
+
+              <div id="pomoRunning" style="display:none;">
+                <div id="pomoLoopCounter" style="font-size:12px;text-align:center;">1 / 1</div>
+                <div id="pomoPhaseLabel" style="font-size:12px;text-align:center;margin-top:2px;">作業中</div>
+                <div class="pomo-timer" id="pomoTimerText">00:00:00</div>
+
+                <div class="pomo-controls">
+                  <button id="stopPomoBtn">■</button>
+                  <button id="pausePomoBtn">⏸</button>
+                  <button id="skipPomoBtn">⏭</button>
+                </div>
+
+                <div class="pomo-progress"><i id="pomoProgressBar"></i></div>
+                <div id="pomoHint" style="font-size:12px;text-align:center;margin-top:6px;">作業した分完食に近づくよ！</div>
+              </div>
             </div>
 
-            <select class="select" id="categoryFilter">
-              <option value="">カテゴリ（すべて）</option>
-              <option>健康</option><option>メンタル</option><option>勉強</option><option>仕事</option>
-              <option>生活</option><option>睡眠</option><option>運動</option><option>英語</option><option>その他</option>
+          </div>
+        </div>
+
+        <div style="margin-top:8px;display:flex;gap:6px;align-items:center;">
+          <div id="eatSoundInfo">↑ 画像クリックでタイマー設定</div>
+          <button id="saveAllBtn" class="wood-btn small" style="margin-left:auto">画像保存</button>
+        </div>
+      </div>
+
+      <div style="width:320px;">
+        <div class="side-card">
+          <div class="photo-stack">
+            <div class="mini-frame">
+              <canvas id="servedArtMini" width="220" height="220"></canvas>
+            </div>
+          </div>
+
+          <div class="photo-stack">
+            <div class="mini-frame">
+              <canvas id="servedCardMini" width="260" height="120"></canvas>
+            </div>
+          </div>
+
+          <div style="margin-top:8px;text-align:right;">
+            <button id="homeFromEat" class="wood-btn small">ホームへ</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 新メニュー提供：説明モーダル ===== -->
+<div id="modalNewMenuInfo" class="modal-back" style="display:none;align-items:center;justify-content:center;">
+  <div class="modal" style="max-width:640px;">
+    <h3>新メニューの提供</h3>
+    <p class="small-info" style="font-size:14px;line-height:1.6;color:#333;">
+      お客様が描いた商品が、<strong>メニューとして追加されるかも</strong>しれません！<br>
+      投稿作品は、<strong>SNSに掲載</strong>されたり、<strong>このサイト内で使用</strong>されることがあります。<br>
+      ご了承の上で投稿してください。
+    </p>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px;">
+      <button id="newMenuCancel" class="small">やめる</button>
+      <button id="newMenuGo" class="btn-green">挑戦</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 新メニュー提供：ペイント画面（オリジナル） ===== -->
+<div id="modalNewMenuPaint" class="modal-back" style="display:none;align-items:flex-start;overflow:auto;">
+  <div class="modal" style="width:95%;max-width:920px;">
+    <h3>新メニューを描く</h3>
+
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:320px;">
+        <div class="small-info" style="margin-bottom:6px;">名前（スタッフ画面に表示されます）</div>
+        <input id="submitterName" placeholder="名前を入力" style="width:100%;max-width:420px;height:48px;font-size:18px;padding:8px;border-radius:10px;border:1px solid #e6d0c6;" />
+        <div class="small-info" style="margin-top:6px;">※ 公開される可能性があります</div>
+
+        <div style="margin-top:12px;background:#fff8ef;padding:10px;border-radius:10px;border:1px solid #e0c7bb;">
+          <strong>お絵描き</strong>
+          <div style="margin-top:8px;display:flex;justify-content:center;">
+            <div class="art-area" style="width:320px;height:320px;">
+              <canvas id="newMenuBg" width="320" height="320"></canvas>
+              <canvas id="newMenuLayer" width="320" height="320"></canvas>
+            </div>
+          </div>
+
+          <div style="margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <label>ツール</label>
+            <select id="newMenuMode">
+              <option value="draw">描く</option>
+              <option value="erase">消しゴム</option>
             </select>
 
-            <select class="select" id="sortBy">
-              <option value="new">🆕 新着</option>
-              <option value="rating">⭐ 評価</option>
-              <option value="success">🎯 成功率</option>
-              <option value="days">📅 継続</option>
-              <option value="favCreators">❤️ お気に入り中の人</option>
+            <label>太さ</label>
+            <select id="newMenuSize">
+              <option value="2">小</option>
+              <option value="6" selected>中</option>
+              <option value="12">大</option>
             </select>
 
-            <button class="btn small" id="btnClearTag">タグ解除</button>
+            <label style="font-size:12px;">背景</label>
+            <input id="newMenuBgColor" type="color" value="#fff7e9"/>
+
+            <label style="font-size:12px;">ペン</label>
+            <input id="newMenuPenColor" type="color" value="#000000"/>
+
+            <button id="newMenuClear" class="small">クリア</button>
           </div>
 
-          <div class="tagArea">
-            <div class="tagGrid">
-              <div class="tagBlock"><div class="chips" id="chipsRecommend"></div></div>
-              <div class="tagBlock"><div class="chips" id="chipsTop"></div></div>
-            </div>
+          <div style="margin-top:10px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;">
+            <button id="newMenuBack" class="small">戻る</button>
+            <button id="newMenuSubmit" class="btn-red">保存して提出</button>
           </div>
 
-          <div class="feedHeader">
-            <div class="pill">件数：<b id="countShown">0</b></div>
-            <div class="pill">カテゴリ：<b id="myCategory">未設定</b> <button class="btn small" id="btnChangeMyCategory">変更</button></div>
-            <div class="pill">依頼：<b id="activeCount">0</b> / 3</div>
+          <div id="newMenuSubmitHint" class="small-info" style="margin-top:8px;color:#444;"></div>
+        </div>
+      </div>
+
+      <div style="flex:1;min-width:280px;">
+        <div style="background:#fff;padding:10px;border-radius:10px;border:1px solid #e6d0c6;">
+          <strong>プレビュー</strong>
+          <div class="small-info" style="margin-top:6px;">提出される画像（縮小表示）</div>
+          <div style="margin-top:8px;display:flex;justify-content:center;">
+            <canvas id="newMenuPreview" width="360" height="360" style="border-radius:12px;border:1px solid #e6d0c6;background:#fff;"></canvas>
           </div>
-
-          <div class="feedGrid" id="feed"></div>
-
-          <div class="composer" id="composer">
-            <div class="counter" id="counterAction">0 / 40</div>
-
-            <div class="composerGrid">
-              <div class="field">
-                <input id="newTitle" placeholder="タイトル" maxlength="40" />
-              </div>
-              <div class="field">
-                <input id="newTags" placeholder="タグ（例：不安,寝つき）" />
-              </div>
-              <div class="field">
-                <select id="newCategory">
-                  <option value="">カテゴリ（任意）</option>
-                  <option>健康</option><option>メンタル</option><option>勉強</option><option>仕事</option>
-                  <option>生活</option><option>睡眠</option><option>運動</option><option>英語</option><option>その他</option>
-                </select>
-              </div>
-              <div class="field">
-                <textarea id="newAction" placeholder="5分でやること（40文字）" maxlength="40"></textarea>
-              </div>
-            </div>
-
-            <div class="composerFooter">
-              <button class="btn primary" id="btnPost">投稿</button>
-            </div>
+          <div class="small-info" style="margin-top:8px;">
+            ※ 画質はFirebase負荷を避けるために適度に圧縮します。
           </div>
         </div>
-      </section>
-
-      <section class="view" id="viewRecords">
-        <div class="panel">
-          <div class="listWrap" id="recordList"></div>
-        </div>
-      </section>
-
-      <section class="view" id="viewBookmarks">
-        <div class="panel">
-          <div class="feedHeader" style="padding:12px">
-            <div class="pill">保存：<b id="bmCount">0</b></div>
-          </div>
-          <div class="feedGrid" id="bmFeed"></div>
-        </div>
-      </section>
-
-      <section class="view" id="viewProfile">
-        <div class="panel">
-          <div class="listWrap" id="profileList"></div>
-        </div>
-      </section>
-    </main>
-  </div>
-
-  <!-- 名前登録 -->
-  <div class="modalBg" id="nameBg">
-    <div class="modal">
-      <h2>名前</h2>
-      <div class="field" style="margin-top:12px">
-        <input id="nameInput" placeholder="名前" maxlength="16" />
-      </div>
-      <div class="modalFooter">
-        <button class="btn primary" id="nameSave" disabled>保存</button>
       </div>
     </div>
+
   </div>
+</div>
 
-  <!-- 初回カテゴリ選択 -->
-  <div class="modalBg" id="modalBg">
-    <div class="modal">
-      <h2>カテゴリ</h2>
-      <div class="catList" id="catList"></div>
-      <div class="modalFooter">
-        <button class="btn" id="modalSkip">閉じる</button>
-        <button class="btn primary" id="modalSave" disabled>保存</button>
-      </div>
-    </div>
-  </div>
+<script type="module">
+/* ===== Firebase imports ===== */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+import {
+  getFirestore,
+  collection,
+  doc,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  onSnapshot,
+  query,
+  orderBy,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
-  <!-- 難易度（3択） -->
-  <div class="modalBg" id="diffBg">
-    <div class="modal">
-      <h2 id="diffTitle">難易度</h2>
-      <div class="diffRow">
-        <button class="diffBtn easy" data-diff="easy">😊</button>
-        <button class="diffBtn mid" data-diff="mid">🙂</button>
-        <button class="diffBtn hard" data-diff="hard">😅</button>
-      </div>
-      <div class="modalFooter">
-        <button class="btn" id="diffClose">閉じる</button>
-      </div>
-    </div>
-  </div>
+/* ===== Firebase config ===== */
+const firebaseConfig = {
+  apiKey: "AIzaSyBJe7_PGeOEkCyC1NxaTMc5bjelQwv2OaU",
+  authDomain: "insyoku-f9aee.firebaseapp.com",
+  projectId: "insyoku-f9aee",
+  storageBucket: "insyoku-f9aee.firebasestorage.app",
+  messagingSenderId: "887841835344",
+  appId: "1:887841835344:web:249470b39af256b8a34455",
+  measurementId: "G-QET0N3KP2L"
+};
 
-  <!-- 評価（⭐/❤️/口コミ） -->
-  <div class="modalBg" id="ratingBg">
-    <div class="modal">
-      <h2 id="ratingHabitTitle">評価</h2>
+/* ===== init ===== */
+let app, auth, db;
+try{
+  app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  db = getFirestore(app);
+  signInAnonymously(auth).catch(()=>{});
+}catch(e){
+  console.warn("Firebase init failed -> offline mode", e);
+  db = null;
+}
 
-      <div class="starsRow" id="starsRow"></div>
+/* ===== DOM ===== */
+const nowtimeEl = document.getElementById('nowtime');
+const coverPage = document.getElementById('coverPage');
+const shiftShort = document.getElementById('shiftShort');
+const orderBtn = document.getElementById('orderBtn');
+const offlineOrderBtn = document.getElementById('offlineOrderBtn');
+const busyInfo = document.getElementById('busyInfo');
 
-      <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center">
-        <button class="toggle" id="likeToggle">❤️</button>
-        <div class="pill">R<b id="myRank">1</b></div>
-      </div>
+const staffPass = document.getElementById('staffPass');
+const passOk = document.getElementById('passOk');
+const staffFull = document.getElementById('staffFull');
+const staffBadge = document.getElementById('staffBadge');
+const logoutStaff = document.getElementById('logoutStaff');
 
-      <textarea class="commentBox" id="commentBox" placeholder="口コミ（短文）"></textarea>
+const shiftBtn = document.getElementById('shiftBtn');
+const breakBtn = document.getElementById('breakBtn');
+const shiftStart = document.getElementById('shiftStart');
+const shiftEnd = document.getElementById('shiftEnd');
+const saveShift = document.getElementById('saveShift');
+const shiftList = document.getElementById('shiftList');
+const staffOrderList = document.getElementById('staffOrderList');
+const pendingTasksSmall = document.getElementById('pendingTasksSmall');
 
-      <div class="modalFooter">
-        <button class="btn danger" id="ratingDelete">削除</button>
-        <button class="btn primary" id="ratingSave">保存</button>
-        <button class="btn" id="ratingClose">閉じる</button>
-      </div>
+const modalName = document.getElementById('modalName');
+const orderName = document.getElementById('orderName');
+const okOrderName = document.getElementById('okOrderName');
+const cancelOrderName = document.getElementById('cancelOrderName');
 
-      <div class="list" id="reviewList"></div>
-    </div>
-  </div>
+const modalMenu = document.getElementById('modalMenu');
+const menuGrid = document.getElementById('menuGrid');
+const backMenu = document.getElementById('backMenu');
 
-  <!-- 口コミ一覧（閲覧専用） -->
-  <div class="modalBg" id="reviewsBg">
-    <div class="modal">
-      <h2 id="reviewsTitle">口コミ</h2>
-      <div class="list" id="reviewsList"></div>
-      <div class="modalFooter">
-        <button class="btn" id="reviewsClose">閉じる</button>
-      </div>
-    </div>
-  </div>
+const modalMakeLatte = document.getElementById('modalMakeLatte');
+const makerName = document.getElementById('makerName');
+const makeTitle = document.getElementById('makeTitle');
+const espressoLabelEl = document.getElementById('espressoLabel');
+const milkLabelEl = document.getElementById('milkLabel');
+const latteArtLabelEl = document.getElementById('latteArtLabel');
 
-  <!-- 編集（ver保持＆派生） -->
-  <div class="modalBg" id="editBg">
-    <div class="modal">
-      <h2 id="editTitle">編集</h2>
+const startEsp = document.getElementById('startEsp');
+const espBar = document.getElementById('espBar');
+const espPct = document.getElementById('espPct');
+const startMilk = document.getElementById('startMilk');
+const milkBar = document.getElementById('milkBar');
+const milkPct = document.getElementById('milkPct');
+const latteCanvas = document.getElementById('latteCanvas');
+const latteCtx = latteCanvas.getContext('2d');
 
-      <div class="composerGrid" style="margin-top:12px">
-        <div class="field"><input id="editNewTitle" placeholder="タイトル" maxlength="40"></div>
-        <div class="field"><input id="editNewTags" placeholder="タグ（例：不安,寝つき）"></div>
-        <div class="field">
-          <select id="editNewCategory">
-            <option value="">カテゴリ（任意）</option>
-            <option>健康</option><option>メンタル</option><option>勉強</option><option>仕事</option>
-            <option>生活</option><option>睡眠</option><option>運動</option><option>英語</option><option>その他</option>
-          </select>
-        </div>
-        <div class="field"><textarea id="editNewAction" placeholder="5分でやること（40文字）" maxlength="40"></textarea></div>
-      </div>
+const artBg = document.getElementById('artBg');
+const artLayer = document.getElementById('artLayer');
+const artBgCtx = artBg.getContext('2d');
+const artLayerCtx = artLayer.getContext('2d');
+const penMode = document.getElementById('penMode');
+const penSize = document.getElementById('penSize');
+const clearArt = document.getElementById('clearArt');
+const saveArt = document.getElementById('saveArt');
+const artBgColor = document.getElementById('artBgColor');
+const artPenColor = document.getElementById('artPenColor');
 
-      <div class="modalFooter">
-        <button class="btn" id="btnDerive">派生</button>
-        <button class="btn primary" id="btnSaveEdit">保存</button>
-        <button class="btn" id="editClose">閉じる</button>
-      </div>
+const cardCanvas = document.getElementById('cardCanvas');
+const cardCtx = cardCanvas.getContext('2d');
+const cardMode = document.getElementById('cardMode');
+const cardSize = document.getElementById('cardSize');
+const clearCard = document.getElementById('clearCard');
+const saveCard = document.getElementById('saveCard');
+const cardBgColor = document.getElementById('cardBgColor');
+const cardPenColor = document.getElementById('cardPenColor');
 
-      <div class="list" id="versionsList"></div>
-    </div>
-  </div>
+const taskStatusSmall = document.getElementById('taskStatusSmall');
+const completeMake = document.getElementById('completeMake');
+const cancelMake = document.getElementById('cancelMake');
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-analytics.js";
+const orderStatusOverlay = document.getElementById('orderStatusOverlay');
+const orderStatusMain = document.getElementById('orderStatusMain');
+const orderStatusSub = document.getElementById('orderStatusSub');
 
-    import {
-      getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged,
-    } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+const soundOverlay = document.getElementById('soundOverlay');
+const enableSoundBtn = document.getElementById('enableSoundBtn');
+const disableSoundBtn = document.getElementById('disableSoundBtn');
 
-    import {
-      getFirestore,
-      collection, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc,
-      getDocs, query, orderBy, limit, serverTimestamp,
-      runTransaction
-    } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+const modalEat = document.getElementById('modalEat');
+const servedImage = document.getElementById('servedImage');
+const servedArtMini = document.getElementById('servedArtMini');
+const servedCardMini = document.getElementById('servedCardMini');
+const saveAllBtn = document.getElementById('saveAllBtn');
+const homeFromEat = document.getElementById('homeFromEat');
+const eatSoundInfo = document.getElementById('eatSoundInfo');
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCvdaEW4o2y8rljlafXQJbGE-nuGQn9Q88",
-      authDomain: "zuzutomo-d8fa0.firebaseapp.com",
-      projectId: "zuzutomo-d8fa0",
-      storageBucket: "zuzutomo-d8fa0.firebasestorage.app",
-      messagingSenderId: "637121353766",
-      appId: "1:637121353766:web:dbfb13f85bfaf521616ee7",
-      measurementId: "G-C6K64YE13X"
-    };
+/* Pomodoro (Eat modal) */
+const pomoPanel = document.getElementById('pomodoroPanel');
+const pomoSettings = document.getElementById('pomoSettings');
+const pomoRunning = document.getElementById('pomoRunning');
+const loopCountInput = document.getElementById('loopCount');
+const workMinInput = document.getElementById('workMin');
+const breakMinInput = document.getElementById('breakMin');
+const loopUp = document.getElementById('loopUp');
+const loopDown = document.getElementById('loopDown');
+const workUp = document.getElementById('workUp');
+const workDown = document.getElementById('workDown');
+const breakUp = document.getElementById('breakUp');
+const breakDown = document.getElementById('breakDown');
+const startPomoBtn = document.getElementById('startPomoBtn');
+const stopPomoBtn = document.getElementById('stopPomoBtn');
+const pausePomoBtn = document.getElementById('pausePomoBtn');
+const skipPomoBtn = document.getElementById('skipPomoBtn');
+const pomoLoopCounter = document.getElementById('pomoLoopCounter');
+const pomoPhaseLabel = document.getElementById('pomoPhaseLabel');
+const pomoTimerText = document.getElementById('pomoTimerText');
+const pomoCountDisplay = document.getElementById('pomoCountDisplay');
+const pomoProgressBar = document.getElementById('pomoProgressBar');
 
-    const app = initializeApp(firebaseConfig);
-    try{ getAnalytics(app); }catch{}
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+/* New Menu submit */
+const newMenuBtn = document.getElementById('newMenuBtn');
+const modalNewMenuInfo = document.getElementById('modalNewMenuInfo');
+const newMenuCancel = document.getElementById('newMenuCancel');
+const newMenuGo = document.getElementById('newMenuGo');
+const modalNewMenuPaint = document.getElementById('modalNewMenuPaint');
+const submitterName = document.getElementById('submitterName');
+const newMenuBg = document.getElementById('newMenuBg');
+const newMenuLayer = document.getElementById('newMenuLayer');
+const newMenuBgCtx = newMenuBg.getContext('2d');
+const newMenuLayerCtx = newMenuLayer.getContext('2d');
+const newMenuMode = document.getElementById('newMenuMode');
+const newMenuSize = document.getElementById('newMenuSize');
+const newMenuBgColor = document.getElementById('newMenuBgColor');
+const newMenuPenColor = document.getElementById('newMenuPenColor');
+const newMenuClear = document.getElementById('newMenuClear');
+const newMenuBack = document.getElementById('newMenuBack');
+const newMenuSubmit = document.getElementById('newMenuSubmit');
+const newMenuPreview = document.getElementById('newMenuPreview');
+const newMenuPreviewCtx = newMenuPreview.getContext('2d');
+const newMenuSubmitHint = document.getElementById('newMenuSubmitHint');
 
-    const $ = (id) => document.getElementById(id);
-    const escapeHtml = (s) => String(s ?? "")
-      .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;").replaceAll("'","&#39;");
+const submissionList = document.getElementById('submissionList');
 
-    const nowLocal = () => new Date();
-    const fmtDate = (d) => {
-      const y = d.getFullYear();
-      const m = String(d.getMonth()+1).padStart(2,"0");
-      const day = String(d.getDate()).padStart(2,"0");
-      return `${y}-${m}-${day}`;
-    };
-    const parseYMD = (s) => {
-      const raw = String(s||"").slice(0,10);
-      if(!/^\d{4}-\d{2}-\d{2}$/.test(raw)) return null;
-      const [y,m,d] = raw.split("-").map(Number);
-      return new Date(y, m-1, d);
-    };
-    const daysBetween = (a, b) => {
-      const A = new Date(a.getFullYear(), a.getMonth(), a.getDate()).getTime();
-      const B = new Date(b.getFullYear(), b.getMonth(), b.getDate()).getTime();
-      return Math.round((B - A) / 86400000);
-    };
+/* ===== Helpers ===== */
+function uid(p='id'){ return p + Math.random().toString(36).slice(2,9); }
+function escapeHtml(s){ return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function showModal(el){ el.style.display='flex'; el.setAttribute('aria-hidden','false'); }
+function hideModal(el){ el.style.display='none'; el.setAttribute('aria-hidden','true'); }
+function getAssetUrl(path){
+  if (!path) return '';
+  if (path.startsWith('@')) return 'https://raw.githubusercontent.com/' + path.slice(1);
+  try { return new URL(path).href; } catch(e){ return path; }
+}
 
-    // nav/views
-    const navHome = $("navHome");
-    const navRecords = $("navRecords");
-    const navBookmarks = $("navBookmarks");
-    const navProfile = $("navProfile");
+/* ✅ JST now */
+function nowInJST(){
+  const s = new Date().toLocaleString('en-US', { timeZone: 'Asia/Tokyo' });
+  return new Date(s);
+}
+setInterval(()=> nowtimeEl.textContent = nowInJST().toLocaleTimeString(), 1000);
 
-    const viewHome = $("viewHome");
-    const viewRecords = $("viewRecords");
-    const viewBookmarks = $("viewBookmarks");
-    const viewProfile = $("viewProfile");
+/* ===== Audio ===== */
+const audioTyaimu = new Audio(getAssetUrl('@zzcafe2800/reiji_cafe/main/tyaimu.mp3'));
+const audioCookbgm = new Audio(getAssetUrl('@zzcafe2800/reiji_cafe/main/cookbgm.mp3'));
+const audioCookdbgm = new Audio(getAssetUrl('@zzcafe2800/reiji_cafe/main/cookdbgm.mp3'));
+const audioPiroStart = new Audio(getAssetUrl('@zzcafe2800/reiji_cafe/main/piro.mp3'));
+const audioPiroBreak = new Audio(getAssetUrl('@zzcafe2800/reiji_cafe/main/piro1.mp3'));
+const audioPiroToggle = new Audio(getAssetUrl('@zzcafe2800/reiji_cafe/main/piro3.mp3'));
+const audioPs = new Audio(getAssetUrl('@zzcafe2800/reiji_cafe/main/s1.mp3')); // ✅ 提供時に鳴らす
 
-    // auth UI
-    const btnLogin = $("btnLogin");
-    const btnLogout = $("btnLogout");
-    const gateLoginBtn = $("gateLoginBtn");
-    const loginGate = $("loginGate");
-    const userName = $("userName");
-    const userSmall = $("userSmall");
-    const userAvatar = $("userAvatar");
+/* ===== Firestore collections ===== */
+const staffsCol = db ? collection(db, 'staffs') : null;
+const ordersCol = db ? collection(db, 'orders') : null;
+const submissionsCol = db ? collection(db, 'submissions') : null;
 
-    // name modal
-    const nameBg = $("nameBg");
-    const nameInput = $("nameInput");
-    const nameSave = $("nameSave");
+/* ===== App state ===== */
+const state = {
+  staffs: [],
+  orders: [],
+  submissions: [],
+  currentUser: { role:'guest', staffId:null },
+  currentOrderIdForClient: null,
+  audioUnlocked: false,
+  pendingPlayQueue: [],
+};
 
-    // home
-    const qInput = $("q");
-    const categoryFilter = $("categoryFilter");
-    const sortBy = $("sortBy");
-    const chipsRecommend = $("chipsRecommend");
-    const chipsTop = $("chipsTop");
-    const btnClearTag = $("btnClearTag");
-    const feed = $("feed");
-    const countShown = $("countShown");
-    const myCategory = $("myCategory");
-    const btnChangeMyCategory = $("btnChangeMyCategory");
-    const activeCount = $("activeCount");
+/* client id local */
+let clientId = localStorage.getItem('reiji_clientId');
+if (!clientId){ clientId = 'c_' + Math.random().toString(36).slice(2,9); localStorage.setItem('reiji_clientId', clientId); }
 
-    // toast
-    const toastWrap = $("toastWrap");
-    const plusOne = $("plusOne");
+/* dismissed orders local set */
+const dismissedOrdersStored = JSON.parse(localStorage.getItem('reiji_dismissed_orders') || '[]');
+const dismissedOrders = new Set(dismissedOrdersStored);
 
-    // composer
-    const newTitle = $("newTitle");
-    const newTags = $("newTags");
-    const newCategory = $("newCategory");
-    const newAction = $("newAction");
-    const counterAction = $("counterAction");
-    const btnPost = $("btnPost");
+/* ===== MENUS ===== */
+const MENUS = {
+  rate: {
+    id: 'rate', title: 'カフェ・ラテ',
+    imageBase: '@zzcafe2800/reiji_cafe/main/rate',
+    frameCount: 6,
+    lastFrameRandom: true,
+    artBg:'#6b3b24', artPen:'#ffffff', cardBg:'#fff2e6', cardPen:'#000000',
+    ui:{ makeTitle:'カフェラテ制作', espressoLabel:'エスプレッソ注ぎ', milkLabel:'フームドミルク注ぎ', latteArtLabel:'ラテアート' }
+  },
+  asa: {
+    id: 'asa', title: '食テロ',
+    imageBase: '@zzcafe2800/reiji_cafe/main/asa',
+    frameCount: 4,
+    lastFrameRandom: false,
+    artBg:'#6b3b24', artPen:'#ffffff', cardBg:'#fff2e6', cardPen:'#000000',
+    ui:{ makeTitle:'あさごはん', espressoLabel:'ウィンナー焼き', milkLabel:'味噌汁', latteArtLabel:'ノリアート' }
+  },
+  tyoko: {
+    id: 'tyoko', title: 'ケーキ（バレンタイン限定）',
+    imageBase: '@zzcafe2800/reiji_cafe/main/tyoko',
+    frameCount: 4,
+    lastFrameRandom: false,
+    artBg:'#6b3b24', artPen:'#ffffff', cardBg:'#fff2e6', cardPen:'#000000',
+    ui:{ makeTitle:'チョコケーキ', espressoLabel:'チョコ', milkLabel:'スポンジ', latteArtLabel:'チョコアート' }
+  },
+  pafe: {
+    id: 'pafe', title: 'パフェ（新メニュー）',
+    imageBase: '@zzcafe2800/reiji_cafe/main/pafe',
+    frameCount: 3,
+    lastFrameRandom: false,
+    artBg:'#6b3b24', artPen:'#ffffff', cardBg:'#fff2e6', cardPen:'#000000',
+    ui:{ makeTitle:'パフェ制作', espressoLabel:'クリーム注ぎ', milkLabel:'トッピング', latteArtLabel:'クリームアート' }
+  },
+  omu: {
+    id: 'omu', title: 'オムライス',
+    imageBase: '@zzcafe2800/reiji_cafe/main/omu',
+    frameCount: 6,
+    lastFrameRandom: true,
+    artBg:'#ffd66b', artPen:'#ff0000', cardBg:'#fff2e6', cardPen:'#000000',
+    ui:{ makeTitle:'オムライス制作', espressoLabel:'ケチャップライス', milkLabel:'卵で包む', latteArtLabel:'ケチャップアート' }
+  }
+};
+MENUS.random = { id:'random', title:'ランダム', imageBase:'@zzcafe2800/reiji_cafe/main/random', frameCount:1, lastFrameRandom:false, artBg:'#cccccc', artPen:'#000000', cardBg:'#fff2e6', cardPen:'#000000', ui:{ makeTitle:'ランダム' } };
 
-    // records/profile/bookmarks
-    const recordList = $("recordList");
-    const profileList = $("profileList");
-    const bmFeed = $("bmFeed");
-    const bmCount = $("bmCount");
+/* ===== Shift helpers ===== */
+function isNowWithinShift(start,end,dateObj){
+  if (!start || !end) return false;
+  const [sh,sm] = start.split(':').map(Number);
+  const [eh,em] = end.split(':').map(Number);
+  const sDate = new Date(dateObj); sDate.setHours(sh,sm,0,0);
+  const eDate = new Date(dateObj); eDate.setHours(eh,em,0,0);
+  if (eDate <= sDate) eDate.setDate(eDate.getDate()+1);
+  return dateObj >= sDate && dateObj <= eDate;
+}
 
-    // category modal
-    const modalBg = $("modalBg");
-    const catList = $("catList");
-    const modalSkip = $("modalSkip");
-    const modalSave = $("modalSave");
-
-    // difficulty modal
-    const diffBg = $("diffBg");
-    const diffTitle = $("diffTitle");
-    const diffClose = $("diffClose");
-
-    // rating modal
-    const ratingBg = $("ratingBg");
-    const ratingClose = $("ratingClose");
-    const ratingHabitTitle = $("ratingHabitTitle");
-    const starsRow = $("starsRow");
-    const likeToggle = $("likeToggle");
-    const myRankEl = $("myRank");
-    const commentBox = $("commentBox");
-    const ratingSave = $("ratingSave");
-    const ratingDelete = $("ratingDelete");
-    const reviewList = $("reviewList");
-
-    // reviews view-only modal
-    const reviewsBg = $("reviewsBg");
-    const reviewsTitle = $("reviewsTitle");
-    const reviewsList = $("reviewsList");
-    const reviewsClose = $("reviewsClose");
-
-    // edit modal
-    const editBg = $("editBg");
-    const editTitle = $("editTitle");
-    const editNewTitle = $("editNewTitle");
-    const editNewTags = $("editNewTags");
-    const editNewCategory = $("editNewCategory");
-    const editNewAction = $("editNewAction");
-    const btnSaveEdit = $("btnSaveEdit");
-    const btnDerive = $("btnDerive");
-    const editClose = $("editClose");
-    const versionsList = $("versionsList");
-
-    let currentUser = null;
-    let myProfile = null;
-
-    let selectedTag = "";
-    let selectedTopTags = [];
-    let selectedRecoTags = [];
-
-    // challenge state for difficulty modal
-    let diffTargetChallenge = null;
-
-    // rating state
-    let ratingTargetHabit = null;
-    let ratingStars = 0;
-    let ratingLiked = false;
-
-    // edit state
-    let editTargetHabit = null;
-
-    // caches
-    let cachedFavCreators = new Set(); // creatorUid
-    let cachedBookmarks = new Set();   // habitId
-
-    const CATS = ["メンタル","睡眠","運動","健康","生活","勉強","英語","仕事","その他"];
-    let modalSelected = "";
-
-    function showPlusOne(){
-      plusOne.style.display = "block";
-      plusOne.style.animation = "none";
-      void plusOne.offsetWidth;
-      plusOne.style.animation = "floatUp .9s ease-out forwards";
-      setTimeout(()=> plusOne.style.display = "none", 950);
-    }
-
-    function setView(which){
-      const home = which==="home";
-      const records = which==="records";
-      const bookmarks = which==="bookmarks";
-      const profile = which==="profile";
-
-      navHome.classList.toggle("active", home);
-      navRecords.classList.toggle("active", records);
-      navBookmarks.classList.toggle("active", bookmarks);
-      navProfile.classList.toggle("active", profile);
-
-      viewHome.classList.toggle("active", home);
-      viewRecords.classList.toggle("active", records);
-      viewBookmarks.classList.toggle("active", bookmarks);
-      viewProfile.classList.toggle("active", profile);
-
-      if(records) refreshRecords();
-      if(bookmarks) refreshBookmarksView();
-      if(profile) refreshProfile();
-    }
-    navHome.addEventListener("click", ()=> setView("home"));
-    navRecords.addEventListener("click", ()=> setView("records"));
-    navBookmarks.addEventListener("click", ()=> setView("bookmarks"));
-    navProfile.addEventListener("click", ()=> setView("profile"));
-
-    // ===== Auth =====
-    async function login(){
-      const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
-    }
-    btnLogin.addEventListener("click", async ()=>{ try{ await login(); }catch{ alert("ログイン失敗"); } });
-    gateLoginBtn.addEventListener("click", async ()=>{ try{ await login(); }catch{ alert("ログイン失敗"); } });
-    btnLogout.addEventListener("click", async ()=>{
-      try{ await signOut(auth); }catch{ alert("ログアウト失敗"); }
-    });
-
-    // ===== Name modal =====
-    function openNameModal(){
-      nameInput.value = "";
-      nameSave.disabled = true;
-      nameBg.classList.add("show");
-    }
-    function closeNameModal(){ nameBg.classList.remove("show"); }
-    nameInput.addEventListener("input", ()=>{
-      nameSave.disabled = nameInput.value.trim().length < 1;
-    });
-    nameSave.addEventListener("click", async ()=>{
-      const nm = nameInput.value.trim().slice(0,16);
-      if(!nm) return;
-      await updateDoc(doc(db,"users",currentUser.uid), { name: nm, updatedAt: serverTimestamp() });
-      myProfile.name = nm;
-      userName.textContent = nm;
-      closeNameModal();
-      // 名前後：カテゴリ
-      const pref = myProfile?.preferredCategory || "";
-      if(!pref) openCategoryModal();
-      await warmCaches();
-      await autoRetireIfMissed();
-      await refreshHome();
-      await refreshRecords();
-      await refreshProfile();
-      await refreshBookmarksView();
-    });
-
-    // ===== Profile doc =====
-    async function ensureProfile(){
-      const ref = doc(db, "users", currentUser.uid);
-      const snap = await getDoc(ref);
-      if(!snap.exists()){
-        const initial = {
-          name: "", // ★必ず入力させる
-          photoURL: currentUser.photoURL || "",
-          preferredCategory: "",
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-          clearCount: 0,
-          totalChallenges: 0,
-          ratingRank: 1
-        };
-        await setDoc(ref, initial);
-        myProfile = initial;
+/* ===== UI updates ===== */
+function updateBusyInfo(){
+  const activeOrders = (state.orders||[]).filter(o => o && (o.state === 'waiting' || o.state === 'inprogress')).length;
+  busyInfo.textContent = `混み具合: ${activeOrders}件`;
+}
+function renderShiftShort(){
+  const now = nowInJST();
+  const active = state.staffs.filter(s => s.onShift && !s.breaking && isNowWithinShift(s.shiftStart, s.shiftEnd, now));
+  if (active.length){
+    shiftShort.textContent = 'シフト：' + active.map(s=>`${s.name}（${s.shiftStart}〜${s.shiftEnd}）`).join(' / ');
+  } else {
+    shiftShort.textContent = 'シフト：無人（注文不可）';
+  }
+}
+function renderShiftList(){
+  shiftList.innerHTML = '';
+  const now = nowInJST();
+  state.staffs.forEach(s=>{
+    const row = document.createElement('div');
+    const onNow = isNowWithinShift(s.shiftStart,s.shiftEnd,now);
+    row.innerHTML = `<strong>${escapeHtml(s.name)}</strong> ${escapeHtml(s.shiftStart||'')}〜${escapeHtml(s.shiftEnd||'')}
+      ${s.onShift && !s.breaking ? '<span style="color:green">待機中</span>' : (s.breaking ? '<span style="color:orange">他方の料理中</span>' : '<span style="color:#888">-</span>')}
+      ${onNow ? '<span class="small-info">（現在この時間）</span>' : ''}`;
+    const del = document.createElement('button');
+    del.className = 'small';
+    del.textContent = '削除';
+    del.style.marginLeft = '8px';
+    del.onclick = async ()=>{
+      if (!s.id) return;
+      if (db){
+        try{ await deleteDoc(doc(db,'staffs',s.id)); }catch(e){}
       }else{
-        myProfile = snap.data();
+        state.staffs = state.staffs.filter(x=>x.id!==s.id);
+        localStorage.setItem('reiji_state_staffs', JSON.stringify(state.staffs));
+        renderShiftList(); renderShiftShort(); updateOrderButtonState();
       }
-      myRankEl.textContent = String(myProfile?.ratingRank || 1);
+    };
+    row.appendChild(del);
+    shiftList.appendChild(row);
+  });
+}
+function updateStaffToggleUI(){
+  if (state.currentUser.role !== 'staff' || !state.currentUser.staffId){
+    shiftBtn.className='off'; breakBtn.className='off';
+    return;
+  }
+  const me = state.staffs.find(s=>s.id===state.currentUser.staffId);
+  if (!me){ shiftBtn.className='off'; breakBtn.className='off'; return; }
+  if (me.onShift && !me.breaking){
+    shiftBtn.classList.add('on'); shiftBtn.classList.remove('off');
+    breakBtn.classList.add('off'); breakBtn.classList.remove('on');
+  } else if (me.breaking){
+    breakBtn.classList.add('on'); breakBtn.classList.remove('off');
+    shiftBtn.classList.add('off'); shiftBtn.classList.remove('on');
+  } else {
+    shiftBtn.className='off'; breakBtn.className='off';
+  }
+}
+
+/* ✅ 注文ボタン：人がいない時は押せない（要件） */
+function updateOrderButtonState(){
+  const now = nowInJST();
+  const available = state.staffs.some(s => s.onShift && !s.breaking && isNowWithinShift(s.shiftStart,s.shiftEnd,now));
+  if (available){
+    orderBtn.classList.remove('disabled');
+  } else {
+    orderBtn.classList.add('disabled');
+  }
+}
+
+/* ===== Orders render ===== */
+function computeOrderTasks(o){
+  const pending = [];
+  if (!o) return pending;
+  if (o.state === 'waiting') pending.push('対応待ち');
+  if (o.state === 'inprogress'){
+    if (!o.artDataUrl && !(o.artStrokes && o.artStrokes.length)) pending.push('アート');
+    if (!o.cardDataUrl && !(o.cardStrokes && o.cardStrokes.length)) pending.push('カード');
+  }
+  return pending;
+}
+
+function renderOrderLists(){
+  staffOrderList.innerHTML = '';
+  const visible = (state.orders||[]).filter(o=>o && (o.state==='waiting' || o.state==='inprogress'));
+  visible.forEach(o=>{
+    const div = document.createElement('div');
+    div.className = 'order-item';
+    const menu = MENUS[o.item] || MENUS.rate;
+
+    const left = document.createElement('div');
+    left.innerHTML = `<strong>${escapeHtml(o.name)}</strong>
+      <div class="small-info">メニュー: ${escapeHtml(menu.title)} / 状態: ${escapeHtml(o.state)} / 作成: ${new Date(o.createdAt||0).toLocaleTimeString()}</div>`;
+
+    const right = document.createElement('div');
+    right.style.display='flex';
+    right.style.alignItems='center';
+    right.style.gap='6px';
+    right.style.flexWrap='wrap';
+
+    const tasks = computeOrderTasks(o);
+    if (tasks.length){
+      const t = document.createElement('span');
+      t.className='small-info';
+      t.textContent = '未: ' + tasks.join(', ');
+      right.appendChild(t);
     }
 
-    onAuthStateChanged(auth, async (user)=>{
-      currentUser = user || null;
+    if (o.state === 'waiting'){
+      const btn = document.createElement('button');
+      btn.className='small btn-green';
+      btn.textContent='対応';
+      btn.onclick = ()=> assignOrderToCurrentStaff(o.id);
+      right.appendChild(btn);
+    } else if (o.state === 'inprogress'){
+      const who = document.createElement('span');
+      who.className='small-info';
+      who.textContent = `担当: ${o.assignedToName || o.assignedTo || '-'}`;
+      right.appendChild(who);
 
-      if(!currentUser){
-        loginGate.classList.add("show");
-        btnLogout.disabled = true;
+      const makeBtn = document.createElement('button');
+      makeBtn.className='small';
+      makeBtn.textContent='制作';
+      makeBtn.onclick = ()=> openMakeModal(o);
+      right.appendChild(makeBtn);
+    }
 
-        userName.textContent = "—";
-        userSmall.textContent = "—";
-        userAvatar.innerHTML = "👤";
+    div.appendChild(left);
+    div.appendChild(right);
+    staffOrderList.appendChild(div);
+  });
 
-        feed.innerHTML = "";
-        toastWrap.innerHTML = "";
-        recordList.innerHTML = "";
-        profileList.innerHTML = "";
-        bmFeed.innerHTML = "";
-        bmCount.textContent = "0";
-        cachedFavCreators = new Set();
-        cachedBookmarks = new Set();
+  const pending = (state.orders||[]).filter(o=>o && (o.state==='waiting' || o.state==='inprogress')).length;
+  pendingTasksSmall.textContent = pending ? ` 未処理:${pending}` : '';
+  updateBusyInfo();
+}
+
+/* ===== Realtime listeners ===== */
+function startRealtime(){
+  if (!db){
+    state.staffs = JSON.parse(localStorage.getItem('reiji_state_staffs')||'[]');
+    state.orders = JSON.parse(localStorage.getItem('reiji_state_orders')||'[]');
+    state.submissions = JSON.parse(localStorage.getItem('reiji_state_submissions')||'[]');
+    renderShiftShort(); renderShiftList(); renderOrderLists(); renderSubmissionList();
+    updateOrderButtonState();
+    updateClientOverlay();
+    return;
+  }
+
+  try{
+    onSnapshot(query(staffsCol, orderBy('createdAt','asc')), snap=>{
+      state.staffs = snap.docs.map(d=>({id:d.id, ...d.data()}));
+      localStorage.setItem('reiji_state_staffs', JSON.stringify(state.staffs));
+      renderShiftShort(); renderShiftList(); updateOrderButtonState(); updateStaffToggleUI();
+    });
+  }catch(e){ console.warn(e); }
+
+  try{
+    onSnapshot(query(ordersCol, orderBy('createdAt','asc')), snap=>{
+      state.orders = snap.docs.map(d=>({id:d.id, ...d.data()}));
+      localStorage.setItem('reiji_state_orders', JSON.stringify(state.orders));
+      renderOrderLists();
+      updateClientOverlay();
+      updateOrderButtonState();
+    });
+  }catch(e){ console.warn(e); }
+
+  try{
+    onSnapshot(query(submissionsCol, orderBy('createdAt','asc')), snap=>{
+      state.submissions = snap.docs.map(d=>({id:d.id, ...d.data()}));
+      localStorage.setItem('reiji_state_submissions', JSON.stringify(state.submissions));
+      renderSubmissionList();
+    });
+  }catch(e){ console.warn(e); }
+}
+
+/* ===== Sound overlay ===== */
+function flushPendingPlays(){
+  while(state.pendingPlayQueue.length){
+    const req = state.pendingPlayQueue.shift();
+    if (req.type==='cook'){ try{ audioCookbgm.currentTime=0; audioCookbgm.loop=true; audioCookbgm.play().catch(()=>{});}catch(e){} }
+    if (req.type==='delivered'){ try{ audioCookdbgm.currentTime=0; audioCookdbgm.play().catch(()=>{});}catch(e){} }
+    if (req.type==='ps'){ try{ audioPs.currentTime=0; audioPs.play().catch(()=>{});}catch(e){} }
+  }
+}
+function showSoundOverlay(){ soundOverlay.style.display='flex'; }
+function hideSoundOverlay(){ soundOverlay.style.display='none'; }
+
+enableSoundBtn.addEventListener('click', ()=>{
+  state.audioUnlocked = true;
+  try{
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    ctx.resume && ctx.resume();
+    ctx.close && ctx.close();
+  }catch(e){}
+  hideSoundOverlay();
+  flushPendingPlays();
+
+  // ✅ 音OK押したら表紙が開く（クリック不要）
+  openCoverOnce();
+});
+disableSoundBtn.addEventListener('click', ()=>{
+  state.audioUnlocked = false;
+  hideSoundOverlay();
+});
+
+/* ===== Cover open ===== */
+let coverOpened = false;
+function openCoverOnce(){
+  if (coverOpened) return;
+  coverOpened = true;
+  if (!coverPage) return;
+  coverPage.classList.add('open');
+  coverPage.addEventListener('animationend', ()=>{
+    coverPage.classList.add('finished');
+    try{ coverPage.remove(); }catch(e){}
+  }, { once:true });
+}
+document.addEventListener('click', function onFirst(){
+  openCoverOnce();
+  document.removeEventListener('click', onFirst);
+}, { once:true });
+
+/* ===== Staff login ===== */
+passOk.addEventListener('click', ()=>{
+  if (staffPass.value === '1232'){
+    showModal(modalName);
+    cancelOrderName.onclick = ()=>{ hideModal(modalName); orderName.value=''; };
+    okOrderName.onclick = async ()=>{
+      const name = orderName.value.trim();
+      if (!name) { alert('名前'); return; }
+      hideModal(modalName);
+
+      if (db){
+        try{
+          const ref = await addDoc(staffsCol, { name, shiftStart:'09:00', shiftEnd:'17:00', onShift:true, breaking:false, createdAt: Date.now() });
+          enterStaffFull(name, ref.id);
+        }catch(e){
+          alert('スタッフ登録に失敗しました');
+        }
+      }else{
+        const s = { id: uid('s'), name, shiftStart:'09:00', shiftEnd:'17:00', onShift:true, breaking:false, createdAt: Date.now() };
+        state.staffs.push(s);
+        localStorage.setItem('reiji_state_staffs', JSON.stringify(state.staffs));
+        enterStaffFull(name, s.id);
+      }
+    };
+  } else {
+    alert('パスワードが違います');
+  }
+});
+
+function enterStaffFull(name, staffId){
+  state.currentUser = { role:'staff', staffId };
+  staffBadge.textContent = name;
+  staffFull.classList.add('show');
+  renderShiftList(); renderOrderLists(); renderSubmissionList();
+  updateStaffToggleUI();
+}
+
+logoutStaff.addEventListener('click', async ()=>{
+  const id = state.currentUser.staffId;
+  if (id){
+    if (db){
+      try{ await deleteDoc(doc(db,'staffs',id)); }catch(e){}
+    }else{
+      state.staffs = state.staffs.filter(s=>s.id!==id);
+      localStorage.setItem('reiji_state_staffs', JSON.stringify(state.staffs));
+    }
+  }
+  state.currentUser = { role:'guest', staffId:null };
+  staffFull.classList.remove('show');
+});
+
+shiftBtn.addEventListener('click', async ()=>{
+  const id = state.currentUser.staffId; if (!id) return;
+  if (db){
+    try{ await updateDoc(doc(db,'staffs',id), { onShift:true, breaking:false }); }catch(e){}
+  } else {
+    const s = state.staffs.find(x=>x.id===id);
+    if (s){ s.onShift=true; s.breaking=false; localStorage.setItem('reiji_state_staffs', JSON.stringify(state.staffs)); }
+    renderShiftList(); renderShiftShort(); updateOrderButtonState();
+  }
+  updateStaffToggleUI();
+});
+breakBtn.addEventListener('click', async ()=>{
+  const id = state.currentUser.staffId; if (!id) return;
+  if (db){
+    try{ await updateDoc(doc(db,'staffs',id), { onShift:false, breaking:true }); }catch(e){}
+  } else {
+    const s = state.staffs.find(x=>x.id===id);
+    if (s){ s.onShift=false; s.breaking=true; localStorage.setItem('reiji_state_staffs', JSON.stringify(state.staffs)); }
+    renderShiftList(); renderShiftShort(); updateOrderButtonState();
+  }
+  updateStaffToggleUI();
+});
+saveShift.addEventListener('click', async ()=>{
+  const id = state.currentUser.staffId; if (!id) return;
+  const payload = { shiftStart: shiftStart.value || '09:00', shiftEnd: shiftEnd.value || '17:00' };
+  if (db){
+    try{ await updateDoc(doc(db,'staffs',id), payload); }catch(e){}
+  } else {
+    const s = state.staffs.find(x=>x.id===id);
+    if (s){ Object.assign(s,payload); localStorage.setItem('reiji_state_staffs', JSON.stringify(state.staffs)); }
+    renderShiftList(); renderShiftShort(); updateOrderButtonState();
+  }
+});
+
+/* ===== Menu build ===== */
+async function buildMenu(){
+  menuGrid.innerHTML = '';
+
+  // random
+  {
+    const it = MENUS.random;
+    const div = document.createElement('div'); div.className='menu-item';
+    const img = document.createElement('img'); img.className='menu-thumb';
+    img.src = getAssetUrl(it.imageBase + '.png');
+    div.appendChild(img);
+    const t = document.createElement('div');
+    t.textContent = it.title; // ✅ “0”になる問題回避：titleを使う
+    div.appendChild(t);
+    div.onclick = ()=> chooseRandomAndOrder();
+    menuGrid.appendChild(div);
+  }
+
+  for (const key of Object.keys(MENUS)){
+    if (key==='random') continue;
+    const it = MENUS[key];
+    const div = document.createElement('div'); div.className='menu-item';
+    const img = document.createElement('img'); img.className='menu-thumb';
+    img.src = getAssetUrl(it.imageBase + '1.png');
+    div.appendChild(img);
+    const t = document.createElement('div');
+    t.textContent = it.title; // ✅ idではなくtitle表示
+    div.appendChild(t);
+    div.onclick = ()=> onMenuSelect(it);
+    menuGrid.appendChild(div);
+  }
+}
+
+function chooseRandomAndOrder(){
+  const list = Object.keys(MENUS).filter(k=>k!=='random').map(k=>MENUS[k]);
+  if (!list.length){ alert('ランダム対象なし'); return; }
+  const chosen = list[Math.floor(Math.random()*list.length)];
+  onMenuSelect(chosen);
+}
+
+/* ===== Guest order flow ===== */
+orderBtn.addEventListener('click', ()=>{
+  if (orderBtn.classList.contains('disabled')) return;
+  try{ audioTyaimu.currentTime=0; if (state.audioUnlocked) audioTyaimu.play().catch(()=>{}); }catch(e){}
+  showModal(modalName);
+
+  cancelOrderName.onclick = ()=>{ hideModal(modalName); orderName.value=''; };
+
+  okOrderName.onclick = ()=>{
+    const name = orderName.value.trim();
+    if (!name){ alert('名前を入力してください'); return; }
+    hideModal(modalName);
+    buildMenu();
+    showModal(modalMenu);
+  };
+});
+backMenu.addEventListener('click', ()=> hideModal(modalMenu));
+
+async function onMenuSelect(item){
+  hideModal(modalMenu);
+
+  const name = (orderName.value.trim() || '名無し');
+  const createdAt = Date.now();
+  const expiresAt = createdAt + 5*60*1000;
+
+  const orderObj = {
+    name, item: item.id, itemImageBase: item.imageBase,
+    state: 'waiting',
+    createdAt, expiresAt,
+    assignedTo:null, assignedToName:null,
+    artStrokes:null, cardStrokes:null,
+    artMeta:null, cardMeta:null,
+    artDataUrl:null, cardDataUrl:null,
+    servedImageData:null,
+    clientId
+  };
+
+  if (db){
+    try{
+      const ref = await addDoc(ordersCol, orderObj);
+      state.currentOrderIdForClient = ref.id;
+      showClientStatus('現在対応待ち中');
+      scheduleOrderTimeout(ref.id, expiresAt);
+    }catch(e){
+      alert('注文に失敗しました');
+    }
+  }else{
+    orderObj.id = uid('o');
+    state.orders.push(orderObj);
+    localStorage.setItem('reiji_state_orders', JSON.stringify(state.orders));
+    state.currentOrderIdForClient = orderObj.id;
+    showClientStatus('現在対応待ち中');
+    scheduleOrderTimeout(orderObj.id, expiresAt);
+    renderOrderLists();
+  }
+}
+
+/* timeout cancel */
+function scheduleOrderTimeout(orderId, expiresAt){
+  const remaining = (expiresAt||0) - Date.now();
+  if (remaining <= 0) return;
+  setTimeout(async ()=>{
+    try{
+      if (!db){
+        const o = state.orders.find(x=>x.id===orderId);
+        if (o && o.state==='waiting'){
+          o.state='cancelled';
+          o.cancelReason='スタッフの応答がないため現在注文を取り消しになります';
+          localStorage.setItem('reiji_state_orders', JSON.stringify(state.orders));
+          renderOrderLists();
+          updateClientOverlay();
+        }
         return;
       }
-
-      loginGate.classList.remove("show");
-      btnLogout.disabled = false;
-
-      userSmall.textContent = currentUser.email || "—";
-      userAvatar.innerHTML = "";
-      if(currentUser.photoURL){
-        const img = document.createElement("img");
-        img.src = currentUser.photoURL;
-        img.alt = "avatar";
-        userAvatar.appendChild(img);
-      }else{
-        userAvatar.textContent = "👤";
+      const snap = await getDoc(doc(db,'orders',orderId));
+      if (snap.exists()){
+        const o = snap.data();
+        if (o.state==='waiting'){
+          await updateDoc(doc(db,'orders',orderId), { state:'cancelled', cancelReason:'スタッフの応答がないため現在注文を取り消しになります' });
+        }
       }
+    }catch(e){}
+  }, remaining);
+}
 
-      await ensureProfile();
+/* ===== staff assign ===== */
+async function assignOrderToCurrentStaff(orderId){
+  const staffId = state.currentUser.staffId;
+  if (!staffId){ alert('スタッフとしてログインしてください'); return; }
+  const s = state.staffs.find(x=>x.id===staffId);
+  if (!s){ alert('スタッフ情報が見つかりません'); return; }
 
-      // UI name
-      const nm = (myProfile?.name || "").trim();
-      userName.textContent = nm || "—";
-
-      // 名前が未設定ならここで止める（名前→カテゴリ→ホーム）
-      if(!nm){
-        openNameModal();
-        return;
-      }
-
-      // カテゴリ
-      const pref = myProfile?.preferredCategory || "";
-      myCategory.textContent = pref || "未設定";
-      if(!pref) openCategoryModal();
-
-      await warmCaches();
-      await autoRetireIfMissed();
-
-      await refreshHome();
-      await refreshRecords();
-      await refreshProfile();
-      await refreshBookmarksView();
-    });
-
-    // ===== Category modal =====
-    function openCategoryModal(){
-      modalSelected = "";
-      modalSave.disabled = true;
-      catList.innerHTML = "";
-      for(const c of CATS){
-        const b = document.createElement("button");
-        b.className = "catBtn";
-        b.textContent = c;
-        b.addEventListener("click", ()=>{
-          modalSelected = c;
-          [...catList.querySelectorAll(".catBtn")].forEach(x=>x.classList.remove("active"));
-          b.classList.add("active");
-          modalSave.disabled = false;
-        });
-        catList.appendChild(b);
-      }
-      modalBg.classList.add("show");
+  if (db){
+    try{
+      await updateDoc(doc(db,'orders',orderId), { state:'inprogress', assignedTo: staffId, assignedToName: s.name });
+      if (!state.audioUnlocked) state.pendingPlayQueue.push({type:'cook'});
+      else { try{ audioCookbgm.currentTime=0; audioCookbgm.loop=true; audioCookbgm.play().catch(()=>{});}catch(e){} }
+    }catch(e){ alert('対応に失敗'); }
+  }else{
+    const o = state.orders.find(x=>x.id===orderId);
+    if (o){
+      o.state='inprogress';
+      o.assignedTo=staffId;
+      o.assignedToName=s.name;
+      localStorage.setItem('reiji_state_orders', JSON.stringify(state.orders));
+      renderOrderLists();
     }
-    function closeCategoryModal(){ modalBg.classList.remove("show"); }
-    btnChangeMyCategory.addEventListener("click", openCategoryModal);
-    modalSkip.addEventListener("click", closeCategoryModal);
-    modalSave.addEventListener("click", async ()=>{
-      if(!modalSelected) return;
-      await updateDoc(doc(db,"users",currentUser.uid), {
-        preferredCategory: modalSelected,
-        updatedAt: serverTimestamp()
-      });
-      myProfile.preferredCategory = modalSelected;
-      myCategory.textContent = modalSelected;
-      closeCategoryModal();
-      await refreshHome();
-    });
+  }
+}
 
-    // ===== Composer =====
-    function updateCounter(){
-      counterAction.textContent = `${newAction.value.length} / 40`;
+/* ===== client overlay ===== */
+function showClientStatus(text){
+  orderStatusMain.textContent = text;
+  orderStatusSub.textContent = '数分そのままでお待ちください';
+  orderStatusOverlay.style.display = 'flex';
+}
+function hideClientStatus(){
+  orderStatusOverlay.style.display = 'none';
+}
+function updateClientOverlay(){
+  if (state.currentOrderIdForClient && dismissedOrders.has(state.currentOrderIdForClient)){
+    state.currentOrderIdForClient = null;
+    return;
+  }
+  if (!state.currentOrderIdForClient) return;
+
+  const o = state.orders.find(x=>x.id===state.currentOrderIdForClient);
+  if (!o) return;
+
+  if (o.state === 'waiting'){
+    showClientStatus('現在対応待ち中');
+  } else if (o.state === 'inprogress'){
+    showClientStatus('現在調理中…');
+    if (state.audioUnlocked){
+      try{ audioCookbgm.currentTime=0; audioCookbgm.loop=true; audioCookbgm.play().catch(()=>{});}catch(e){}
+    } else {
+      state.pendingPlayQueue.push({type:'cook'});
     }
-    newAction.addEventListener("input", updateCounter);
-    updateCounter();
+  } else if (o.state === 'delivered'){
+    hideClientStatus();
+    try{ audioCookbgm.pause(); audioCookbgm.currentTime=0; }catch(e){}
+    showClientServed(o);
+  } else if (o.state === 'cancelled'){
+    showClientStatus(o.cancelReason || '注文が取り消しになりました');
+    setTimeout(()=>{ hideClientStatus(); state.currentOrderIdForClient=null; }, 8000);
+  }
+}
 
-    btnPost.addEventListener("click", async ()=>{
-      const title = newTitle.value.trim();
-      const tags = newTags.value.split(",").map(s=>s.trim()).filter(Boolean).slice(0,8);
-      const category = String(newCategory.value || "").trim();
-      const action = newAction.value.trim();
+/* ===== Canvas helpers (strokes) ===== */
+function normPoint(pt, canvas){ return { x: pt.x / canvas.width, y: pt.y / canvas.height }; }
+function denormPoint(p, canvas){ return { x: (p.x||0) * canvas.width, y: (p.y||0) * canvas.height }; }
 
-      if(title.length < 2 || action.length < 2){ alert("短すぎ"); return; }
-      if(action.length > 40){ alert("40文字以内"); return; }
+function getEventPos(e, canvas){
+  const r = canvas.getBoundingClientRect();
+  const t = e.touches ? e.touches[0] : null;
+  const cx = t ? t.clientX : e.clientX;
+  const cy = t ? t.clientY : e.clientY;
+  return { x: (cx - r.left) * (canvas.width / r.width), y: (cy - r.top) * (canvas.height / r.height) };
+}
 
-      const data = {
-        title, action, tags, category,
-        creatorUid: currentUser.uid,
-        creatorName: myProfile?.name || (currentUser.displayName || "作成者"),
-        creatorPhoto: currentUser.photoURL || "",
-        createdAt: serverTimestamp(),
+/* ✅ 背景まで消えるバグ対策：
+   - 背景(artBg) と線(artLayer) を分離
+   - 消しゴムは artLayer のみ destination-out（背景は消えない）
+*/
+function initArtCanvas(bgColor){
+  artBgCtx.clearRect(0,0,artBg.width,artBg.height);
+  artBgCtx.fillStyle = bgColor || artBgColor.value || '#6b3b24';
+  // 背景：丸
+  artBgCtx.beginPath();
+  artBgCtx.arc(120,120,100,0,Math.PI*2);
+  artBgCtx.fill();
+  // ✅ 白い縁取り
+  artBgCtx.lineWidth = 6;
+  artBgCtx.strokeStyle = 'rgba(255,255,255,0.95)';
+  artBgCtx.stroke();
 
-        // 集計（土台）
-        avgRating: 0,
-        ratingCount: 0,
-        participantsCount: 0,
-        avgDays: 0,
-        successRate: 0,
-        feelEasy: 0,
-        feelMid: 0,
-        feelHard: 0,
+  artLayerCtx.clearRect(0,0,artLayer.width,artLayer.height);
+  artLayerCtx.lineCap='round';
+  artLayerCtx.lineJoin='round';
+}
 
-        // versioning
-        baseHabitId: "",
-        version: 1,
-        updatedAt: serverTimestamp()
-      };
+function initCardCanvas(bgColor){
+  cardCtx.clearRect(0,0,cardCanvas.width,cardCanvas.height);
+  cardCtx.fillStyle = bgColor || cardBgColor.value || '#fff2e6';
+  cardCtx.fillRect(0,0,cardCanvas.width,cardCanvas.height);
+  cardCtx.lineCap='round';
+  cardCtx.lineJoin='round';
+}
 
+function replayStrokes(strokes, canvasEl, ctx, meta){
+  if (!strokes || !strokes.length) return;
+  for (const s of strokes){
+    ctx.beginPath();
+    const scaleW = canvasEl.width / (meta?.origWidth || canvasEl.width);
+    ctx.lineWidth = (s.width || 3) * scaleW;
+    if (s.tool === 'draw'){
+      ctx.globalCompositeOperation='source-over';
+      ctx.strokeStyle = s.pen || (meta?.penDefault) || '#000';
+    } else {
+      ctx.globalCompositeOperation='destination-out';
+    }
+    const pts = s.points || [];
+    for (let i=0;i<pts.length;i++){
+      const p = denormPoint(pts[i], canvasEl);
+      if (i===0) ctx.moveTo(p.x,p.y); else ctx.lineTo(p.x,p.y);
+    }
+    ctx.stroke();
+    ctx.closePath();
+    ctx.globalCompositeOperation='source-over';
+  }
+}
+
+/* ===== Make modal drawing state ===== */
+let artStrokes = [];
+let currentArtStroke = null;
+let artDrawing = false;
+
+let cardStrokes = [];
+let currentCardStroke = null;
+let cardDrawing = false;
+
+let savedArtDataUrlLocal = null;
+let savedCardDataUrlLocal = null;
+let savedArtMeta = null;
+let savedCardMeta = null;
+
+let espInterval = null, milkInterval = null;
+let espDone = false, milkDone = false;
+
+function latteClear(){
+  latteCtx.clearRect(0,0,latteCanvas.width,latteCanvas.height);
+  latteCtx.fillStyle='#6b3b24';
+  latteCtx.beginPath(); latteCtx.arc(60,60,58,0,Math.PI*2); latteCtx.fill();
+}
+function latteFillEsp(){ latteCtx.fillStyle='#5a2f1a'; latteCtx.fillRect(0,60,latteCanvas.width,60); }
+function latteFillMilk(){ latteCtx.fillStyle='#f6efe6'; latteCtx.beginPath(); latteCtx.arc(60,60,48,0,Math.PI*2); latteCtx.fill(); }
+latteClear();
+
+function resetPouring(){
+  if (espInterval){ clearInterval(espInterval); espInterval=null; }
+  if (milkInterval){ clearInterval(milkInterval); milkInterval=null; }
+  espBar.style.width='0%'; espPct.textContent='0%';
+  milkBar.style.width='0%'; milkPct.textContent='0%';
+  espDone=false; milkDone=false;
+  startEsp.disabled=false; startMilk.disabled=true;
+  updateTaskStatus();
+}
+resetPouring();
+
+function startAutoPour(barEl, pctEl, onOverflow){
+  let pct=0;
+  const it = setInterval(()=>{
+    pct = Math.min(130, pct + Math.random()*4 + 1);
+    barEl.style.width = pct + '%';
+    pctEl.textContent = Math.round(pct) + '%';
+    if (pct >= 120){ clearInterval(it); onOverflow(); }
+  }, 100);
+  return { it, getPct: ()=>pct };
+}
+
+startEsp.addEventListener('mousedown', ()=>{
+  if (espInterval) return;
+  startEsp.textContent='注ぎ中...';
+  const res = startAutoPour(espBar, espPct, ()=>{ alert('注ぎ過ぎ（120%）最初からやり直し'); resetPouring(); });
+  espInterval = res.it;
+});
+startEsp.addEventListener('mouseup', ()=>{
+  if (espInterval){ clearInterval(espInterval); espInterval=null; }
+  startEsp.textContent='注ぐ（押し続け）';
+  const pct = parseFloat(espBar.style.width)||0;
+  if (pct>=95 && pct<=105){
+    espDone=true; latteFillEsp(); startMilk.disabled=false;
+    updateTaskStatus();
+  } else { alert('合格ライン外。最初から'); resetPouring(); }
+});
+startMilk.addEventListener('mousedown', ()=>{
+  if (milkInterval) return;
+  startMilk.textContent='注ぎ中...';
+  const res = startAutoPour(milkBar, milkPct, ()=>{ alert('注ぎ過ぎ（120%）最初から'); resetPouring(); });
+  milkInterval = res.it;
+});
+startMilk.addEventListener('mouseup', ()=>{
+  if (milkInterval){ clearInterval(milkInterval); milkInterval=null; }
+  startMilk.textContent='注ぐ（押し続け）';
+  const pct = parseFloat(milkBar.style.width)||0;
+  if (pct>=95 && pct<=105){
+    milkDone=true; latteFillMilk();
+    updateTaskStatus();
+  } else { alert('合格ライン外。最初から'); resetPouring(); }
+});
+
+/* touch alias */
+startEsp.addEventListener('touchstart',(e)=>{ e.preventDefault(); startEsp.dispatchEvent(new Event('mousedown')); }, {passive:false});
+startEsp.addEventListener('touchend',(e)=>{ e.preventDefault(); startEsp.dispatchEvent(new Event('mouseup')); }, {passive:false});
+startMilk.addEventListener('touchstart',(e)=>{ e.preventDefault(); startMilk.dispatchEvent(new Event('mousedown')); }, {passive:false});
+startMilk.addEventListener('touchend',(e)=>{ e.preventDefault(); startMilk.dispatchEvent(new Event('mouseup')); }, {passive:false});
+
+/* art draw */
+artLayer.addEventListener('mousedown', (e)=>{
+  artDrawing = true;
+  const p = getEventPos(e, artLayer);
+  const tool = penMode.value;
+  const w = parseInt(penSize.value,10);
+  currentArtStroke = { tool, width:w, points:[ normPoint(p, artLayer) ], pen: artPenColor.value || '#fff' };
+});
+artLayer.addEventListener('mousemove', (e)=>{
+  if (!artDrawing || !currentArtStroke) return;
+  const p = getEventPos(e, artLayer);
+  currentArtStroke.points.push(normPoint(p, artLayer));
+  renderLatestSegment(artLayerCtx, artLayer, currentArtStroke);
+});
+artLayer.addEventListener('mouseup', ()=>{
+  if (!artDrawing) return;
+  artDrawing=false;
+  if (currentArtStroke){ artStrokes.push(currentArtStroke); currentArtStroke=null; saveArt.disabled=false; updateTaskStatus(); }
+});
+artLayer.addEventListener('mouseleave', ()=>{
+  if (artDrawing){
+    artDrawing=false;
+    if (currentArtStroke){ artStrokes.push(currentArtStroke); currentArtStroke=null; saveArt.disabled=false; updateTaskStatus(); }
+  }
+});
+artLayer.addEventListener('touchstart',(e)=>{ e.preventDefault(); const t=e.touches[0]; artLayer.dispatchEvent(new MouseEvent('mousedown',{clientX:t.clientX, clientY:t.clientY})); }, {passive:false});
+artLayer.addEventListener('touchmove',(e)=>{ e.preventDefault(); const t=e.touches[0]; artLayer.dispatchEvent(new MouseEvent('mousemove',{clientX:t.clientX, clientY:t.clientY})); }, {passive:false});
+artLayer.addEventListener('touchend',(e)=>{ e.preventDefault(); artLayer.dispatchEvent(new MouseEvent('mouseup')); }, {passive:false});
+
+/* card draw */
+cardCanvas.addEventListener('mousedown', (e)=>{
+  cardDrawing = true;
+  const p = getEventPos(e, cardCanvas);
+  const tool = cardMode.value;
+  const w = parseInt(cardSize.value,10);
+  currentCardStroke = { tool, width:w, points:[ normPoint(p, cardCanvas) ], pen: cardPenColor.value || '#000' };
+});
+cardCanvas.addEventListener('mousemove', (e)=>{
+  if (!cardDrawing || !currentCardStroke) return;
+  const p = getEventPos(e, cardCanvas);
+  currentCardStroke.points.push(normPoint(p, cardCanvas));
+  renderLatestSegment(cardCtx, cardCanvas, currentCardStroke);
+});
+cardCanvas.addEventListener('mouseup', ()=>{
+  if (!cardDrawing) return;
+  cardDrawing=false;
+  if (currentCardStroke){ cardStrokes.push(currentCardStroke); currentCardStroke=null; saveCard.disabled=false; updateTaskStatus(); }
+});
+cardCanvas.addEventListener('mouseleave', ()=>{
+  if (cardDrawing){
+    cardDrawing=false;
+    if (currentCardStroke){ cardStrokes.push(currentCardStroke); currentCardStroke=null; saveCard.disabled=false; updateTaskStatus(); }
+  }
+});
+cardCanvas.addEventListener('touchstart',(e)=>{ e.preventDefault(); const t=e.touches[0]; cardCanvas.dispatchEvent(new MouseEvent('mousedown',{clientX:t.clientX, clientY:t.clientY})); }, {passive:false});
+cardCanvas.addEventListener('touchmove',(e)=>{ e.preventDefault(); const t=e.touches[0]; cardCanvas.dispatchEvent(new MouseEvent('mousemove',{clientX:t.clientX, clientY:t.clientY})); }, {passive:false});
+cardCanvas.addEventListener('touchend',(e)=>{ e.preventDefault(); cardCanvas.dispatchEvent(new MouseEvent('mouseup')); }, {passive:false});
+
+function renderLatestSegment(ctx, canvasEl, stroke){
+  if (!stroke || stroke.points.length < 2) return;
+  const p1 = denormPoint(stroke.points[stroke.points.length-2], canvasEl);
+  const p2 = denormPoint(stroke.points[stroke.points.length-1], canvasEl);
+  if (stroke.tool === 'draw'){
+    ctx.globalCompositeOperation='source-over';
+    ctx.strokeStyle = stroke.pen || '#000';
+    ctx.lineWidth = stroke.width || 6;
+  } else {
+    ctx.globalCompositeOperation='destination-out';
+    ctx.lineWidth = stroke.width || 6;
+  }
+  ctx.beginPath();
+  ctx.moveTo(p1.x,p1.y);
+  ctx.lineTo(p2.x,p2.y);
+  ctx.stroke();
+  ctx.globalCompositeOperation='source-over';
+}
+
+/* clear */
+clearArt.addEventListener('click', ()=>{ initArtCanvas(); artStrokes=[]; currentArtStroke=null; saveArt.disabled=true; updateTaskStatus(); });
+clearCard.addEventListener('click', ()=>{ initCardCanvas(); cardStrokes=[]; currentCardStroke=null; saveCard.disabled=true; updateTaskStatus(); });
+
+/* ✅ saveArt/saveCard：軽量PNG作成（保存の潰れ対策＝高解像度tmp→PNG化） */
+function strokesToPng(strokes, bg, canvasW, canvasH, scale=2, defaultPen='#000'){
+  const tmp = document.createElement('canvas');
+  tmp.width = canvasW * scale;
+  tmp.height = canvasH * scale;
+  const t = tmp.getContext('2d');
+
+  t.fillStyle = bg;
+  t.fillRect(0,0,tmp.width,tmp.height);
+  t.lineCap='round'; t.lineJoin='round';
+
+  for (const s of (strokes||[])){
+    t.beginPath();
+    t.globalCompositeOperation = s.tool==='draw' ? 'source-over' : 'destination-out';
+    t.strokeStyle = s.pen || defaultPen;
+    t.lineWidth = (s.width || 6) * scale;
+    const pts = s.points || [];
+    for (let i=0;i<pts.length;i++){
+      const x = (pts[i].x||0) * tmp.width;
+      const y = (pts[i].y||0) * tmp.height;
+      if (i===0) t.moveTo(x,y); else t.lineTo(x,y);
+    }
+    t.stroke();
+    t.closePath();
+    t.globalCompositeOperation='source-over';
+  }
+
+  return {
+    dataUrl: tmp.toDataURL('image/png'),
+    meta: { origWidth: canvasW, origHeight: canvasH, savedWidth: tmp.width, savedHeight: tmp.height, bg, penDefault: defaultPen, scale }
+  };
+}
+
+saveArt.addEventListener('click', ()=>{
+  const bg = artBgColor.value || '#6b3b24';
+  const out = strokesToPng(artStrokes, bg, artLayer.width, artLayer.height, 2, artPenColor.value || '#fff');
+  savedArtDataUrlLocal = out.dataUrl;
+  savedArtMeta = out.meta;
+  saveArt.disabled = true;
+  updateTaskStatus();
+  alert('アートを保存しました。');
+});
+saveCard.addEventListener('click', ()=>{
+  const bg = cardBgColor.value || '#fff2e6';
+  const out = strokesToPng(cardStrokes, bg, cardCanvas.width, cardCanvas.height, 2, cardPenColor.value || '#000');
+  savedCardDataUrlLocal = out.dataUrl;
+  savedCardMeta = out.meta;
+  saveCard.disabled = true;
+  updateTaskStatus();
+  alert('カードを保存しました。');
+});
+
+/* make modal open */
+let currentMakingOrderId = null;
+let currentOrderObj = null;
+
+async function openMakeModal(order){
+  currentMakingOrderId = order.id;
+  currentOrderObj = order;
+
+  makerName.textContent = order.assignedToName || order.assignedTo || '';
+  const cfg = MENUS[order.item] || MENUS.rate;
+
+  makeTitle.textContent = `${cfg.ui?.makeTitle || '制作'}（担当：${order.assignedToName || order.assignedTo || ''}）`;
+  espressoLabelEl.textContent = cfg.ui?.espressoLabel || 'エスプレッソ注ぎ';
+  milkLabelEl.textContent = cfg.ui?.milkLabel || 'フームドミルク注ぎ';
+  latteArtLabelEl.textContent = cfg.ui?.latteArtLabel || 'アート';
+
+  /* restore per order */
+  artStrokes = (order.artStrokes && Array.isArray(order.artStrokes)) ? JSON.parse(JSON.stringify(order.artStrokes)) : [];
+  cardStrokes = (order.cardStrokes && Array.isArray(order.cardStrokes)) ? JSON.parse(JSON.stringify(order.cardStrokes)) : [];
+  savedArtDataUrlLocal = order.artDataUrl || null;
+  savedCardDataUrlLocal = order.cardDataUrl || null;
+  savedArtMeta = order.artMeta || null;
+  savedCardMeta = order.cardMeta || null;
+
+  const artBgUse = (savedArtMeta && savedArtMeta.bg) || cfg.artBg || artBgColor.value;
+  const cardBgUse = (savedCardMeta && savedCardMeta.bg) || cfg.cardBg || cardBgColor.value;
+
+  artBgColor.value = artBgUse;
+  cardBgColor.value = cardBgUse;
+
+  initArtCanvas(artBgUse);
+  initCardCanvas(cardBgUse);
+
+  if (artStrokes.length) replayStrokes(artStrokes, artLayer, artLayerCtx, savedArtMeta);
+  if (cardStrokes.length) replayStrokes(cardStrokes, cardCanvas, cardCtx, savedCardMeta);
+
+  /* reset pouring for each session */
+  latteClear();
+  resetPouring();
+
+  saveArt.disabled = !artStrokes.length;
+  saveCard.disabled = !cardStrokes.length;
+  updateTaskStatus();
+
+  showModal(modalMakeLatte);
+}
+
+cancelMake.addEventListener('click', ()=>{
+  hideModal(modalMakeLatte);
+  currentMakingOrderId = null;
+  currentOrderObj = null;
+});
+
+function updateTaskStatus(){
+  const parts = [];
+  if (!espDone || !milkDone) parts.push('注ぎ');
+  if (!savedArtDataUrlLocal && !(artStrokes && artStrokes.length)) parts.push('アート');
+  if (!savedCardDataUrlLocal && !(cardStrokes && cardStrokes.length)) parts.push('カード');
+  taskStatusSmall.textContent = parts.length ? ('未完了: ' + parts.join(', ')) : 'すべて完了';
+  completeMake.disabled = parts.length !== 0;
+}
+
+completeMake.addEventListener('click', async ()=>{
+  if (!currentMakingOrderId || !currentOrderObj){ alert('対象の注文がありません'); return; }
+
+  // 合成画像
+  const tmp = document.createElement('canvas');
+  tmp.width = 1200; tmp.height = 1200;
+  const tctx = tmp.getContext('2d');
+  tctx.fillStyle = '#fff8ef'; tctx.fillRect(0,0,tmp.width,tmp.height);
+
+  tctx.drawImage(latteCanvas, 450,300,300,300);
+
+  if (savedArtDataUrlLocal){
+    const img = new Image(); img.src = savedArtDataUrlLocal;
+    await new Promise(r=>{ img.onload=r; img.onerror=r; });
+    tctx.drawImage(img, 440,120,320,320);
+  }
+  if (savedCardDataUrlLocal){
+    const img2 = new Image(); img2.src = savedCardDataUrlLocal;
+    await new Promise(r=>{ img2.onload=r; img2.onerror=r; });
+    tctx.drawImage(img2, 430,700,340,160);
+  }
+
+  const servedDataUrl = tmp.toDataURL('image/png');
+
+  const payload = {
+    state:'delivered',
+    deliveredAt: Date.now(),
+    servedImageData: servedDataUrl,
+    artStrokes: artStrokes || [],
+    cardStrokes: cardStrokes || [],
+    artMeta: savedArtMeta || null,
+    cardMeta: savedCardMeta || null,
+    artDataUrl: savedArtDataUrlLocal || null,
+    cardDataUrl: savedCardDataUrlLocal || null
+  };
+
+  try{
+    if (db){
+      await updateDoc(doc(db,'orders',currentMakingOrderId), payload);
+    } else {
+      const o = state.orders.find(x=>x.id===currentMakingOrderId);
+      if (o) Object.assign(o, payload);
+      localStorage.setItem('reiji_state_orders', JSON.stringify(state.orders));
+      renderOrderLists();
+    }
+
+    hideModal(modalMakeLatte);
+    currentMakingOrderId = null;
+    currentOrderObj = null;
+
+    try{ audioCookbgm.pause(); audioCookbgm.currentTime=0; }catch(e){}
+    alert('提供しました');
+  }catch(e){
+    console.warn(e);
+    alert('提供に失敗しました');
+  }
+});
+
+/* ===== Served view ===== */
+async function preloadFrames(basePath, frameCount=6){
+  const frames = [];
+  for (let i=0;i<=frameCount;i++){
+    // ✅ 「0→①以降」対応：0番は base0.png があれば使う（なければ1にfallback）
+    const idx = i;
+    const candidates = [
+      `${basePath}${idx}.png`,
+      `${basePath}${String(idx).padStart(2,'0')}.png`,
+      `${basePath}_${idx}.png`,
+      `${basePath}_${String(idx).padStart(2,'0')}.png`,
+    ];
+    let picked = null;
+    for (const c of candidates){
+      const url = getAssetUrl(c);
       try{
-        await addDoc(collection(db, "habits"), data);
-
-        newTitle.value = "";
-        newTags.value = "";
-        newCategory.value = "";
-        newAction.value = "";
-        updateCounter();
-
-        await refreshHome();
-        await refreshProfile();
-      }catch{
-        alert("投稿失敗");
-      }
-    });
-
-    // ===== Filters =====
-    function setSelectedTag(tag){
-      selectedTag = tag || "";
-      [...document.querySelectorAll(".chip")].forEach(ch=>{
-        ch.classList.toggle("active", ch.dataset.tag === selectedTag);
-      });
-      refreshHome();
-    }
-    btnClearTag.addEventListener("click", ()=> setSelectedTag(""));
-    qInput.addEventListener("keydown", (e)=>{ if(e.key==="Enter") refreshHome(); });
-    categoryFilter.addEventListener("change", refreshHome);
-    sortBy.addEventListener("change", refreshHome);
-
-    function renderChips(container, tags){
-      container.innerHTML = "";
-      for(const t of tags){
-        const chip = document.createElement("div");
-        chip.className = "chip";
-        chip.dataset.tag = t;
-        chip.textContent = `#${t}`;
-        chip.addEventListener("click", ()=> setSelectedTag(t));
-        container.appendChild(chip);
-      }
-      [...container.querySelectorAll(".chip")].forEach(ch=>{
-        ch.classList.toggle("active", ch.dataset.tag === selectedTag);
-      });
-    }
-
-    // ===== Phase3 caches (no composite index) =====
-    async function warmCaches(){
-      cachedFavCreators = new Set();
-      cachedBookmarks = new Set();
-
-      // fav creators
-      {
-        const qs = await getDocs(query(
-          collection(db, "userCreatorFavs", currentUser.uid, "items"),
-          orderBy("createdAt","desc"),
-          limit(300)
-        ));
-        qs.forEach(s=> cachedFavCreators.add(s.id));
-      }
-
-      // bookmarks
-      {
-        const qs = await getDocs(query(
-          collection(db, "userBookmarks", currentUser.uid, "items"),
-          orderBy("createdAt","desc"),
-          limit(500)
-        ));
-        qs.forEach(s=> cachedBookmarks.add(s.id));
-      }
-    }
-
-    async function toggleCreatorFav(creatorUid){
-      if(!creatorUid) return;
-      const ref = doc(db, "userCreatorFavs", currentUser.uid, "items", creatorUid);
-      if(cachedFavCreators.has(creatorUid)){
-        await deleteDoc(ref);
-        cachedFavCreators.delete(creatorUid);
-      }else{
-        await setDoc(ref, { createdAt: serverTimestamp() });
-        cachedFavCreators.add(creatorUid);
-      }
-      await refreshProfile();
-      await refreshHome();
-    }
-
-    async function toggleBookmark(habitId){
-      if(!habitId) return;
-      const ref = doc(db, "userBookmarks", currentUser.uid, "items", habitId);
-      if(cachedBookmarks.has(habitId)){
-        await deleteDoc(ref);
-        cachedBookmarks.delete(habitId);
-      }else{
-        await setDoc(ref, { createdAt: serverTimestamp() });
-        cachedBookmarks.add(habitId);
-      }
-      await refreshBookmarksView();
-      await refreshHome(); // アイコン反映
-      await refreshProfile();
-    }
-
-    // ===== Home =====
-    async function refreshHome(){
-      if(!currentUser) return;
-
-      const keyword = qInput.value.trim().toLowerCase();
-      const cat = categoryFilter.value.trim();
-      const sort = sortBy.value;
-      const prefCat = myProfile?.preferredCategory || "";
-
-      myCategory.textContent = prefCat || "未設定";
-
-      // habits
-      let habits = [];
-      const qs = await getDocs(query(collection(db,"habits"), orderBy("createdAt","desc"), limit(220)));
-      qs.forEach(docSnap=> habits.push({ id: docSnap.id, ...docSnap.data() }));
-
-      // tag counts
-      const tagCounts = new Map();
-      for(const h of habits){
-        (h.tags || []).forEach(t=>{
-          const k = String(t || "").trim();
-          if(!k) return;
-          tagCounts.set(k, (tagCounts.get(k)||0)+1);
-        });
-      }
-      selectedTopTags = [...tagCounts.entries()].sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
-      renderChips(chipsTop, selectedTopTags);
-
-      const recoPool = habits.filter(h=>{
-        if(!prefCat) return true;
-        return (h.category || "").trim() === prefCat;
-      });
-      const recoCounts = new Map();
-      for(const h of recoPool){
-        (h.tags||[]).forEach(t=>{
-          const k = String(t||"").trim();
-          if(!k) return;
-          recoCounts.set(k, (recoCounts.get(k)||0)+1);
-        });
-      }
-      selectedRecoTags = [...recoCounts.entries()].sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
-      if(selectedRecoTags.length===0) selectedRecoTags = selectedTopTags;
-      renderChips(chipsRecommend, selectedRecoTags);
-
-      // filter
-      let filtered = habits.filter(h=>{
-        if(cat && (h.category || "").trim() !== cat) return false;
-        if(selectedTag && !(h.tags || []).includes(selectedTag)) return false;
-        if(keyword){
-          const blob = [h.title, h.action, (h.tags||[]).join(" "), h.category, h.creatorName].join(" ").toLowerCase();
-          if(!blob.includes(keyword)) return false;
+        const res = await fetch(url, { method:'GET' });
+        if (res.ok){
+          const blob = await res.blob();
+          picked = URL.createObjectURL(blob);
+          break;
         }
-        // ❤️お気に入り中の人
-        if(sort === "favCreators"){
-          return cachedFavCreators.has(h.creatorUid);
+      }catch(e){}
+    }
+    if (!picked && idx===0){
+      // fallback: 1
+      picked = getAssetUrl(`${basePath}1.png`);
+    }
+    if (picked) frames.push(picked);
+  }
+  return frames;
+}
+
+const servedSeq = { frames:[], idx:0, menuKey:'rate' };
+
+async function showClientServed(order){
+  const cfg = MENUS[order.item] || MENUS.rate;
+  servedSeq.menuKey = order.item || 'rate';
+
+  // main image sequence
+  servedSeq.frames = await preloadFrames(cfg.imageBase, cfg.frameCount || 6);
+  servedSeq.idx = 0;
+  servedImage.src = servedSeq.frames[0] || getAssetUrl(cfg.imageBase+'1.png');
+
+  // minis
+  const aCtx = servedArtMini.getContext('2d');
+  aCtx.clearRect(0,0,servedArtMini.width, servedArtMini.height);
+  aCtx.fillStyle = (order.artMeta && order.artMeta.bg) || cfg.artBg || '#6b3b24';
+  aCtx.fillRect(0,0,servedArtMini.width, servedArtMini.height);
+
+  if (order.artDataUrl){
+    const im = new Image(); im.src = order.artDataUrl;
+    await new Promise(r=>{ im.onload=r; im.onerror=r; });
+    aCtx.drawImage(im, 0,0, servedArtMini.width, servedArtMini.height);
+  } else if (order.artStrokes && order.artStrokes.length){
+    replayStrokes(order.artStrokes, servedArtMini, aCtx, order.artMeta);
+  }
+
+  const cCtx = servedCardMini.getContext('2d');
+  cCtx.clearRect(0,0,servedCardMini.width, servedCardMini.height);
+  cCtx.fillStyle = (order.cardMeta && order.cardMeta.bg) || cfg.cardBg || '#fff2e6';
+  cCtx.fillRect(0,0,servedCardMini.width, servedCardMini.height);
+  if (order.cardDataUrl){
+    const im2 = new Image(); im2.src = order.cardDataUrl;
+    await new Promise(r=>{ im2.onload=r; im2.onerror=r; });
+    cCtx.drawImage(im2, 0,0, servedCardMini.width, servedCardMini.height);
+  } else if (order.cardStrokes && order.cardStrokes.length){
+    replayStrokes(order.cardStrokes, servedCardMini, cCtx, order.cardMeta);
+  }
+
+  // show modal
+  showModal(modalEat);
+
+  // ✅ 提供時：スマホはバイブ＋ps.mp3 / PCも音
+  try{
+    if (navigator.vibrate) navigator.vibrate([120,60,120]);
+  }catch(e){}
+  if (state.audioUnlocked){
+    try{ audioPs.currentTime=0; audioPs.play().catch(()=>{});}catch(e){}
+  } else {
+    state.pendingPlayQueue.push({type:'ps'});
+  }
+}
+
+/* save image (潰れにくい合成) */
+saveAllBtn.addEventListener('click', ()=>{
+  const tmp = document.createElement('canvas');
+  tmp.width = 1400; tmp.height = 1200;
+  const t = tmp.getContext('2d');
+  t.fillStyle = '#fff8ef'; t.fillRect(0,0,tmp.width,tmp.height);
+
+  const main = new Image();
+  main.crossOrigin = 'anonymous';
+  main.src = servedImage.src;
+  main.onload = ()=>{
+    // main
+    t.drawImage(main, 100,80, 900, 700);
+    // minis
+    t.drawImage(servedArtMini, 1040,120, 260, 260);
+    t.drawImage(servedCardMini, 1020,420, 320, 160);
+
+    const a = document.createElement('a');
+    a.href = tmp.toDataURL('image/png');
+    a.download = 'served_save.png';
+    a.click();
+  };
+  main.onerror = ()=> alert('画像読み込み失敗');
+});
+
+homeFromEat.addEventListener('click', async ()=>{
+  const curId = state.currentOrderIdForClient;
+  if (curId){
+    dismissedOrders.add(curId);
+    localStorage.setItem('reiji_dismissed_orders', JSON.stringify(Array.from(dismissedOrders)));
+    state.currentOrderIdForClient = null;
+  }
+  hideModal(modalEat);
+  pomoPanel.classList.remove('show');
+  pomoPanel.style.display='none';
+});
+
+/* ===== Pomodoro logic（画像クリックで開く / 進行でフレーム更新） ===== */
+const POMO = {
+  running:false,
+  phase:'idle', // work/break/paused/idle
+  loopTotal:2,
+  loopIndex:0,
+  workMin:1,
+  breakMin:5,
+  remainingMs:0,
+  tick:null,
+  lastTick:0,
+  currentMenuKey:'rate'
+};
+
+function formatTime(ms){
+  if (ms<0) ms=0;
+  let s=Math.floor(ms/1000);
+  const h=Math.floor(s/3600); s%=3600;
+  const m=Math.floor(s/60); const sec=s%60;
+  return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0');
+}
+
+function setServedFrameByRatio(menuKey, ratio){
+  const menu = MENUS[menuKey] || MENUS.rate;
+  const fc = menu.frameCount || 6;
+
+  // ✅ 0→①以降：0は「設定画面」扱い、開始後は 1..fc を出す
+  const from = 1;
+  const to = fc;
+  const idx = Math.min(to, Math.max(from, Math.floor(from + (to-from)*ratio)));
+
+  // servedSeq.frames: [0..fc]（0含む）で入れているので idxで参照
+  const safeIdx = Math.min(servedSeq.frames.length-1, Math.max(1, idx));
+  servedImage.src = servedSeq.frames[safeIdx] || servedImage.src;
+}
+
+function renderPomoUI(){
+  if (!POMO.running){
+    pomoSettings.style.display='block';
+    pomoRunning.style.display='none';
+    return;
+  }
+  pomoSettings.style.display='none';
+  pomoRunning.style.display='block';
+  pomoLoopCounter.textContent = `${POMO.loopIndex+1} / ${POMO.loopTotal}`;
+  pomoPhaseLabel.textContent = (POMO.phase==='work') ? '作業中' : (POMO.phase==='break' ? '休憩中' : (POMO.phase==='paused' ? '一時停止' : '待機'));
+  pomoTimerText.textContent = formatTime(POMO.remainingMs);
+
+  let total = 1;
+  if (POMO.phase==='work') total = POMO.workMin*60*1000;
+  if (POMO.phase==='break') total = POMO.breakMin*60*1000;
+
+  const elapsed = Math.max(0, total - POMO.remainingMs);
+  const pct = Math.min(100, Math.floor((elapsed/total)*100));
+  pomoProgressBar.style.width = pct + '%';
+
+  pausePomoBtn.textContent = (POMO.phase==='paused') ? '▶' : '⏸';
+}
+
+function updatePomoCountDisplay(){
+  const loops = Math.max(1, Math.min(10, parseInt(loopCountInput.value||'1')));
+  pomoCountDisplay.textContent = `${loops} / ${loops}`;
+}
+
+function stopPomoTick(){
+  if (POMO.tick){ clearInterval(POMO.tick); POMO.tick=null; }
+}
+
+function startPomoTick(){
+  stopPomoTick();
+  POMO.lastTick = Date.now();
+  POMO.tick = setInterval(()=>{
+    if (!POMO.running) return;
+    if (POMO.phase==='paused' || POMO.phase==='idle') return;
+
+    const now = Date.now();
+    const delta = now - POMO.lastTick;
+    POMO.lastTick = now;
+    POMO.remainingMs -= delta;
+
+    if (POMO.remainingMs <= 0){
+      if (POMO.phase==='work'){
+        POMO.phase='break';
+        POMO.remainingMs = POMO.breakMin*60*1000;
+        if (state.audioUnlocked) audioPiroBreak.play().catch(()=>{});
+        setServedFrameByRatio(POMO.currentMenuKey, 1); // breakは最後に近い絵
+      } else if (POMO.phase==='break'){
+        POMO.loopIndex++;
+        if (POMO.loopIndex >= POMO.loopTotal){
+          stopPomo(true);
+          return;
         }
-        return true;
-      });
-
-      // sort
-      filtered.sort((a,b)=>{
-        const ca = a.createdAt?.seconds ? a.createdAt.seconds : 0;
-        const cb = b.createdAt?.seconds ? b.createdAt.seconds : 0;
-
-        const ra = Number(a.avgRating||0);
-        const rb = Number(b.avgRating||0);
-        const sa = Number(a.successRate||0);
-        const sb = Number(b.successRate||0);
-        const da = Number(a.avgDays||0);
-        const dbb = Number(b.avgDays||0);
-
-        if(sort === "rating") return (rb - ra) || (cb - ca);
-        if(sort === "success") return (sb - sa) || (cb - ca);
-        if(sort === "days") return (dbb - da) || (cb - ca);
-        if(sort === "favCreators") return (cb - ca);
-        return (cb - ca);
-      });
-
-      countShown.textContent = String(filtered.length);
-
-      // active count
-      const actives = await loadActiveChallenges();
-      activeCount.textContent = String(actives.length);
-
-      // today toasts
-      await refreshTodayToasts();
-
-      // render
-      feed.innerHTML = "";
-      for(const h of filtered){
-        feed.appendChild(renderHabitCard(h));
+        POMO.phase='work';
+        POMO.remainingMs = POMO.workMin*60*1000;
+        if (state.audioUnlocked) audioPiroStart.play().catch(()=>{});
+      }
+    } else {
+      if (POMO.phase==='work'){
+        const total = POMO.workMin*60*1000;
+        const ratio = Math.min(1, Math.max(0, (total - POMO.remainingMs)/total));
+        setServedFrameByRatio(POMO.currentMenuKey, ratio);
       }
     }
+    renderPomoUI();
+  }, 250);
+}
 
-    function renderHabitCard(h){
-      const card = document.createElement("div");
-      card.className = "habitCard";
+function startPomo(){
+  const loops = Math.max(1, Math.min(10, parseInt(loopCountInput.value||'1')));
+  const w = Math.max(1, Math.min(200, parseInt(workMinInput.value||'25')));
+  const b = Math.max(1, Math.min(200, parseInt(breakMinInput.value||'5')));
 
-      const tags = (h.tags || []).slice(0,3);
-      const cat = (h.category || "").trim();
+  POMO.loopTotal = loops;
+  POMO.loopIndex = 0;
+  POMO.workMin = w;
+  POMO.breakMin = b;
+  POMO.running = true;
+  POMO.phase = 'work';
+  POMO.remainingMs = w*60*1000;
+  POMO.currentMenuKey = servedSeq.menuKey || 'rate';
 
-      const avgRating = Number(h.avgRating||0);
-      const avgDays = Number(h.avgDays||0);
-      const successRate = Number(h.successRate||0);
+  if (state.audioUnlocked) audioPiroStart.play().catch(()=>{});
+  startPomoTick();
+  renderPomoUI();
+}
 
-      const isMine = h.creatorUid === currentUser.uid;
-      const creatorFav = cachedFavCreators.has(h.creatorUid);
-      const bookmarked = cachedBookmarks.has(h.id);
+function stopPomo(toSettings){
+  POMO.running=false;
+  POMO.phase='idle';
+  POMO.remainingMs=0;
+  stopPomoTick();
+  renderPomoUI();
+  if (toSettings){
+    startPomoBtn.textContent = '再生 ▶';
+  }
+}
 
-      card.innerHTML = `
-        <div>
-          <div class="habitTop">
-            <div class="miniUser">
-              <div class="miniAva">${h.creatorPhoto ? `<img src="${escapeHtml(h.creatorPhoto)}" alt=""/>` : ""}</div>
-              <div class="miniName">${escapeHtml(h.creatorName || "作成者")}</div>
-            </div>
-            <div class="badgeRow">
-              ${cat ? `<span class="badge cat" data-cat="${escapeHtml(cat)}">${escapeHtml(cat)}</span>` : ""}
-              ${tags.map(t=>`<span class="badge tag" data-tag="${escapeHtml(t)}">${escapeHtml(t)}</span>`).join("")}
-            </div>
-          </div>
+function togglePausePomo(){
+  if (!POMO.running) return;
+  if (POMO.phase==='paused'){
+    POMO.phase = POMO._prevPhase || 'work';
+    if (state.audioUnlocked) audioPiroToggle.play().catch(()=>{});
+    startPomoTick();
+  } else {
+    POMO._prevPhase = POMO.phase;
+    POMO.phase = 'paused';
+    stopPomoTick();
+    if (state.audioUnlocked) audioPiroToggle.play().catch(()=>{});
+  }
+  renderPomoUI();
+}
 
-          <div class="habitTitle">${escapeHtml(h.title || "")}</div>
-          <p class="habitDesc">${escapeHtml(h.action || "")}</p>
-        </div>
+function skipPomo(){
+  if (!POMO.running) return;
+  POMO.remainingMs = 0;
+}
 
-        <div>
-          <div class="stats">
-            <div class="stat">⭐ ${avgRating ? avgRating.toFixed(1) : "—"}</div>
-            <div class="stat">📅 ${avgDays ? avgDays.toFixed(1) : "—"}</div>
-            <div class="stat">🎯 ${successRate ? successRate.toFixed(0) + "%" : "—"}</div>
-          </div>
+/* show / hide panel by clicking image */
+servedImage.addEventListener('click', ()=>{
+  // open panel
+  pomoPanel.classList.add('show');
+  pomoPanel.style.display = 'block';
 
-          <div class="actions">
-            <button class="iconBtn ${bookmarked ? "ok":""}" data-act="bookmark" data-tip="保存">🔖</button>
-            <button class="iconBtn ${creatorFav ? "ok":""}" data-act="creatorFav" data-tip="作成者">👤</button>
-            <button class="iconBtn primary" data-act="rate" data-tip="評価">⭐</button>
-            <button class="iconBtn" data-act="reviews" data-tip="口コミ">💬</button>
-            ${isMine ? `<button class="iconBtn warn" data-act="edit" data-tip="編集">🛠️</button>` : ""}
-            <button class="iconBtn tryBtn" data-act="try" data-tip="挑戦">▶</button>
-          </div>
-        </div>
-      `;
+  // ✅ “0しか表示されない”対策：タイマーを開いたら「0番（設定用）」の絵に寄せる
+  // servedSeq.frames[0] は preloadFrames で用意
+  if (servedSeq.frames && servedSeq.frames.length){
+    servedImage.src = servedSeq.frames[0] || servedImage.src;
+  }
 
-      card.querySelector('[data-act="try"]').addEventListener("click", ()=> startChallenge(h));
-      card.querySelector('[data-act="rate"]').addEventListener("click", ()=> openRatingModal(h));
-      card.querySelector('[data-act="reviews"]').addEventListener("click", ()=> openReviewsModal(h));
-      card.querySelector('[data-act="bookmark"]').addEventListener("click", ()=> toggleBookmark(h.id));
-      card.querySelector('[data-act="creatorFav"]').addEventListener("click", ()=> toggleCreatorFav(h.creatorUid));
+  // settings initialize
+  if (!POMO.running){
+    loopCountInput.value = POMO.loopTotal || 2;
+    workMinInput.value = POMO.workMin || 1;
+    breakMinInput.value = POMO.breakMin || 5;
+    updatePomoCountDisplay();
+    renderPomoUI();
+  }
+});
 
-      const editBtn = card.querySelector('[data-act="edit"]');
-      if(editBtn) editBtn.addEventListener("click", ()=> openEditModal(h));
+function wireHold(btn, input, delta, min, max){
+  let timer=null, holdStart=0, interval=450;
+  function step(){
+    let v = parseInt(input.value||'0');
+    v += delta;
+    if (typeof min==='number') v = Math.max(min, v);
+    if (typeof max==='number') v = Math.min(max, v);
+    input.value = v;
+    updatePomoCountDisplay();
+  }
+  function start(){
+    holdStart = Date.now();
+    interval = 450;
+    step();
+    timer = setTimeout(function rep(){
+      const held = Date.now() - holdStart;
+      const t = Math.min(1, held/1500);
+      interval = Math.max(80, Math.floor(450 - 360*t));
+      step();
+      timer = setTimeout(rep, interval);
+    }, interval);
+  }
+  function stop(){ if (timer){ clearTimeout(timer); timer=null; } }
 
-      card.querySelectorAll(".badge.tag").forEach(el=>{
-        el.addEventListener("click", (e)=>{
-          setSelectedTag(el.dataset.tag || el.textContent.trim());
-          e.stopPropagation();
-        });
-      });
-      card.querySelectorAll(".badge.cat").forEach(el=>{
-        el.addEventListener("click", (e)=>{
-          categoryFilter.value = el.dataset.cat || el.textContent.trim();
-          refreshHome();
-          e.stopPropagation();
-        });
-      });
+  btn.addEventListener('mousedown',(e)=>{ e.preventDefault(); start(); });
+  btn.addEventListener('touchstart',(e)=>{ e.preventDefault(); start(); }, {passive:false});
+  window.addEventListener('mouseup', stop);
+  window.addEventListener('touchend', stop);
+  btn.addEventListener('click',(e)=>{ e.preventDefault(); step(); });
+}
+wireHold(loopUp, loopCountInput, +1, 1, 10);
+wireHold(loopDown, loopCountInput, -1, 1, 10);
+wireHold(workUp, workMinInput, +1, 1, 200);
+wireHold(workDown, workMinInput, -1, 1, 200);
+wireHold(breakUp, breakMinInput, +1, 1, 200);
+wireHold(breakDown, breakMinInput, -1, 1, 200);
 
-      return card;
+startPomoBtn.addEventListener('click', ()=>{
+  if (!POMO.running){
+    startPomo();
+    startPomoBtn.textContent = '実行中';
+  }
+});
+stopPomoBtn.addEventListener('click', ()=> stopPomo(true));
+pausePomoBtn.addEventListener('click', ()=> togglePausePomo());
+skipPomoBtn.addEventListener('click', ()=> skipPomo());
+
+/* ===== New Menu: info -> paint ===== */
+newMenuBtn.addEventListener('click', ()=> showModal(modalNewMenuInfo));
+newMenuCancel.addEventListener('click', ()=> hideModal(modalNewMenuInfo));
+newMenuGo.addEventListener('click', ()=>{
+  hideModal(modalNewMenuInfo);
+  openNewMenuPaint();
+});
+
+function initNewMenuCanvas(){
+  newMenuBgCtx.clearRect(0,0,newMenuBg.width,newMenuBg.height);
+  newMenuBgCtx.fillStyle = newMenuBgColor.value || '#fff7e9';
+  newMenuBgCtx.fillRect(0,0,newMenuBg.width,newMenuBg.height);
+  // 白縁
+  newMenuBgCtx.strokeStyle = 'rgba(255,255,255,0.95)';
+  newMenuBgCtx.lineWidth = 8;
+  newMenuBgCtx.strokeRect(6,6,newMenuBg.width-12,newMenuBg.height-12);
+
+  newMenuLayerCtx.clearRect(0,0,newMenuLayer.width,newMenuLayer.height);
+  newMenuLayerCtx.lineCap='round';
+  newMenuLayerCtx.lineJoin='round';
+
+  updateNewMenuPreview();
+}
+
+function openNewMenuPaint(){
+  initNewMenuCanvas();
+  submitterName.value = (orderName.value || '').trim();
+  newMenuSubmitHint.textContent = '';
+  showModal(modalNewMenuPaint);
+}
+
+/* new menu draw */
+let nmDrawing=false;
+let nmStrokes=[];
+let nmCur=null;
+
+function renderLatestNewMenu(stroke){
+  if (!stroke || stroke.points.length<2) return;
+  const p1 = denormPoint(stroke.points[stroke.points.length-2], newMenuLayer);
+  const p2 = denormPoint(stroke.points[stroke.points.length-1], newMenuLayer);
+
+  if (stroke.tool==='draw'){
+    newMenuLayerCtx.globalCompositeOperation='source-over';
+    newMenuLayerCtx.strokeStyle = stroke.pen || '#000';
+    newMenuLayerCtx.lineWidth = stroke.width || 6;
+  } else {
+    newMenuLayerCtx.globalCompositeOperation='destination-out';
+    newMenuLayerCtx.lineWidth = stroke.width || 6;
+  }
+  newMenuLayerCtx.beginPath();
+  newMenuLayerCtx.moveTo(p1.x,p1.y);
+  newMenuLayerCtx.lineTo(p2.x,p2.y);
+  newMenuLayerCtx.stroke();
+  newMenuLayerCtx.globalCompositeOperation='source-over';
+}
+
+newMenuLayer.addEventListener('mousedown',(e)=>{
+  nmDrawing=true;
+  const p = getEventPos(e, newMenuLayer);
+  nmCur = {
+    tool: newMenuMode.value,
+    width: parseInt(newMenuSize.value,10),
+    pen: newMenuPenColor.value || '#000',
+    points: [ normPoint(p, newMenuLayer) ]
+  };
+});
+newMenuLayer.addEventListener('mousemove',(e)=>{
+  if (!nmDrawing || !nmCur) return;
+  const p = getEventPos(e, newMenuLayer);
+  nmCur.points.push(normPoint(p, newMenuLayer));
+  renderLatestNewMenu(nmCur);
+  updateNewMenuPreview(false);
+});
+newMenuLayer.addEventListener('mouseup',()=>{
+  if (!nmDrawing) return;
+  nmDrawing=false;
+  if (nmCur){ nmStrokes.push(nmCur); nmCur=null; }
+  updateNewMenuPreview();
+});
+newMenuLayer.addEventListener('mouseleave',()=>{
+  if (nmDrawing){
+    nmDrawing=false;
+    if (nmCur){ nmStrokes.push(nmCur); nmCur=null; }
+    updateNewMenuPreview();
+  }
+});
+newMenuLayer.addEventListener('touchstart',(e)=>{ e.preventDefault(); const t=e.touches[0]; newMenuLayer.dispatchEvent(new MouseEvent('mousedown',{clientX:t.clientX, clientY:t.clientY})); }, {passive:false});
+newMenuLayer.addEventListener('touchmove',(e)=>{ e.preventDefault(); const t=e.touches[0]; newMenuLayer.dispatchEvent(new MouseEvent('mousemove',{clientX:t.clientX, clientY:t.clientY})); }, {passive:false});
+newMenuLayer.addEventListener('touchend',(e)=>{ e.preventDefault(); newMenuLayer.dispatchEvent(new MouseEvent('mouseup')); }, {passive:false});
+
+newMenuBgColor.addEventListener('input', ()=> initNewMenuCanvas());
+newMenuClear.addEventListener('click', ()=>{
+  nmStrokes=[];
+  nmCur=null;
+  initNewMenuCanvas();
+});
+
+function updateNewMenuPreview(final=true){
+  // 合成してプレビューへ
+  const comp = document.createElement('canvas');
+  comp.width = 640; comp.height = 640;
+  const c = comp.getContext('2d');
+
+  c.fillStyle = newMenuBgColor.value || '#fff7e9';
+  c.fillRect(0,0,comp.width,comp.height);
+
+  // layerを高解像度に描画（潰れ防止）
+  c.drawImage(newMenuLayer, 0,0, comp.width, comp.height);
+
+  // プレビュー
+  newMenuPreviewCtx.clearRect(0,0,newMenuPreview.width,newMenuPreview.height);
+  newMenuPreviewCtx.drawImage(comp, 0,0, newMenuPreview.width, newMenuPreview.height);
+
+  if (final){
+    newMenuPreview.dataset.dataUrl = comp.toDataURL('image/jpeg', 0.70); // ✅ 負荷を抑える（JPEG圧縮）
+  }
+}
+
+newMenuBack.addEventListener('click', ()=>{
+  hideModal(modalNewMenuPaint);
+  showModal(modalNewMenuInfo);
+});
+
+newMenuSubmit.addEventListener('click', async ()=>{
+  const name = submitterName.value.trim();
+  if (!name){ alert('名前を入力してください'); return; }
+
+  // dataUrl（圧縮済み）
+  updateNewMenuPreview(true);
+  const dataUrl = newMenuPreview.dataset.dataUrl;
+  if (!dataUrl){ alert('画像が作れません'); return; }
+
+  // number id (表示用)
+  const numId = Math.floor(Date.now()/1000).toString();
+
+  const obj = {
+    submitterName: name,
+    displayNumber: numId,
+    imageData: dataUrl,
+    createdAt: Date.now(),
+    status: 'new'
+  };
+
+  try{
+    if (db){
+      await addDoc(submissionsCol, obj);
+    } else {
+      obj.id = uid('sub');
+      state.submissions.push(obj);
+      localStorage.setItem('reiji_state_submissions', JSON.stringify(state.submissions));
+      renderSubmissionList();
     }
+    newMenuSubmitHint.textContent = `提出しました！番号: ${numId}（スタッフ画面に表示されます）`;
+    // 閉じる
+    setTimeout(()=> hideModal(modalNewMenuPaint), 900);
+  }catch(e){
+    console.warn(e);
+    alert('提出に失敗しました');
+  }
+});
 
-    // ===== Challenge (★複合インデックス不要版) =====
-    async function loadActiveChallenges(){
-      // orderByのみ → インデックス不要
-      const qs = await getDocs(query(
-        collection(db, "userChallenges", currentUser.uid, "items"),
-        orderBy("updatedAt","desc"),
-        limit(50)
-      ));
-      const arr = [];
-      qs.forEach(s=> arr.push(s.data()));
-      return arr.filter(x => x.status === "active").slice(0, 10);
-    }
+/* ===== Staff: submission list ===== */
+function renderSubmissionList(){
+  submissionList.innerHTML = '';
+  const list = (state.submissions||[]).slice().reverse();
+  if (!list.length){
+    submissionList.innerHTML = `<div class="small-info">まだ投稿はありません</div>`;
+    return;
+  }
 
-    async function startChallenge(h){
-      const maxActive = 3;
-      const actives = await loadActiveChallenges();
-      if(actives.length >= maxActive){ alert("依頼は最大3"); return; }
+  list.forEach(sub=>{
+    const wrap = document.createElement('div');
+    wrap.style.padding='8px';
+    wrap.style.border='1px dashed #e6d0c6';
+    wrap.style.borderRadius='10px';
+    wrap.style.marginBottom='8px';
+    wrap.style.background='#fff';
 
-      const start = fmtDate(nowLocal());
+    const head = document.createElement('div');
+    head.innerHTML = `<strong>#${escapeHtml(sub.displayNumber||'--')}</strong> ${escapeHtml(sub.submitterName||'名無し')}
+      <div class="small-info">${new Date(sub.createdAt||0).toLocaleString()}</div>`;
 
-      try{
-        const ref = doc(db, "userChallenges", currentUser.uid, "items", h.id);
-        const snap = await getDoc(ref);
-        if(snap.exists() && snap.data()?.status === "active") return;
+    const img = document.createElement('img');
+    img.src = sub.imageData || '';
+    img.alt = 'submission';
+    img.style.width='100%';
+    img.style.maxWidth='260px';
+    img.style.borderRadius='10px';
+    img.style.border='1px solid #e6d0c6';
+    img.style.marginTop='6px';
+    img.style.display='block';
 
-        await setDoc(ref, {
-          habitId: h.id,
-          habitTitle: h.title || "",
-          status:"active",
-          startDate: start,
-          day: 1,
-          lastReportedDate: "",
-          streakMiss: 0,
-          successDays: 0,
-          restDays: 0,
-          difficulty: { easy:0, mid:0, hard:0 },
-          updatedAt: serverTimestamp()
-        });
+    const row = document.createElement('div');
+    row.style.display='flex';
+    row.style.gap='8px';
+    row.style.marginTop='8px';
+    row.style.flexWrap='wrap';
 
-        // participantsCount +1
-        await runTransaction(db, async (tx)=>{
-          const href = doc(db, "habits", h.id);
-          const hs = await tx.get(href);
-          if(!hs.exists()) return;
-          const cur = hs.data();
-          const pc = Number(cur.participantsCount||0) + 1;
-          tx.update(href, { participantsCount: pc, updatedAt: serverTimestamp() });
-        });
+    const save = document.createElement('button');
+    save.className='small';
+    save.textContent='画像保存';
+    save.onclick = ()=>{
+      const a = document.createElement('a');
+      a.href = sub.imageData;
+      a.download = `new_menu_${sub.displayNumber||'submission'}.jpg`;
+      a.click();
+    };
 
-        // user stats
-        await runTransaction(db, async (tx)=>{
-          const uref = doc(db, "users", currentUser.uid);
-          const us = await tx.get(uref);
-          if(!us.exists()) return;
-          const cur = us.data();
-          tx.update(uref, { totalChallenges: Number(cur.totalChallenges||0)+1, updatedAt: serverTimestamp() });
-        });
-
-        await refreshTodayToasts();
-        await refreshRecords();
-        await refreshHome();
-        await refreshProfile();
-      }catch{
-        alert("挑戦失敗");
+    const del = document.createElement('button');
+    del.className='small';
+    del.textContent='削除';
+    del.onclick = async ()=>{
+      if (!confirm('この提案を削除しますか？')) return;
+      if (db){
+        try{ await deleteDoc(doc(db,'submissions',sub.id)); }catch(e){}
+      } else {
+        state.submissions = state.submissions.filter(x=>x.id!==sub.id);
+        localStorage.setItem('reiji_state_submissions', JSON.stringify(state.submissions));
+        renderSubmissionList();
       }
-    }
-
-    async function refreshTodayToasts(){
-      toastWrap.innerHTML = "";
-      const actives = await loadActiveChallenges();
-      activeCount.textContent = String(actives.length);
-      if(actives.length === 0) return;
-
-      for(const ch of actives.slice(0,3)){
-        const title = ch.habitTitle || "習慣";
-        const day = Number(ch.day||1);
-        const toast = document.createElement("div");
-        toast.className = "toast";
-        toast.innerHTML = `
-          <div class="left"><div class="main">🌱 ${escapeHtml(title)}（${day}日目）</div></div>
-          <div class="right">
-            <button class="iconBtn ok" data-act="done" data-tip="やった">✅</button>
-            <button class="iconBtn warn" data-act="rest" data-tip="休む">🛌</button>
-            <button class="iconBtn danger" data-act="retire" data-tip="リタイア">🏳️</button>
-          </div>
-        `;
-        toast.querySelector('[data-act="done"]').addEventListener("click", ()=> openDiffModal(ch));
-        toast.querySelector('[data-act="rest"]').addEventListener("click", ()=> applyReport(ch, { type:"rest" }));
-        toast.querySelector('[data-act="retire"]').addEventListener("click", async ()=>{
-          if(!confirm("リタイア？")) return;
-          await applyReport(ch, { type:"retire" });
-        });
-        toastWrap.appendChild(toast);
-      }
-    }
-
-    // ===== Difficulty modal =====
-    function openDiffModal(ch){
-      diffTargetChallenge = ch;
-      diffTitle.textContent = ch.habitTitle || "難易度";
-      diffBg.classList.add("show");
-    }
-    function closeDiffModal(){
-      diffTargetChallenge = null;
-      diffBg.classList.remove("show");
-    }
-    diffClose.addEventListener("click", closeDiffModal);
-    diffBg.addEventListener("click", (e)=>{ if(e.target===diffBg) closeDiffModal(); });
-    diffBg.querySelectorAll(".diffBtn").forEach(btn=>{
-      btn.addEventListener("click", async ()=>{
-        if(!diffTargetChallenge) return;
-        const diff = btn.dataset.diff;
-        await applyReport(diffTargetChallenge, { type:"done", diff });
-        closeDiffModal();
-      });
-    });
-
-    async function applyReport(ch, payload){
-      const today = fmtDate(nowLocal());
-
-      try{
-        const ref = doc(db, "userChallenges", currentUser.uid, "items", ch.habitId);
-        const snap = await getDoc(ref);
-        if(!snap.exists()) return;
-        const cur = snap.data();
-
-        const update = {};
-        if(payload.type === "done"){
-          update.successDays = Number(cur.successDays||0) + 1;
-          update.lastReportedDate = today;
-          update.streakMiss = 0;
-          update.day = Number(cur.day||1) + 1;
-
-          const diffObj = cur.difficulty || {easy:0,mid:0,hard:0};
-          diffObj[payload.diff] = Number(diffObj[payload.diff]||0) + 1;
-          update.difficulty = diffObj;
-
-          showPlusOne();
-        }else if(payload.type === "rest"){
-          update.restDays = Number(cur.restDays||0) + 1;
-          update.lastReportedDate = today + "（休）";
-          update.streakMiss = 0;
-          update.day = Number(cur.day||1) + 1;
-        }else if(payload.type === "retire"){
-          update.status = "retired";
-          update.lastReportedDate = today + "（リタイア）";
-        }
-
-        update.updatedAt = serverTimestamp();
-        await updateDoc(ref, update);
-
-        // 7日制：成功5でクリア（done時だけ確認）
-        if(payload.type === "done" && cur.status === "active"){
-          const nextSuccess = Number(cur.successDays||0)+1;
-          const nextDay = Number(cur.day||1)+1;
-          if(nextSuccess >= 5 && nextDay >= 7){
-            if(confirm("クリアにする？")){
-              await updateDoc(ref, { status:"cleared", lastReportedDate: today + "（クリア）", updatedAt: serverTimestamp() });
-              await runTransaction(db, async (tx)=>{
-                const uref = doc(db, "users", currentUser.uid);
-                const us = await tx.get(uref);
-                if(!us.exists()) return;
-                const u = us.data();
-                tx.update(uref, { clearCount: Number(u.clearCount||0)+1, updatedAt: serverTimestamp() });
-              });
-            }
-          }
-        }
-
-        // 習慣側の最低限集計（本番はCloud Functions推奨）
-        await recomputeHabitStatsFromActions(ch.habitId, payload);
-
-        await refreshTodayToasts();
-        await refreshRecords();
-        await refreshHome();
-        await refreshProfile();
-      }catch{
-        alert("失敗");
-      }
-    }
-
-    async function recomputeHabitStatsFromActions(habitId, payload){
-      try{
-        await runTransaction(db, async (tx)=>{
-          const href = doc(db, "habits", habitId);
-          const hs = await tx.get(href);
-          if(!hs.exists()) return;
-          const h = hs.data();
-
-          let feelEasy = Number(h.feelEasy||0);
-          let feelMid  = Number(h.feelMid||0);
-          let feelHard = Number(h.feelHard||0);
-
-          let successRate = Number(h.successRate||0);
-          let avgDays = Number(h.avgDays||0);
-          const participants = Math.max(1, Number(h.participantsCount||0));
-
-          if(payload.type === "done"){
-            if(payload.diff === "easy") feelEasy++;
-            if(payload.diff === "mid") feelMid++;
-            if(payload.diff === "hard") feelHard++;
-
-            const totalFeel = feelEasy + feelMid + feelHard;
-            successRate = totalFeel ? (totalFeel / totalFeel) * 100 : successRate; // 最低限(表示用)
-            avgDays = totalFeel ? (totalFeel / participants) : avgDays;
-          }
-
-          tx.update(href, {
-            feelEasy, feelMid, feelHard,
-            successRate: Number.isFinite(successRate) ? successRate : 0,
-            avgDays: Number.isFinite(avgDays) ? avgDays : 0,
-            updatedAt: serverTimestamp()
-          });
-        });
-      }catch{}
-    }
-
-    // ===== Auto retire (★複合インデックス不要版) =====
-    async function autoRetireIfMissed(){
-      const today = nowLocal();
-      const qs = await getDocs(query(
-        collection(db, "userChallenges", currentUser.uid, "items"),
-        orderBy("updatedAt","desc"),
-        limit(200)
-      ));
-      const updates = [];
-      qs.forEach(s=>{
-        const ch = s.data();
-        if(ch.status !== "active") return;
-
-        const startD = parseYMD(ch.startDate);
-        const lastD = parseYMD(ch.lastReportedDate);
-
-        let miss = 0;
-        if(lastD){
-          const gap = daysBetween(lastD, today);
-          miss = Math.max(0, gap - 1);
-        }else if(startD){
-          const gap = daysBetween(startD, today);
-          miss = Math.max(0, gap - 1);
-        }
-
-        const ref = doc(db, "userChallenges", currentUser.uid, "items", ch.habitId);
-        if(miss >= 3){
-          updates.push(updateDoc(ref, {
-            status:"retired",
-            streakMiss: miss,
-            lastReportedDate: fmtDate(today) + "（自動リタイア）",
-            updatedAt: serverTimestamp()
-          }));
-        }else{
-          updates.push(updateDoc(ref, { streakMiss: miss, updatedAt: serverTimestamp() }));
-        }
-      });
-      await Promise.allSettled(updates);
-    }
-
-    // ===== Records =====
-    async function refreshRecords(){
-      const qs = await getDocs(query(
-        collection(db, "userChallenges", currentUser.uid, "items"),
-        orderBy("updatedAt","desc"),
-        limit(120)
-      ));
-      const items = [];
-      qs.forEach(s=> items.push(s.data()));
-
-      const order = (st)=> st==="active"?0 : st==="cleared"?1 : 2;
-      items.sort((a,b)=> order(a.status)-order(b.status));
-
-      recordList.innerHTML = "";
-      for(const ch of items){
-        recordList.appendChild(renderRecordRow(ch));
-      }
-    }
-
-    function renderRecordRow(ch){
-      const card = document.createElement("div");
-      card.className = "simpleRow";
-
-      const st = ch.status;
-      const stBadge = st==="active" ? "✅" : st==="cleared" ? "🏁" : "🏳️";
-      const day = Number(ch.day||1);
-      const success = Number(ch.successDays||0);
-      const rest = Number(ch.restDays||0);
-
-      card.innerHTML = `
-        <div class="rowTop">
-          <div>
-            <p class="rowTitle">${stBadge} ${escapeHtml(ch.habitTitle||"")}</p>
-            <div class="rowSub">${escapeHtml(ch.startDate||"—")} / ${day}日目 / 成功:${success} / 休:${rest}<br>${escapeHtml(ch.lastReportedDate||"")}</div>
-          </div>
-          <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end">
-            ${st==="active"
-              ? `<button class="btn small danger" data-act="retire">リタイア</button>`
-              : `<button class="btn small" data-act="restart">再挑戦</button>`}
-          </div>
-        </div>
-      `;
-
-      const btnRet = card.querySelector('[data-act="retire"]');
-      if(btnRet){
-        btnRet.addEventListener("click", async ()=>{
-          if(!confirm("リタイア？")) return;
-          await applyReport(ch, { type:"retire" });
-        });
-      }
-      const btnRestart = card.querySelector('[data-act="restart"]');
-      if(btnRestart){
-        btnRestart.addEventListener("click", async ()=>{
-          if(!confirm("再挑戦？")) return;
-          await restartChallenge(ch);
-        });
-      }
-      return card;
-    }
-
-    async function restartChallenge(ch){
-      const today = fmtDate(nowLocal());
-      const ref = doc(db, "userChallenges", currentUser.uid, "items", ch.habitId);
-      await updateDoc(ref, {
-        status:"active",
-        startDate: today,
-        day:1,
-        lastReportedDate:"",
-        streakMiss:0,
-        successDays:0,
-        restDays:0,
-        difficulty:{easy:0,mid:0,hard:0},
-        updatedAt: serverTimestamp()
-      });
-      await refreshTodayToasts();
-      await refreshRecords();
-      await refreshHome();
-      await refreshProfile();
-    }
-
-    // ===== Bookmarks view (Phase3) =====
-    async function refreshBookmarksView(){
-      if(!currentUser) return;
-      bmFeed.innerHTML = "";
-      bmCount.textContent = String(cachedBookmarks.size);
-
-      if(cachedBookmarks.size === 0) return;
-
-      // habitsをまとめて取って表示（最新のみ）
-      const qs = await getDocs(query(collection(db,"habits"), orderBy("createdAt","desc"), limit(250)));
-      const habits = [];
-      qs.forEach(s=> habits.push({id:s.id, ...s.data()}));
-      const filtered = habits.filter(h => cachedBookmarks.has(h.id));
-
-      bmCount.textContent = String(filtered.length);
-      for(const h of filtered){
-        bmFeed.appendChild(renderHabitCard(h));
-      }
-    }
-
-    // ===== Profile (Phase3) =====
-    async function refreshProfile(){
-      const u = myProfile || {};
-
-      // counts
-      const myPostsCount = await countMyPosts();
-      const favCreatorsCount = cachedFavCreators.size;
-      const bookmarksCount = cachedBookmarks.size;
-
-      // active count
-      const actives = await loadActiveChallenges();
-
-      profileList.innerHTML = `
-        <div class="simpleRow">
-          <div class="rowTop">
-            <div>
-              <p class="rowTitle">👤 ${escapeHtml(u.name || "—")}</p>
-              <div class="rowSub">
-                🔥 クリア ${Number(u.clearCount||0)} / 🌱 挑戦中 ${actives.length} / 📅 総挑戦 ${Number(u.totalChallenges||0)}<br>
-                ❤️ 作成者 ${favCreatorsCount} / 🔖 保存 ${bookmarksCount} / 🧩 投稿 ${myPostsCount}<br>
-                ⭐ 評価ランク R${Number(u.ratingRank||1)}
-              </div>
-            </div>
-            <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end">
-              <button class="btn small" id="rankUp">R+1</button>
-              <button class="btn small danger" id="rankDown">R-1</button>
-              <button class="btn small" id="rename">名前変更</button>
-            </div>
-          </div>
-        </div>
-      `;
-
-      const rankUp = $("rankUp");
-      const rankDown = $("rankDown");
-      const rename = $("rename");
-
-      rankUp.addEventListener("click", async ()=>{
-        const next = Math.min(3, Number(myProfile.ratingRank||1)+1);
-        await updateDoc(doc(db,"users",currentUser.uid), { ratingRank: next, updatedAt: serverTimestamp() });
-        myProfile.ratingRank = next;
-        myRankEl.textContent = String(next);
-        await refreshProfile();
-      });
-      rankDown.addEventListener("click", async ()=>{
-        const next = Math.max(1, Number(myProfile.ratingRank||1)-1);
-        await updateDoc(doc(db,"users",currentUser.uid), { ratingRank: next, updatedAt: serverTimestamp() });
-        myProfile.ratingRank = next;
-        myRankEl.textContent = String(next);
-        await refreshProfile();
-      });
-      rename.addEventListener("click", ()=>{
-        openNameModal();
-      });
-    }
-
-    async function countMyPosts(){
-      // インデックス不要にするため、最新からざっくりカウント（簡易）
-      const qs = await getDocs(query(collection(db,"habits"), orderBy("createdAt","desc"), limit(400)));
-      let c = 0;
-      qs.forEach(s=>{
-        const h = s.data();
-        if(h.creatorUid === currentUser.uid) c++;
-      });
-      return c;
-    }
-
-    // ===== Ratings (Phase2) =====
-    function openRatingModal(h){
-      ratingTargetHabit = h;
-      ratingStars = 0;
-      ratingLiked = false;
-      commentBox.value = "";
-      ratingHabitTitle.textContent = `⭐ ${h.title || ""}`;
-      myRankEl.textContent = String(myProfile?.ratingRank || 1);
-
-      renderStars();
-      likeToggle.classList.remove("active");
-      likeToggle.onclick = ()=>{
-        ratingLiked = !ratingLiked;
-        likeToggle.classList.toggle("active", ratingLiked);
-      };
-
-      ratingDelete.onclick = async ()=>{
-        if(!confirm("削除？")) return;
-        await deleteMyRating(h.id);
-        await recomputeRatingAgg(h.id);
-        await loadRatingsList(h.id, reviewList);
-        await refreshHome();
-      };
-
-      ratingSave.onclick = async ()=>{
-        if(ratingStars < 1){ alert("⭐"); return; }
-        await saveMyRating(h.id);
-        await recomputeRatingAgg(h.id);
-        await loadRatingsList(h.id, reviewList);
-        await refreshHome();
-      };
-
-      ratingBg.classList.add("show");
-      loadMyRating(h.id).then(()=> loadRatingsList(h.id, reviewList));
-    }
-    function closeRatingModal(){
-      ratingBg.classList.remove("show");
-      ratingTargetHabit = null;
-    }
-    ratingClose.addEventListener("click", closeRatingModal);
-    ratingBg.addEventListener("click", (e)=>{ if(e.target===ratingBg) closeRatingModal(); });
-
-    function renderStars(){
-      starsRow.innerHTML = "";
-      for(let i=1;i<=5;i++){
-        const b = document.createElement("button");
-        b.className = "starBtn" + (i===ratingStars ? " active" : "");
-        b.textContent = `⭐ ${i}`;
-        b.addEventListener("click", ()=>{
-          ratingStars = i;
-          renderStars();
-        });
-        starsRow.appendChild(b);
-      }
-    }
-
-    async function loadMyRating(habitId){
-      const ref = doc(db, "habits", habitId, "ratings", currentUser.uid);
-      const snap = await getDoc(ref);
-      if(!snap.exists()){
-        ratingStars = 0;
-        ratingLiked = false;
-        commentBox.value = "";
-        likeToggle.classList.remove("active");
-        renderStars();
-        return;
-      }
-      const data = snap.data();
-      ratingStars = Number(data.stars || 0);
-      ratingLiked = !!data.liked;
-      commentBox.value = String(data.comment || "");
-      likeToggle.classList.toggle("active", ratingLiked);
-      renderStars();
-    }
-
-    async function saveMyRating(habitId){
-      const rank = Number(myProfile?.ratingRank || 1);
-      const weight = rank === 3 ? 3 : rank === 2 ? 2 : 1;
-
-      const data = {
-        uid: currentUser.uid,
-        displayName: myProfile?.name || currentUser.displayName || "ユーザー",
-        photoURL: currentUser.photoURL || "",
-        stars: ratingStars,
-        liked: ratingLiked,
-        comment: (commentBox.value || "").trim().slice(0, 300),
-        rank,
-        weight,
-        updatedAt: serverTimestamp()
-      };
-      await setDoc(doc(db, "habits", habitId, "ratings", currentUser.uid), data, { merge:true });
-    }
-
-    async function deleteMyRating(habitId){
-      await deleteDoc(doc(db, "habits", habitId, "ratings", currentUser.uid));
-    }
-
-    async function loadRatingsList(habitId, container){
-      container.innerHTML = "";
-      const qs = await getDocs(query(
-        collection(db, "habits", habitId, "ratings"),
-        orderBy("updatedAt","desc"),
-        limit(40)
-      ));
-      const arr = [];
-      qs.forEach(s=> arr.push(s.data()));
-      for(const r of arr){
-        const box = document.createElement("div");
-        box.className = "review";
-        box.innerHTML = `
-          <div class="reviewTop">
-            <div class="reviewName">${escapeHtml(r.displayName || "ユーザー")}</div>
-            <div class="reviewMeta">⭐ ${Number(r.stars||0)} ${r.liked ? "❤️" : ""}（R${Number(r.rank||1)}）</div>
-          </div>
-          <div class="reviewText">${escapeHtml(r.comment || "")}</div>
-        `;
-        container.appendChild(box);
-      }
-    }
-
-    async function recomputeRatingAgg(habitId){
-      await runTransaction(db, async (tx)=>{
-        const href = doc(db, "habits", habitId);
-        const hs = await tx.get(href);
-        if(!hs.exists()) return;
-
-        // ここは getDocs を使うので tx外扱いに近いが、最低限のために許容
-        // 本番は Functions 推奨
-        const rs = await getDocs(query(collection(db, "habits", habitId, "ratings"), limit(500)));
-        let wSum = 0;
-        let swSum = 0;
-        let ratingCount = 0;
-
-        rs.forEach(s=>{
-          const r = s.data();
-          const stars = Number(r.stars||0);
-          const w = Number(r.weight||1);
-          if(stars>=1 && stars<=5){
-            wSum += w;
-            swSum += stars*w;
-            ratingCount += 1;
-          }
-        });
-        const avgRating = wSum ? (swSum / wSum) : 0;
-
-        tx.update(href, {
-          ratingCount,
-          avgRating: Number.isFinite(avgRating) ? avgRating : 0,
-          updatedAt: serverTimestamp()
-        });
-      });
-    }
-
-    // reviews view-only
-    function openReviewsModal(h){
-      reviewsTitle.textContent = `💬 ${h.title || ""}`;
-      reviewsList.innerHTML = "";
-      reviewsBg.classList.add("show");
-      loadRatingsList(h.id, reviewsList);
-    }
-    function closeReviewsModal(){ reviewsBg.classList.remove("show"); }
-    reviewsClose.addEventListener("click", closeReviewsModal);
-    reviewsBg.addEventListener("click", (e)=>{ if(e.target===reviewsBg) closeReviewsModal(); });
-
-    // ===== Edit (Phase2) ver1-3 + derive =====
-    function openEditModal(h){
-      editTargetHabit = h;
-      editTitle.textContent = `🛠️ ${h.title || ""}`;
-      editNewTitle.value = h.title || "";
-      editNewTags.value = (h.tags || []).join(",");
-      editNewCategory.value = h.category || "";
-      editNewAction.value = h.action || "";
-      versionsList.innerHTML = "";
-      editBg.classList.add("show");
-
-      loadVersions(h.id);
-    }
-    function closeEditModal(){
-      editBg.classList.remove("show");
-      editTargetHabit = null;
-    }
-    editClose.addEventListener("click", closeEditModal);
-    editBg.addEventListener("click", (e)=>{ if(e.target===editBg) closeEditModal(); });
-
-    async function loadVersions(habitId){
-      versionsList.innerHTML = "";
-      const qs = await getDocs(query(
-        collection(db, "habits", habitId, "versions"),
-        orderBy("createdAt","desc"),
-        limit(3)
-      ));
-      qs.forEach(s=>{
-        const v = s.data();
-        const box = document.createElement("div");
-        box.className = "review";
-        box.innerHTML = `
-          <div class="reviewTop">
-            <div class="reviewName">ver${Number(v.version||1)}</div>
-            <div class="reviewMeta"></div>
-          </div>
-          <div class="reviewText">${escapeHtml(v.title||"")}\n${escapeHtml(v.action||"")}</div>
-        `;
-        versionsList.appendChild(box);
-      });
-    }
-
-    btnSaveEdit.addEventListener("click", async ()=>{
-      if(!editTargetHabit) return;
-
-      const title = editNewTitle.value.trim();
-      const tags = editNewTags.value.split(",").map(s=>s.trim()).filter(Boolean).slice(0,8);
-      const category = String(editNewCategory.value||"").trim();
-      const action = editNewAction.value.trim();
-
-      if(title.length < 2 || action.length < 2){ alert("短すぎ"); return; }
-      if(action.length > 40){ alert("40文字以内"); return; }
-
-      const habitId = editTargetHabit.id;
-
-      await runTransaction(db, async (tx)=>{
-        const href = doc(db, "habits", habitId);
-        const hs = await tx.get(href);
-        if(!hs.exists()) return;
-        const cur = hs.data();
-
-        // versions に旧を保存
-        const vref = doc(collection(db, "habits", habitId, "versions"));
-        tx.set(vref, {
-          version: Number(cur.version||1),
-          title: cur.title||"",
-          action: cur.action||"",
-          tags: cur.tags||[],
-          category: cur.category||"",
-          createdAt: serverTimestamp()
-        });
-
-        // verは最大3（表示はversions側で3件に制限）
-        const nextVer = Math.min(3, Number(cur.version||1) + 1);
-
-        tx.update(href, {
-          title, action, tags, category,
-          version: nextVer,
-          updatedAt: serverTimestamp()
-        });
-      });
-
-      // versionsが増えすぎたら古いのを消す（ベストエフォート）
-      try{
-        const qs = await getDocs(query(collection(db, "habits", habitId, "versions"), orderBy("createdAt","desc"), limit(10)));
-        const all = [];
-        qs.forEach(s=> all.push({ref:s.ref}));
-        const toDelete = all.slice(3);
-        await Promise.allSettled(toDelete.map(x=>deleteDoc(x.ref)));
-      }catch{}
-
-      await loadVersions(habitId);
-      await refreshHome();
-    });
-
-    btnDerive.addEventListener("click", async ()=>{
-      if(!editTargetHabit) return;
-
-      const title = editNewTitle.value.trim();
-      const tags = editNewTags.value.split(",").map(s=>s.trim()).filter(Boolean).slice(0,8);
-      const category = String(editNewCategory.value||"").trim();
-      const action = editNewAction.value.trim();
-
-      if(title.length < 2 || action.length < 2){ alert("短すぎ"); return; }
-      if(action.length > 40){ alert("40文字以内"); return; }
-
-      await addDoc(collection(db, "habits"), {
-        title, action, tags, category,
-        creatorUid: currentUser.uid,
-        creatorName: myProfile?.name || (currentUser.displayName || "作成者"),
-        creatorPhoto: currentUser.photoURL || "",
-        createdAt: serverTimestamp(),
-
-        avgRating: 0,
-        ratingCount: 0,
-        participantsCount: 0,
-        avgDays: 0,
-        successRate: 0,
-        feelEasy: 0,
-        feelMid: 0,
-        feelHard: 0,
-
-        baseHabitId: editTargetHabit.id,
-        version: 1,
-        updatedAt: serverTimestamp()
-      });
-
-      await refreshHome();
-      closeEditModal();
-      await refreshProfile();
-    });
-
-    // ===== UI events =====
-    function setSelectedTagSafe(tag){ setSelectedTag(tag); }
-    btnClearTag.addEventListener("click", ()=> setSelectedTagSafe(""));
-
-    // ===== Init misc =====
-    function updateAuthButtons(){
-      btnLogout.disabled = !currentUser;
-    }
-    updateAuthButtons();
-
-  </script>
+    };
+
+    row.appendChild(save);
+    row.appendChild(del);
+
+    wrap.appendChild(head);
+    wrap.appendChild(img);
+    wrap.appendChild(row);
+    submissionList.appendChild(wrap);
+  });
+}
+
+/* ===== X button ===== */
+document.getElementById('bgmBtn').addEventListener('click', ()=> window.open('https://x.com/zzcafe_280', '_blank'));
+
+/* ===== init ===== */
+initArtCanvas();
+initCardCanvas();
+buildMenu().catch(()=>{});
+startRealtime();
+showSoundOverlay(); // 音許可を最初に出す
+</script>
 </body>
 </html>
