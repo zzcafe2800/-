@@ -6,23 +6,21 @@
   <title>習慣さがし</title>
   <style>
     :root{
-      --bg1:#071a2b;
-      --bg2:#0b2b45;
+      --bg:#071a2b;
+      --panel: rgba(255,255,255,.04);
+      --panel2: rgba(0,0,0,.14);
+      --line: rgba(255,255,255,.12);
       --text:#eaf6ff;
-      --muted:#b7d4e8;
-      --line:#24465f;
-
+      --muted: rgba(234,246,255,.75);
       --accent:#57c7ff;
       --ok:#7cffa6;
       --danger:#ff4d5e;
       --warn:#ffc94d;
-
-      --radius:16px;
+      --r:16px;
+      --gap:10px;
       --shadow: 0 10px 30px rgba(0,0,0,.35);
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", "Meiryo", sans-serif;
       --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
-
-      --gap:10px;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -31,79 +29,68 @@
       font-family:var(--sans);
       color:var(--text);
       overflow:hidden;
-      background: radial-gradient(1200px 700px at 10% 0%, #103e63 0%, transparent 55%),
-                  radial-gradient(900px 600px at 95% 30%, #083a5a 0%, transparent 55%),
-                  linear-gradient(160deg, var(--bg1), var(--bg2));
+      background:
+        radial-gradient(1200px 700px at 10% 0%, #103e63 0%, transparent 55%),
+        radial-gradient(900px 600px at 95% 30%, #083a5a 0%, transparent 55%),
+        linear-gradient(160deg, #061827, #0b2b45);
     }
 
-    /* 背景の魚（ぼかし） */
-    .bg-fish{ position:fixed; inset:0; pointer-events:none; opacity:.35; mix-blend-mode:screen; }
+    /* 背景(薄い魚) */
+    .bg{position:fixed; inset:0; pointer-events:none; opacity:.28; mix-blend-mode:screen}
     .fish{
-      position:absolute;
+      position:absolute; top:35%;
       width:240px; height:90px;
       background: radial-gradient(closest-side, rgba(120,220,255,.5), transparent 70%),
                   radial-gradient(closest-side, rgba(90,255,180,.35), transparent 72%);
       border-radius: 999px;
-      animation: swim 16s linear infinite;
       filter: blur(10px);
+      animation: swim 18s linear infinite;
     }
     .fish::before{
-      content:"";
-      position:absolute;
-      right:-18px; top:26px;
+      content:""; position:absolute; right:-18px; top:26px;
       width:40px; height:40px;
       background: radial-gradient(circle at 30% 50%, rgba(120,220,255,.5), transparent 70%);
       border-radius: 8px 999px 999px 8px;
       transform: rotate(20deg);
       filter: blur(6px);
     }
-    .fish.f2{ top:18%; animation-duration: 22s; opacity:.25;}
-    .fish.f3{ top:62%; animation-duration: 19s; opacity:.2;}
-    .fish.f1{ top:38%; animation-duration: 17s; opacity:.22;}
-    @keyframes swim{
-      0%{ left:-35vw; transform: translateY(0) scale(1) }
-      30%{ transform: translateY(-10px) scale(1.02)}
-      60%{ transform: translateY(8px) scale(.99)}
-      100%{ left:120vw; transform: translateY(0) scale(1) }
-    }
+    .fish.f2{top:18%; animation-duration:22s; opacity:.25}
+    .fish.f3{top:62%; animation-duration:19s; opacity:.2}
+    @keyframes swim{0%{left:-35vw}100%{left:120vw}}
 
     .app{
       position:relative;
       height:100%;
       display:grid;
-      grid-template-columns: 280px 1fr;
+      grid-template-columns: 260px 1fr;
     }
     @media (max-width: 980px){
       body{overflow:auto}
-      .app{grid-template-columns: 88px 1fr; height:auto; min-height:100%}
+      .app{grid-template-columns: 84px 1fr; height:auto; min-height:100%}
       .nav{padding:10px 8px}
       .nav .label{display:none}
       .nav .navBtn{justify-content:center}
       .content{padding:14px}
       .topbar{grid-template-columns: 1fr; }
-      .select{width:100%}
-      .composerGrid{grid-template-columns: 1fr}
       .feedGrid{grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));}
+      .composerGrid{grid-template-columns: 1fr}
     }
 
     .nav{
-      padding:18px 16px;
+      padding:16px 14px;
       border-right:1px solid rgba(255,255,255,.06);
-      background: linear-gradient(180deg, rgba(10,35,55,.7), rgba(10,30,48,.35));
+      background: linear-gradient(180deg, rgba(10,35,55,.65), rgba(10,30,48,.30));
       backdrop-filter: blur(10px);
     }
-    .brand{
-      display:flex; align-items:center; gap:10px;
-      padding:10px 10px 16px;
-    }
+    .brand{display:flex; align-items:center; gap:10px; padding:8px 8px 14px}
     .logo{
-      width:40px; height:40px; border-radius:14px;
+      width:38px; height:38px; border-radius:14px;
       background: radial-gradient(circle at 30% 30%, #7fe3ff, #1a6f9b 55%, #07314d);
       box-shadow: 0 12px 26px rgba(0,0,0,.35);
+      flex:0 0 auto;
     }
-    .brand h1{ font-size:16px; margin:0; letter-spacing:.06em; }
+    .brand h1{font-size:15px; margin:0; letter-spacing:.06em}
 
-    .navSection{margin-top:10px}
     .navBtn{
       width:100%;
       border:1px solid rgba(255,255,255,.08);
@@ -114,7 +101,7 @@
       display:flex; align-items:center; gap:10px;
       cursor:pointer;
       margin:10px 0;
-      transition: .15s transform, .15s background, .15s border-color;
+      transition: .12s transform, .12s background, .12s border-color;
     }
     .navBtn:hover{transform: translateY(-1px); background: rgba(255,255,255,.06)}
     .navBtn.active{
@@ -123,12 +110,12 @@
       box-shadow: 0 14px 30px rgba(0,0,0,.22);
     }
     .navBtn .ico{font-size:20px; width:26px; text-align:center}
-    .navBtn .label{font-weight:800; letter-spacing:.04em}
+    .navBtn .label{font-weight:900; letter-spacing:.04em}
 
     .navFooter{
-      position:sticky; bottom:16px;
-      margin-top:18px;
-      padding-top:14px;
+      position:sticky; bottom:14px;
+      margin-top:14px;
+      padding-top:12px;
       border-top:1px solid rgba(255,255,255,.08);
     }
     .userCard{
@@ -142,13 +129,13 @@
       width:34px; height:34px; border-radius:50%;
       background: rgba(255,255,255,.08);
       overflow:hidden;
-      flex: 0 0 auto;
+      flex:0 0 auto;
       display:grid; place-items:center;
       border:1px solid rgba(255,255,255,.12);
     }
     .avatar img{width:100%; height:100%; object-fit:cover}
     .userMeta{min-width:0}
-    .userName{font-size:13px; font-weight:900; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+    .userName{font-size:13px; font-weight:1000; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
     .userSmall{font-size:11px; color:var(--muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 
     .authRow{display:flex; gap:10px; margin-top:10px}
@@ -159,42 +146,35 @@
       border-radius:12px;
       padding:10px 12px;
       cursor:pointer;
-      font-weight:900;
+      font-weight:1000;
       letter-spacing:.03em;
-      transition:.15s transform, .15s background, .15s border-color;
+      transition:.12s transform, .12s background, .12s border-color;
       user-select:none;
     }
     .btn:hover{transform:translateY(-1px); background: rgba(255,255,255,.08)}
-    .btn.primary{
-      border-color: rgba(87,199,255,.55);
-      background: linear-gradient(180deg, rgba(87,199,255,.18), rgba(255,255,255,.06));
-    }
-    .btn.danger{
-      border-color: rgba(255,77,94,.55);
-      background: linear-gradient(180deg, rgba(255,77,94,.16), rgba(255,255,255,.04));
-    }
+    .btn.primary{border-color: rgba(87,199,255,.55); background: rgba(87,199,255,.14)}
+    .btn.danger{border-color: rgba(255,77,94,.55); background: rgba(255,77,94,.14)}
     .btn.small{padding:8px 10px; font-size:12px; border-radius:10px}
     .btn:disabled{opacity:.55; cursor:not-allowed; transform:none}
 
     .content{
-      padding:18px;
+      padding:16px;
       overflow:auto;
       height:100%;
     }
-
     .panel{
-      background: rgba(255,255,255,.04);
+      background: var(--panel);
       border: 1px solid rgba(255,255,255,.10);
-      border-radius: var(--radius);
+      border-radius: var(--r);
       box-shadow: var(--shadow);
       backdrop-filter: blur(10px);
     }
 
     .topbar{
       display:grid;
-      grid-template-columns: 1fr auto auto;
+      grid-template-columns: 1fr auto auto auto;
       gap:var(--gap);
-      padding:14px;
+      padding:12px;
       align-items:center;
     }
     .searchBox{
@@ -206,35 +186,34 @@
     }
     .searchBox input{
       width:100%;
-      border:none;
-      outline:none;
+      border:none; outline:none;
       background:transparent;
       color:var(--text);
       font-size:14px;
     }
     .select{
-      min-width: 170px;
+      min-width: 160px;
       border-radius: 14px;
       border:1px solid rgba(255,255,255,.12);
       background: rgba(0,0,0,.16);
       color:var(--text);
       padding:10px 12px;
-      font-weight:800;
+      font-weight:900;
       outline:none;
     }
 
-    .tagArea{ padding: 0 14px 14px; }
+    .tagArea{padding: 0 12px 12px;}
     .tagGrid{
       display:grid;
       grid-template-columns: 1fr 1fr;
       gap:var(--gap);
     }
     .tagBlock{
-      padding:12px;
+      padding:10px;
       border-radius:14px;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.12);
-      min-height:66px;
+      min-height:56px;
     }
     .chips{display:flex; gap:8px; flex-wrap:wrap}
     .chip{
@@ -244,21 +223,18 @@
       padding:7px 10px;
       border-radius: 999px;
       cursor:pointer;
-      font-weight:900;
+      font-weight:1000;
       font-size:12px;
       transition:.12s transform, .12s background;
       user-select:none;
     }
     .chip:hover{transform: translateY(-1px); background: rgba(87,199,255,.14)}
-    .chip.active{
-      border-color: rgba(124,255,166,.55);
-      background: rgba(124,255,166,.14);
-    }
+    .chip.active{border-color: rgba(124,255,166,.55); background: rgba(124,255,166,.14)}
 
     .feedHeader{
       display:flex; align-items:center; justify-content:space-between;
       gap:10px;
-      padding: 10px 14px 0;
+      padding: 8px 12px 0;
       flex-wrap:wrap;
     }
     .pill{
@@ -268,20 +244,19 @@
       border:1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.14);
       font-size:12px;
-      color: rgba(255,255,255,.85);
-      font-weight:900;
+      color: rgba(255,255,255,.88);
+      font-weight:1000;
     }
-    .pill b{font-weight:1000}
+    .pill b{font-weight:1100}
 
-    /* ★ 余白最小の正方形グリッド */
+    /* ★ 正方形・余白最小グリッド */
     .feedGrid{
-      padding: 12px 14px 14px;
+      padding: 12px;
       display:grid;
       grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
       gap: var(--gap);
       align-items:stretch;
     }
-
     .habitCard{
       position:relative;
       padding:10px;
@@ -293,34 +268,26 @@
       display:flex;
       flex-direction:column;
       justify-content:space-between;
-      min-height: 0;
+      min-height:0;
     }
-
     .habitTop{
       display:flex; align-items:center; justify-content:space-between;
-      gap:10px;
-      margin-bottom:8px;
-      min-width:0;
+      gap:10px; margin-bottom:8px; min-width:0;
     }
-    .miniUser{
-      display:flex; align-items:center; gap:8px;
-      min-width:0;
-      opacity:.95;
-    }
-    .miniUser .miniAva{
+    .miniUser{display:flex; align-items:center; gap:8px; min-width:0}
+    .miniAva{
       width:24px; height:24px; border-radius:50%;
       background: rgba(255,255,255,.08);
       overflow:hidden;
       border:1px solid rgba(255,255,255,.12);
       flex:0 0 auto;
     }
-    .miniUser .miniAva img{width:100%; height:100%; object-fit:cover}
-    .miniUser .miniName{
-      font-size:12px; font-weight:900;
+    .miniAva img{width:100%; height:100%; object-fit:cover}
+    .miniName{
+      font-size:12px; font-weight:1000;
       white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
       max-width: 140px;
     }
-
     .badgeRow{display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end}
     .badge{
       font-size:11px;
@@ -328,16 +295,15 @@
       border-radius:999px;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.14);
-      color: rgba(255,255,255,.85);
-      font-weight:900;
+      color: rgba(255,255,255,.86);
+      font-weight:1000;
       cursor:pointer;
     }
     .badge.cat{border-color: rgba(255,201,77,.28); background: rgba(255,201,77,.12)}
     .badge.tag{border-color: rgba(87,199,255,.28); background: rgba(87,199,255,.10)}
 
     .habitTitle{
-      font-size:15px;
-      font-weight:1000;
+      font-size:15px; font-weight:1100;
       letter-spacing:.03em;
       margin:2px 0 6px;
       line-height:1.25;
@@ -359,11 +325,7 @@
       opacity:.95;
     }
 
-    .stats{
-      display:flex; gap:8px; flex-wrap:wrap;
-      font-size:12px;
-      font-weight:900;
-    }
+    .stats{display:flex; gap:8px; flex-wrap:wrap; font-size:12px; font-weight:1000}
     .stat{
       display:flex; align-items:center; gap:7px;
       padding:6px 10px;
@@ -380,7 +342,7 @@
       margin-top:8px;
     }
 
-    /* アイコンボタン（hoverでツールチップ） */
+    /* アイコンボタン（ホバーで名前） */
     .iconBtn{
       position:relative;
       border:1px solid rgba(255,255,255,.14);
@@ -388,17 +350,17 @@
       color:var(--text);
       border-radius: 12px;
       padding:10px 10px;
-      font-weight:1000;
+      font-weight:1100;
       cursor:pointer;
       display:flex; align-items:center; justify-content:center;
       min-width: 42px;
+      user-select:none;
     }
     .iconBtn:hover{background: rgba(255,255,255,.06)}
     .iconBtn.danger{border-color: rgba(255,77,94,.45)}
     .iconBtn.ok{border-color: rgba(124,255,166,.45)}
     .iconBtn.warn{border-color: rgba(255,201,77,.45)}
     .iconBtn.primary{border-color: rgba(87,199,255,.45)}
-
     .iconBtn[data-tip]::after{
       content: attr(data-tip);
       position:absolute;
@@ -411,16 +373,13 @@
       padding:6px 8px;
       border-radius: 10px;
       font-size:11px;
-      font-weight:900;
+      font-weight:1000;
       white-space:nowrap;
       opacity:0;
       pointer-events:none;
       transition: opacity .12s ease, transform .12s ease;
     }
-    .iconBtn:hover::after{
-      opacity:1;
-      transform: translateX(-50%) translateY(-2px);
-    }
+    .iconBtn:hover::after{opacity:1; transform: translateX(-50%) translateY(-2px)}
 
     .tryBtn{
       background: linear-gradient(180deg, rgba(255,77,94,.95), rgba(255,77,94,.62));
@@ -431,7 +390,7 @@
     .tryBtn:hover{filter:brightness(1.03)}
     .tryBtn[data-tip]::after{ border-color: rgba(255,77,94,.25); }
 
-    /* 今日の進行中（上の通知風） */
+    /* 今日の進行中（通知風） */
     .toastWrap{
       position:sticky;
       top:10px;
@@ -452,7 +411,7 @@
     }
     @keyframes pop{from{transform: translateY(-6px); opacity:.0} to{transform: translateY(0); opacity:1}}
     .toast .left{display:flex; flex-direction:column; gap:4px; min-width:0}
-    .toast .main{font-size:14px; font-weight:1000; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+    .toast .main{font-size:14px; font-weight:1100; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
     .toast .right{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
 
     .plusOne{
@@ -460,7 +419,7 @@
       right:22px;
       top: 92px;
       z-index:60;
-      font-weight:1000;
+      font-weight:1100;
       font-size:14px;
       padding:10px 12px;
       border-radius: 999px;
@@ -482,7 +441,7 @@
       position:sticky;
       bottom: 12px;
       z-index:10;
-      margin-top: 14px;
+      margin-top: 12px;
       padding: 12px;
       border-radius: 18px;
       border:1px solid rgba(255,255,255,.12);
@@ -525,37 +484,18 @@
     .view{display:none}
     .view.active{display:block}
 
-    /* records */
-    .recordGrid{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap:10px;
-      padding:14px;
-    }
-    .recordCard{
+    /* list screens */
+    .listWrap{padding:12px}
+    .simpleRow{
       padding:12px;
       border-radius:16px;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.14);
+      margin:10px 0;
     }
-    .recordTop{
-      display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
-    }
-    .recordTitle{font-weight:1000; font-size:14px; margin:0}
-    .recordSub{color:var(--muted); font-size:12px; margin-top:6px; line-height:1.6}
-    .stamps{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
-    .stamp{
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.12);
-      border-radius: 12px;
-      padding:8px 10px;
-      font-weight:900;
-      font-size:12px;
-    }
-    .stamp.easy{border-color: rgba(124,255,166,.35); background: rgba(124,255,166,.10)}
-    .stamp.mid{border-color: rgba(87,199,255,.35); background: rgba(87,199,255,.10)}
-    .stamp.hard{border-color: rgba(255,201,77,.40); background: rgba(255,201,77,.10)}
-    .stamp.fail{border-color: rgba(255,77,94,.40); background: rgba(255,77,94,.10)}
+    .rowTop{display:flex; align-items:flex-start; justify-content:space-between; gap:12px}
+    .rowTitle{font-weight:1100; font-size:14px; margin:0}
+    .rowSub{color:var(--muted); font-size:12px; margin-top:6px; line-height:1.6}
 
     /* modals */
     .modalBg{
@@ -586,13 +526,12 @@
       border:1px solid rgba(255,255,255,.12);
       background: rgba(0,0,0,.14);
       color:var(--text);
-      font-weight:900;
+      font-weight:1000;
       cursor:pointer;
     }
     .catBtn:hover{background: rgba(255,255,255,.06)}
     .catBtn.active{border-color: rgba(87,199,255,.55); background: rgba(87,199,255,.12)}
 
-    /* rating/reviews */
     .list{
       margin-top:12px;
       border-top:1px solid rgba(255,255,255,.10);
@@ -608,7 +547,7 @@
       padding:10px 12px;
     }
     .reviewTop{display:flex; align-items:center; justify-content:space-between; gap:10px}
-    .reviewName{font-weight:900; font-size:12px; opacity:.95}
+    .reviewName{font-weight:1000; font-size:12px; opacity:.95}
     .reviewMeta{font-size:12px; opacity:.9}
     .reviewText{margin-top:8px; font-size:13px; line-height:1.55; opacity:.95; white-space:pre-wrap}
 
@@ -619,7 +558,7 @@
       border-radius: 12px;
       padding:10px 12px;
       cursor:pointer;
-      font-weight:1000;
+      font-weight:1100;
       color:var(--text);
       display:flex; align-items:center; gap:8px;
     }
@@ -631,9 +570,10 @@
       border-radius: 12px;
       padding:10px 12px;
       cursor:pointer;
-      font-weight:900;
+      font-weight:1000;
       color:var(--text);
       display:flex; align-items:center; gap:8px;
+      user-select:none;
     }
     .toggle.active{border-color: rgba(255,77,94,.55); background: rgba(255,77,94,.14)}
     .commentBox{
@@ -659,7 +599,7 @@
       border-radius: 14px;
       padding:14px 12px;
       cursor:pointer;
-      font-weight:1000;
+      font-weight:1100;
       color:var(--text);
       display:flex; align-items:center; justify-content:center; gap:10px;
       font-size:18px;
@@ -688,15 +628,15 @@
       box-shadow: var(--shadow);
       padding:16px;
     }
-    .gateTitle{margin:0; font-size:16px; font-weight:1000; letter-spacing:.06em}
+    .gateTitle{margin:0; font-size:16px; font-weight:1100; letter-spacing:.06em}
     .gateActions{display:flex; justify-content:flex-end; gap:10px; margin-top:14px; flex-wrap:wrap}
   </style>
 </head>
 
 <body>
-  <div class="bg-fish" aria-hidden="true">
+  <div class="bg" aria-hidden="true">
     <div class="fish f2"></div>
-    <div class="fish f1"></div>
+    <div class="fish"></div>
     <div class="fish f3"></div>
   </div>
 
@@ -720,18 +660,10 @@
       </div>
 
       <div class="navSection">
-        <button class="navBtn active" id="navHome">
-          <div class="ico">🏠</div>
-          <div class="label">ホーム</div>
-        </button>
-        <button class="navBtn" id="navRecords">
-          <div class="ico">📅</div>
-          <div class="label">達成記録</div>
-        </button>
-        <button class="navBtn" id="navProfile">
-          <div class="ico">👤</div>
-          <div class="label">プロフィール</div>
-        </button>
+        <button class="navBtn active" id="navHome"><div class="ico">🏠</div><div class="label">ホーム</div></button>
+        <button class="navBtn" id="navRecords"><div class="ico">📅</div><div class="label">達成記録</div></button>
+        <button class="navBtn" id="navBookmarks"><div class="ico">🔖</div><div class="label">保存</div></button>
+        <button class="navBtn" id="navProfile"><div class="ico">👤</div><div class="label">プロフィール</div></button>
       </div>
 
       <div class="navFooter">
@@ -763,15 +695,8 @@
 
             <select class="select" id="categoryFilter">
               <option value="">カテゴリ（すべて）</option>
-              <option>健康</option>
-              <option>メンタル</option>
-              <option>勉強</option>
-              <option>仕事</option>
-              <option>生活</option>
-              <option>睡眠</option>
-              <option>運動</option>
-              <option>英語</option>
-              <option>その他</option>
+              <option>健康</option><option>メンタル</option><option>勉強</option><option>仕事</option>
+              <option>生活</option><option>睡眠</option><option>運動</option><option>英語</option><option>その他</option>
             </select>
 
             <select class="select" id="sortBy">
@@ -779,7 +704,10 @@
               <option value="rating">⭐ 評価</option>
               <option value="success">🎯 成功率</option>
               <option value="days">📅 継続</option>
+              <option value="favCreators">❤️ お気に入り中の人</option>
             </select>
+
+            <button class="btn small" id="btnClearTag">タグ解除</button>
           </div>
 
           <div class="tagArea">
@@ -828,22 +756,44 @@
 
       <section class="view" id="viewRecords">
         <div class="panel">
-          <div class="recordGrid" id="recordGrid"></div>
+          <div class="listWrap" id="recordList"></div>
+        </div>
+      </section>
+
+      <section class="view" id="viewBookmarks">
+        <div class="panel">
+          <div class="feedHeader" style="padding:12px">
+            <div class="pill">保存：<b id="bmCount">0</b></div>
+          </div>
+          <div class="feedGrid" id="bmFeed"></div>
         </div>
       </section>
 
       <section class="view" id="viewProfile">
         <div class="panel">
-          <div class="recordGrid" id="profileGrid"></div>
+          <div class="listWrap" id="profileList"></div>
         </div>
       </section>
     </main>
   </div>
 
+  <!-- 名前登録 -->
+  <div class="modalBg" id="nameBg">
+    <div class="modal">
+      <h2>名前</h2>
+      <div class="field" style="margin-top:12px">
+        <input id="nameInput" placeholder="名前" maxlength="16" />
+      </div>
+      <div class="modalFooter">
+        <button class="btn primary" id="nameSave" disabled>保存</button>
+      </div>
+    </div>
+  </div>
+
   <!-- 初回カテゴリ選択 -->
   <div class="modalBg" id="modalBg">
     <div class="modal">
-      <h2>カテゴリ選択</h2>
+      <h2>カテゴリ</h2>
       <div class="catList" id="catList"></div>
       <div class="modalFooter">
         <button class="btn" id="modalSkip">閉じる</button>
@@ -921,7 +871,7 @@
       </div>
 
       <div class="modalFooter">
-        <button class="btn" id="btnDerive">派生版</button>
+        <button class="btn" id="btnDerive">派生</button>
         <button class="btn primary" id="btnSaveEdit">保存</button>
         <button class="btn" id="editClose">閉じる</button>
       </div>
@@ -941,7 +891,7 @@
     import {
       getFirestore,
       collection, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc,
-      getDocs, query, where, orderBy, limit, serverTimestamp,
+      getDocs, query, orderBy, limit, serverTimestamp,
       runTransaction
     } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
@@ -987,9 +937,12 @@
     // nav/views
     const navHome = $("navHome");
     const navRecords = $("navRecords");
+    const navBookmarks = $("navBookmarks");
     const navProfile = $("navProfile");
+
     const viewHome = $("viewHome");
     const viewRecords = $("viewRecords");
+    const viewBookmarks = $("viewBookmarks");
     const viewProfile = $("viewProfile");
 
     // auth UI
@@ -1001,12 +954,18 @@
     const userSmall = $("userSmall");
     const userAvatar = $("userAvatar");
 
+    // name modal
+    const nameBg = $("nameBg");
+    const nameInput = $("nameInput");
+    const nameSave = $("nameSave");
+
     // home
     const qInput = $("q");
     const categoryFilter = $("categoryFilter");
     const sortBy = $("sortBy");
     const chipsRecommend = $("chipsRecommend");
     const chipsTop = $("chipsTop");
+    const btnClearTag = $("btnClearTag");
     const feed = $("feed");
     const countShown = $("countShown");
     const myCategory = $("myCategory");
@@ -1025,9 +984,11 @@
     const counterAction = $("counterAction");
     const btnPost = $("btnPost");
 
-    // records/profile
-    const recordGrid = $("recordGrid");
-    const profileGrid = $("profileGrid");
+    // records/profile/bookmarks
+    const recordList = $("recordList");
+    const profileList = $("profileList");
+    const bmFeed = $("bmFeed");
+    const bmCount = $("bmCount");
 
     // category modal
     const modalBg = $("modalBg");
@@ -1088,6 +1049,10 @@
     // edit state
     let editTargetHabit = null;
 
+    // caches
+    let cachedFavCreators = new Set(); // creatorUid
+    let cachedBookmarks = new Set();   // habitId
+
     const CATS = ["メンタル","睡眠","運動","健康","生活","勉強","英語","仕事","その他"];
     let modalSelected = "";
 
@@ -1102,21 +1067,26 @@
     function setView(which){
       const home = which==="home";
       const records = which==="records";
+      const bookmarks = which==="bookmarks";
       const profile = which==="profile";
 
       navHome.classList.toggle("active", home);
       navRecords.classList.toggle("active", records);
+      navBookmarks.classList.toggle("active", bookmarks);
       navProfile.classList.toggle("active", profile);
 
       viewHome.classList.toggle("active", home);
       viewRecords.classList.toggle("active", records);
+      viewBookmarks.classList.toggle("active", bookmarks);
       viewProfile.classList.toggle("active", profile);
 
       if(records) refreshRecords();
+      if(bookmarks) refreshBookmarksView();
       if(profile) refreshProfile();
     }
     navHome.addEventListener("click", ()=> setView("home"));
     navRecords.addEventListener("click", ()=> setView("records"));
+    navBookmarks.addEventListener("click", ()=> setView("bookmarks"));
     navProfile.addEventListener("click", ()=> setView("profile"));
 
     // ===== Auth =====
@@ -1124,11 +1094,62 @@
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
     }
-    btnLogin.addEventListener("click", async ()=>{ try{ await login(); }catch(e){ alert("ログイン失敗"); } });
-    gateLoginBtn.addEventListener("click", async ()=>{ try{ await login(); }catch(e){ alert("ログイン失敗"); } });
+    btnLogin.addEventListener("click", async ()=>{ try{ await login(); }catch{ alert("ログイン失敗"); } });
+    gateLoginBtn.addEventListener("click", async ()=>{ try{ await login(); }catch{ alert("ログイン失敗"); } });
     btnLogout.addEventListener("click", async ()=>{
-      try{ await signOut(auth); }catch(e){ alert("ログアウト失敗"); }
+      try{ await signOut(auth); }catch{ alert("ログアウト失敗"); }
     });
+
+    // ===== Name modal =====
+    function openNameModal(){
+      nameInput.value = "";
+      nameSave.disabled = true;
+      nameBg.classList.add("show");
+    }
+    function closeNameModal(){ nameBg.classList.remove("show"); }
+    nameInput.addEventListener("input", ()=>{
+      nameSave.disabled = nameInput.value.trim().length < 1;
+    });
+    nameSave.addEventListener("click", async ()=>{
+      const nm = nameInput.value.trim().slice(0,16);
+      if(!nm) return;
+      await updateDoc(doc(db,"users",currentUser.uid), { name: nm, updatedAt: serverTimestamp() });
+      myProfile.name = nm;
+      userName.textContent = nm;
+      closeNameModal();
+      // 名前後：カテゴリ
+      const pref = myProfile?.preferredCategory || "";
+      if(!pref) openCategoryModal();
+      await warmCaches();
+      await autoRetireIfMissed();
+      await refreshHome();
+      await refreshRecords();
+      await refreshProfile();
+      await refreshBookmarksView();
+    });
+
+    // ===== Profile doc =====
+    async function ensureProfile(){
+      const ref = doc(db, "users", currentUser.uid);
+      const snap = await getDoc(ref);
+      if(!snap.exists()){
+        const initial = {
+          name: "", // ★必ず入力させる
+          photoURL: currentUser.photoURL || "",
+          preferredCategory: "",
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+          clearCount: 0,
+          totalChallenges: 0,
+          ratingRank: 1
+        };
+        await setDoc(ref, initial);
+        myProfile = initial;
+      }else{
+        myProfile = snap.data();
+      }
+      myRankEl.textContent = String(myProfile?.ratingRank || 1);
+    }
 
     onAuthStateChanged(auth, async (user)=>{
       currentUser = user || null;
@@ -1141,18 +1162,20 @@
         userSmall.textContent = "—";
         userAvatar.innerHTML = "👤";
 
-        // ログイン必須なので、ここで操作不能にする
         feed.innerHTML = "";
         toastWrap.innerHTML = "";
-        recordGrid.innerHTML = "";
-        profileGrid.innerHTML = "";
+        recordList.innerHTML = "";
+        profileList.innerHTML = "";
+        bmFeed.innerHTML = "";
+        bmCount.textContent = "0";
+        cachedFavCreators = new Set();
+        cachedBookmarks = new Set();
         return;
       }
 
       loginGate.classList.remove("show");
       btnLogout.disabled = false;
 
-      userName.textContent = currentUser.displayName || "ユーザー";
       userSmall.textContent = currentUser.email || "—";
       userAvatar.innerHTML = "";
       if(currentUser.photoURL){
@@ -1166,41 +1189,29 @@
 
       await ensureProfile();
 
-      // ★ ログイン時：3日連続未報告なら自動リタイア
-      await autoRetireIfMissed();
+      // UI name
+      const nm = (myProfile?.name || "").trim();
+      userName.textContent = nm || "—";
 
-      // 初回カテゴリ未設定ならモーダル
+      // 名前が未設定ならここで止める（名前→カテゴリ→ホーム）
+      if(!nm){
+        openNameModal();
+        return;
+      }
+
+      // カテゴリ
       const pref = myProfile?.preferredCategory || "";
       myCategory.textContent = pref || "未設定";
       if(!pref) openCategoryModal();
 
+      await warmCaches();
+      await autoRetireIfMissed();
+
       await refreshHome();
       await refreshRecords();
       await refreshProfile();
+      await refreshBookmarksView();
     });
-
-    async function ensureProfile(){
-      const ref = doc(db, "users", currentUser.uid);
-      const snap = await getDoc(ref);
-      if(!snap.exists()){
-        const initial = {
-          displayName: currentUser.displayName || "ユーザー",
-          photoURL: currentUser.photoURL || "",
-          preferredCategory: "",
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-          clearCount: 0,
-          totalChallenges: 0,
-          // 参加者ランク（1-3）
-          ratingRank: 1
-        };
-        await setDoc(ref, initial);
-        myProfile = initial;
-      }else{
-        myProfile = snap.data();
-      }
-      myRankEl.textContent = String(myProfile?.ratingRank || 1);
-    }
 
     // ===== Category modal =====
     function openCategoryModal(){
@@ -1249,17 +1260,17 @@
       const category = String(newCategory.value || "").trim();
       const action = newAction.value.trim();
 
-      if(!title || !action){ alert("タイトル / 5分でやること は必須"); return; }
+      if(title.length < 2 || action.length < 2){ alert("短すぎ"); return; }
       if(action.length > 40){ alert("40文字以内"); return; }
 
       const data = {
         title, action, tags, category,
         creatorUid: currentUser.uid,
-        creatorName: currentUser.displayName || "作成者",
+        creatorName: myProfile?.name || (currentUser.displayName || "作成者"),
         creatorPhoto: currentUser.photoURL || "",
         createdAt: serverTimestamp(),
 
-        // 集計（Phase2の土台）
+        // 集計（土台）
         avgRating: 0,
         ratingCount: 0,
         participantsCount: 0,
@@ -1270,7 +1281,7 @@
         feelHard: 0,
 
         // versioning
-        baseHabitId: "", // 自分が派生なら元のID
+        baseHabitId: "",
         version: 1,
         updatedAt: serverTimestamp()
       };
@@ -1286,7 +1297,7 @@
 
         await refreshHome();
         await refreshProfile();
-      }catch(e){
+      }catch{
         alert("投稿失敗");
       }
     });
@@ -1299,6 +1310,7 @@
       });
       refreshHome();
     }
+    btnClearTag.addEventListener("click", ()=> setSelectedTag(""));
     qInput.addEventListener("keydown", (e)=>{ if(e.key==="Enter") refreshHome(); });
     categoryFilter.addEventListener("change", refreshHome);
     sortBy.addEventListener("change", refreshHome);
@@ -1318,6 +1330,61 @@
       });
     }
 
+    // ===== Phase3 caches (no composite index) =====
+    async function warmCaches(){
+      cachedFavCreators = new Set();
+      cachedBookmarks = new Set();
+
+      // fav creators
+      {
+        const qs = await getDocs(query(
+          collection(db, "userCreatorFavs", currentUser.uid, "items"),
+          orderBy("createdAt","desc"),
+          limit(300)
+        ));
+        qs.forEach(s=> cachedFavCreators.add(s.id));
+      }
+
+      // bookmarks
+      {
+        const qs = await getDocs(query(
+          collection(db, "userBookmarks", currentUser.uid, "items"),
+          orderBy("createdAt","desc"),
+          limit(500)
+        ));
+        qs.forEach(s=> cachedBookmarks.add(s.id));
+      }
+    }
+
+    async function toggleCreatorFav(creatorUid){
+      if(!creatorUid) return;
+      const ref = doc(db, "userCreatorFavs", currentUser.uid, "items", creatorUid);
+      if(cachedFavCreators.has(creatorUid)){
+        await deleteDoc(ref);
+        cachedFavCreators.delete(creatorUid);
+      }else{
+        await setDoc(ref, { createdAt: serverTimestamp() });
+        cachedFavCreators.add(creatorUid);
+      }
+      await refreshProfile();
+      await refreshHome();
+    }
+
+    async function toggleBookmark(habitId){
+      if(!habitId) return;
+      const ref = doc(db, "userBookmarks", currentUser.uid, "items", habitId);
+      if(cachedBookmarks.has(habitId)){
+        await deleteDoc(ref);
+        cachedBookmarks.delete(habitId);
+      }else{
+        await setDoc(ref, { createdAt: serverTimestamp() });
+        cachedBookmarks.add(habitId);
+      }
+      await refreshBookmarksView();
+      await refreshHome(); // アイコン反映
+      await refreshProfile();
+    }
+
     // ===== Home =====
     async function refreshHome(){
       if(!currentUser) return;
@@ -1331,7 +1398,7 @@
 
       // habits
       let habits = [];
-      const qs = await getDocs(query(collection(db,"habits"), orderBy("createdAt","desc"), limit(180)));
+      const qs = await getDocs(query(collection(db,"habits"), orderBy("createdAt","desc"), limit(220)));
       qs.forEach(docSnap=> habits.push({ id: docSnap.id, ...docSnap.data() }));
 
       // tag counts
@@ -1370,6 +1437,10 @@
           const blob = [h.title, h.action, (h.tags||[]).join(" "), h.category, h.creatorName].join(" ").toLowerCase();
           if(!blob.includes(keyword)) return false;
         }
+        // ❤️お気に入り中の人
+        if(sort === "favCreators"){
+          return cachedFavCreators.has(h.creatorUid);
+        }
         return true;
       });
 
@@ -1388,6 +1459,7 @@
         if(sort === "rating") return (rb - ra) || (cb - ca);
         if(sort === "success") return (sb - sa) || (cb - ca);
         if(sort === "days") return (dbb - da) || (cb - ca);
+        if(sort === "favCreators") return (cb - ca);
         return (cb - ca);
       });
 
@@ -1419,6 +1491,8 @@
       const successRate = Number(h.successRate||0);
 
       const isMine = h.creatorUid === currentUser.uid;
+      const creatorFav = cachedFavCreators.has(h.creatorUid);
+      const bookmarked = cachedBookmarks.has(h.id);
 
       card.innerHTML = `
         <div>
@@ -1445,6 +1519,8 @@
           </div>
 
           <div class="actions">
+            <button class="iconBtn ${bookmarked ? "ok":""}" data-act="bookmark" data-tip="保存">🔖</button>
+            <button class="iconBtn ${creatorFav ? "ok":""}" data-act="creatorFav" data-tip="作成者">👤</button>
             <button class="iconBtn primary" data-act="rate" data-tip="評価">⭐</button>
             <button class="iconBtn" data-act="reviews" data-tip="口コミ">💬</button>
             ${isMine ? `<button class="iconBtn warn" data-act="edit" data-tip="編集">🛠️</button>` : ""}
@@ -1456,6 +1532,9 @@
       card.querySelector('[data-act="try"]').addEventListener("click", ()=> startChallenge(h));
       card.querySelector('[data-act="rate"]').addEventListener("click", ()=> openRatingModal(h));
       card.querySelector('[data-act="reviews"]').addEventListener("click", ()=> openReviewsModal(h));
+      card.querySelector('[data-act="bookmark"]').addEventListener("click", ()=> toggleBookmark(h.id));
+      card.querySelector('[data-act="creatorFav"]').addEventListener("click", ()=> toggleCreatorFav(h.creatorUid));
+
       const editBtn = card.querySelector('[data-act="edit"]');
       if(editBtn) editBtn.addEventListener("click", ()=> openEditModal(h));
 
@@ -1476,17 +1555,17 @@
       return card;
     }
 
-    // ===== Challenge =====
+    // ===== Challenge (★複合インデックス不要版) =====
     async function loadActiveChallenges(){
+      // orderByのみ → インデックス不要
       const qs = await getDocs(query(
         collection(db, "userChallenges", currentUser.uid, "items"),
-        where("status","==","active"),
         orderBy("updatedAt","desc"),
-        limit(10)
+        limit(50)
       ));
       const arr = [];
       qs.forEach(s=> arr.push(s.data()));
-      return arr;
+      return arr.filter(x => x.status === "active").slice(0, 10);
     }
 
     async function startChallenge(h){
@@ -1515,7 +1594,7 @@
           updatedAt: serverTimestamp()
         });
 
-        // participantsCount +1（トランザクション）
+        // participantsCount +1
         await runTransaction(db, async (tx)=>{
           const href = doc(db, "habits", h.id);
           const hs = await tx.get(href);
@@ -1537,7 +1616,8 @@
         await refreshTodayToasts();
         await refreshRecords();
         await refreshHome();
-      }catch(e){
+        await refreshProfile();
+      }catch{
         alert("挑戦失敗");
       }
     }
@@ -1554,9 +1634,7 @@
         const toast = document.createElement("div");
         toast.className = "toast";
         toast.innerHTML = `
-          <div class="left">
-            <div class="main">🌱 ${escapeHtml(title)}（${day}日目）</div>
-          </div>
+          <div class="left"><div class="main">🌱 ${escapeHtml(title)}（${day}日目）</div></div>
           <div class="right">
             <button class="iconBtn ok" data-act="done" data-tip="やった">✅</button>
             <button class="iconBtn warn" data-act="rest" data-tip="休む">🛌</button>
@@ -1628,7 +1706,7 @@
         update.updatedAt = serverTimestamp();
         await updateDoc(ref, update);
 
-        // 7日制：成功5でクリア（done時のみ確認）
+        // 7日制：成功5でクリア（done時だけ確認）
         if(payload.type === "done" && cur.status === "active"){
           const nextSuccess = Number(cur.successDays||0)+1;
           const nextDay = Number(cur.day||1)+1;
@@ -1646,21 +1724,19 @@
           }
         }
 
-        // ★ habitの簡易集計（できる範囲で）
+        // 習慣側の最低限集計（本番はCloud Functions推奨）
         await recomputeHabitStatsFromActions(ch.habitId, payload);
 
         await refreshTodayToasts();
         await refreshRecords();
         await refreshHome();
-      }catch(e){
+        await refreshProfile();
+      }catch{
         alert("失敗");
       }
     }
 
-    // ===== Habit stats (簡易) =====
     async function recomputeHabitStatsFromActions(habitId, payload){
-      // 本番はCloud Functions推奨。ここでは「最低限動く」。
-      // できること：体感比率 / 成功率 / 平均継続(雑) を習慣docへ反映
       try{
         await runTransaction(db, async (tx)=>{
           const href = doc(db, "habits", habitId);
@@ -1676,17 +1752,13 @@
           let avgDays = Number(h.avgDays||0);
           const participants = Math.max(1, Number(h.participantsCount||0));
 
-          // doneのみ体感カウント & 成功率計算用の分母を増やす
           if(payload.type === "done"){
             if(payload.diff === "easy") feelEasy++;
             if(payload.diff === "mid") feelMid++;
             if(payload.diff === "hard") feelHard++;
 
-            // successRate を "成功報告数 / (成功+休+失敗の代替)" で雑に更新
             const totalFeel = feelEasy + feelMid + feelHard;
-            successRate = totalFeel ? ( (feelEasy+feelMid+feelHard) / totalFeel ) * 100 : successRate;
-
-            // avgDays を "総成功報告 / 参加者" で雑に
+            successRate = totalFeel ? (totalFeel / totalFeel) * 100 : successRate; // 最低限(表示用)
             avgDays = totalFeel ? (totalFeel / participants) : avgDays;
           }
 
@@ -1700,17 +1772,19 @@
       }catch{}
     }
 
-    // ===== Auto retire (3日未報告) =====
+    // ===== Auto retire (★複合インデックス不要版) =====
     async function autoRetireIfMissed(){
       const today = nowLocal();
       const qs = await getDocs(query(
         collection(db, "userChallenges", currentUser.uid, "items"),
-        where("status","==","active"),
-        limit(50)
+        orderBy("updatedAt","desc"),
+        limit(200)
       ));
       const updates = [];
       qs.forEach(s=>{
         const ch = s.data();
+        if(ch.status !== "active") return;
+
         const startD = parseYMD(ch.startDate);
         const lastD = parseYMD(ch.lastReportedDate);
 
@@ -1743,7 +1817,7 @@
       const qs = await getDocs(query(
         collection(db, "userChallenges", currentUser.uid, "items"),
         orderBy("updatedAt","desc"),
-        limit(80)
+        limit(120)
       ));
       const items = [];
       qs.forEach(s=> items.push(s.data()));
@@ -1751,45 +1825,33 @@
       const order = (st)=> st==="active"?0 : st==="cleared"?1 : 2;
       items.sort((a,b)=> order(a.status)-order(b.status));
 
-      recordGrid.innerHTML = "";
+      recordList.innerHTML = "";
       for(const ch of items){
-        recordGrid.appendChild(renderRecordCard(ch));
+        recordList.appendChild(renderRecordRow(ch));
       }
     }
 
-    function renderRecordCard(ch){
+    function renderRecordRow(ch){
       const card = document.createElement("div");
-      card.className = "recordCard";
+      card.className = "simpleRow";
 
       const st = ch.status;
-      const stLabel = st==="active" ? "進行中" : st==="cleared" ? "クリア" : "リタイア";
       const stBadge = st==="active" ? "✅" : st==="cleared" ? "🏁" : "🏳️";
-
-      const diff = ch.difficulty || {easy:0,mid:0,hard:0};
-      const totalFeel = (diff.easy||0)+(diff.mid||0)+(diff.hard||0);
-      const easyP = totalFeel ? Math.round((diff.easy||0)/totalFeel*100) : 0;
-      const midP  = totalFeel ? Math.round((diff.mid||0)/totalFeel*100) : 0;
-      const hardP = totalFeel ? Math.round((diff.hard||0)/totalFeel*100) : 0;
+      const day = Number(ch.day||1);
+      const success = Number(ch.successDays||0);
+      const rest = Number(ch.restDays||0);
 
       card.innerHTML = `
-        <div class="recordTop">
+        <div class="rowTop">
           <div>
-            <p class="recordTitle">${stBadge} ${escapeHtml(ch.habitTitle||"")}（${escapeHtml(stLabel)}）</p>
-            <div class="recordSub">
-              ${escapeHtml(ch.startDate||"—")} / ${Number(ch.day||1)}日目 / 成功:${Number(ch.successDays||0)} / 休:${Number(ch.restDays||0)}
-              <br/>${escapeHtml(ch.lastReportedDate||"")}
-            </div>
+            <p class="rowTitle">${stBadge} ${escapeHtml(ch.habitTitle||"")}</p>
+            <div class="rowSub">${escapeHtml(ch.startDate||"—")} / ${day}日目 / 成功:${success} / 休:${rest}<br>${escapeHtml(ch.lastReportedDate||"")}</div>
           </div>
           <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end">
-            ${st==="active" ? `<button class="btn small danger" data-act="retire">リタイア</button>` : `<button class="btn small" data-act="restart">再挑戦</button>`}
+            ${st==="active"
+              ? `<button class="btn small danger" data-act="retire">リタイア</button>`
+              : `<button class="btn small" data-act="restart">再挑戦</button>`}
           </div>
-        </div>
-
-        <div class="stamps">
-          <div class="stamp easy">😊 ${easyP}%</div>
-          <div class="stamp mid">🙂 ${midP}%</div>
-          <div class="stamp hard">😅 ${hardP}%</div>
-          ${st==="retired" ? `<div class="stamp fail">🏳️</div>` : ""}
         </div>
       `;
 
@@ -1800,7 +1862,6 @@
           await applyReport(ch, { type:"retire" });
         });
       }
-
       const btnRestart = card.querySelector('[data-act="restart"]');
       if(btnRestart){
         btnRestart.addEventListener("click", async ()=>{
@@ -1808,7 +1869,6 @@
           await restartChallenge(ch);
         });
       }
-
       return card;
     }
 
@@ -1829,25 +1889,56 @@
       await refreshTodayToasts();
       await refreshRecords();
       await refreshHome();
+      await refreshProfile();
     }
 
-    // ===== Profile =====
+    // ===== Bookmarks view (Phase3) =====
+    async function refreshBookmarksView(){
+      if(!currentUser) return;
+      bmFeed.innerHTML = "";
+      bmCount.textContent = String(cachedBookmarks.size);
+
+      if(cachedBookmarks.size === 0) return;
+
+      // habitsをまとめて取って表示（最新のみ）
+      const qs = await getDocs(query(collection(db,"habits"), orderBy("createdAt","desc"), limit(250)));
+      const habits = [];
+      qs.forEach(s=> habits.push({id:s.id, ...s.data()}));
+      const filtered = habits.filter(h => cachedBookmarks.has(h.id));
+
+      bmCount.textContent = String(filtered.length);
+      for(const h of filtered){
+        bmFeed.appendChild(renderHabitCard(h));
+      }
+    }
+
+    // ===== Profile (Phase3) =====
     async function refreshProfile(){
       const u = myProfile || {};
-      profileGrid.innerHTML = `
-        <div class="recordCard">
-          <div class="recordTop">
+
+      // counts
+      const myPostsCount = await countMyPosts();
+      const favCreatorsCount = cachedFavCreators.size;
+      const bookmarksCount = cachedBookmarks.size;
+
+      // active count
+      const actives = await loadActiveChallenges();
+
+      profileList.innerHTML = `
+        <div class="simpleRow">
+          <div class="rowTop">
             <div>
-              <p class="recordTitle">👤 ${escapeHtml(u.displayName || "ユーザー")}</p>
-              <div class="recordSub">
-                🔥 クリア数 ${Number(u.clearCount||0)}<br>
-                📅 総挑戦数 ${Number(u.totalChallenges||0)}<br>
+              <p class="rowTitle">👤 ${escapeHtml(u.name || "—")}</p>
+              <div class="rowSub">
+                🔥 クリア ${Number(u.clearCount||0)} / 🌱 挑戦中 ${actives.length} / 📅 総挑戦 ${Number(u.totalChallenges||0)}<br>
+                ❤️ 作成者 ${favCreatorsCount} / 🔖 保存 ${bookmarksCount} / 🧩 投稿 ${myPostsCount}<br>
                 ⭐ 評価ランク R${Number(u.ratingRank||1)}
               </div>
             </div>
             <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end">
               <button class="btn small" id="rankUp">R+1</button>
               <button class="btn small danger" id="rankDown">R-1</button>
+              <button class="btn small" id="rename">名前変更</button>
             </div>
           </div>
         </div>
@@ -1855,6 +1946,8 @@
 
       const rankUp = $("rankUp");
       const rankDown = $("rankDown");
+      const rename = $("rename");
+
       rankUp.addEventListener("click", async ()=>{
         const next = Math.min(3, Number(myProfile.ratingRank||1)+1);
         await updateDoc(doc(db,"users",currentUser.uid), { ratingRank: next, updatedAt: serverTimestamp() });
@@ -1869,9 +1962,23 @@
         myRankEl.textContent = String(next);
         await refreshProfile();
       });
+      rename.addEventListener("click", ()=>{
+        openNameModal();
+      });
     }
 
-    // ===== Ratings =====
+    async function countMyPosts(){
+      // インデックス不要にするため、最新からざっくりカウント（簡易）
+      const qs = await getDocs(query(collection(db,"habits"), orderBy("createdAt","desc"), limit(400)));
+      let c = 0;
+      qs.forEach(s=>{
+        const h = s.data();
+        if(h.creatorUid === currentUser.uid) c++;
+      });
+      return c;
+    }
+
+    // ===== Ratings (Phase2) =====
     function openRatingModal(h){
       ratingTargetHabit = h;
       ratingStars = 0;
@@ -1952,7 +2059,7 @@
 
       const data = {
         uid: currentUser.uid,
-        displayName: currentUser.displayName || "ユーザー",
+        displayName: myProfile?.name || currentUser.displayName || "ユーザー",
         photoURL: currentUser.photoURL || "",
         stars: ratingStars,
         liked: ratingLiked,
@@ -1992,12 +2099,13 @@
     }
 
     async function recomputeRatingAgg(habitId){
-      // ratingCount / avgRating を重み付きで更新
       await runTransaction(db, async (tx)=>{
         const href = doc(db, "habits", habitId);
         const hs = await tx.get(href);
         if(!hs.exists()) return;
 
+        // ここは getDocs を使うので tx外扱いに近いが、最低限のために許容
+        // 本番は Functions 推奨
         const rs = await getDocs(query(collection(db, "habits", habitId, "ratings"), limit(500)));
         let wSum = 0;
         let swSum = 0;
@@ -2034,7 +2142,7 @@
     reviewsClose.addEventListener("click", closeReviewsModal);
     reviewsBg.addEventListener("click", (e)=>{ if(e.target===reviewsBg) closeReviewsModal(); });
 
-    // ===== Edit (ver1-3) + derive =====
+    // ===== Edit (Phase2) ver1-3 + derive =====
     function openEditModal(h){
       editTargetHabit = h;
       editTitle.textContent = `🛠️ ${h.title || ""}`;
@@ -2068,7 +2176,7 @@
         box.innerHTML = `
           <div class="reviewTop">
             <div class="reviewName">ver${Number(v.version||1)}</div>
-            <div class="reviewMeta">${v.createdAt?.seconds ? "" : ""}</div>
+            <div class="reviewMeta"></div>
           </div>
           <div class="reviewText">${escapeHtml(v.title||"")}\n${escapeHtml(v.action||"")}</div>
         `;
@@ -2084,12 +2192,11 @@
       const category = String(editNewCategory.value||"").trim();
       const action = editNewAction.value.trim();
 
-      if(!title || !action){ alert("タイトル / 5分でやること は必須"); return; }
+      if(title.length < 2 || action.length < 2){ alert("短すぎ"); return; }
       if(action.length > 40){ alert("40文字以内"); return; }
 
       const habitId = editTargetHabit.id;
 
-      // ver管理：現在の内容を versions に保存、最大3つだけ残す（古いの削除）
       await runTransaction(db, async (tx)=>{
         const href = doc(db, "habits", habitId);
         const hs = await tx.get(href);
@@ -2097,7 +2204,6 @@
         const cur = hs.data();
 
         // versions に旧を保存
-        const nextVer = Math.min(3, Number(cur.version||1) + 1);
         const vref = doc(collection(db, "habits", habitId, "versions"));
         tx.set(vref, {
           version: Number(cur.version||1),
@@ -2108,7 +2214,9 @@
           createdAt: serverTimestamp()
         });
 
-        // 本体更新（verは最大3）
+        // verは最大3（表示はversions側で3件に制限）
+        const nextVer = Math.min(3, Number(cur.version||1) + 1);
+
         tx.update(href, {
           title, action, tags, category,
           version: nextVer,
@@ -2116,14 +2224,13 @@
         });
       });
 
-      // 3つ超えた versions を削る（ベストエフォート）
+      // versionsが増えすぎたら古いのを消す（ベストエフォート）
       try{
         const qs = await getDocs(query(collection(db, "habits", habitId, "versions"), orderBy("createdAt","desc"), limit(10)));
         const all = [];
-        qs.forEach(s=> all.push({id:s.id, ...s.data(), _ref:s.ref}));
-        // createdAt desc → 先頭が新しい。3個残す
+        qs.forEach(s=> all.push({ref:s.ref}));
         const toDelete = all.slice(3);
-        await Promise.allSettled(toDelete.map(x=>deleteDoc(x._ref)));
+        await Promise.allSettled(toDelete.map(x=>deleteDoc(x.ref)));
       }catch{}
 
       await loadVersions(habitId);
@@ -2138,14 +2245,13 @@
       const category = String(editNewCategory.value||"").trim();
       const action = editNewAction.value.trim();
 
-      if(!title || !action){ alert("タイトル / 5分でやること は必須"); return; }
+      if(title.length < 2 || action.length < 2){ alert("短すぎ"); return; }
       if(action.length > 40){ alert("40文字以内"); return; }
 
-      // 派生版：baseHabitId に元IDを入れて新規作成
       await addDoc(collection(db, "habits"), {
         title, action, tags, category,
         creatorUid: currentUser.uid,
-        creatorName: currentUser.displayName || "作成者",
+        creatorName: myProfile?.name || (currentUser.displayName || "作成者"),
         creatorPhoto: currentUser.photoURL || "",
         createdAt: serverTimestamp(),
 
@@ -2165,13 +2271,19 @@
 
       await refreshHome();
       closeEditModal();
+      await refreshProfile();
     });
 
-    // ===== init =====
-    </script>
+    // ===== UI events =====
+    function setSelectedTagSafe(tag){ setSelectedTag(tag); }
+    btnClearTag.addEventListener("click", ()=> setSelectedTagSafe(""));
 
-  <script type="module">
-    // 2つ目のmoduleにするのが嫌なら上に統合してOK（今回は貼りやすさ優先）
+    // ===== Init misc =====
+    function updateAuthButtons(){
+      btnLogout.disabled = !currentUser;
+    }
+    updateAuthButtons();
+
   </script>
 </body>
 </html>
