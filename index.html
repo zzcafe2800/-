@@ -1,8 +1,5 @@
-<!-- =========================
-  PART 1 / 3
-  ここから Part1 を貼る
-  （Part2, Part3 を後ろに連結すると完成）
-========================= -->
+
+
 <!doctype html>
 <html lang="ja">
 <head>
@@ -56,7 +53,8 @@
       .nav .brandName{display:none}
       .nav .navBtn{justify-content:center}
       .content{padding:12px}
-      .sideList{max-height: calc(100vh - 410px)}
+      .tagWrap{grid-template-columns:1fr 1fr;}
+      .sideList{max-height: calc(100vh - 340px)}
       .sideItem{padding: 10px;border-radius: 12px;}
       .btnMini{font-size: 11px; padding: 9px 10px}
       .feedGrid{grid-template-columns: 1fr;} /* 常に縦1列 */
@@ -146,7 +144,7 @@
       stroke: #e9e9e9;
     }
     .lvRingFg{
-      stroke: #10a85a;
+      stroke: #10a85a; /* 経験値リング（緑） */
       stroke-dasharray: 999;
       stroke-dashoffset: 999;
       transition: stroke-dashoffset .35s ease;
@@ -223,7 +221,7 @@
       border-radius:999px;
       padding:4px 8px;
       font-family:var(--mono);
-      font-size:12px;
+      font-size:12px; /* “名前くらい”に寄せて少し上げる */
       font-weight:1100;
       color:#111;
       background:#fff;
@@ -232,7 +230,7 @@
     }
     .userSmall{font-size:11px; color:var(--muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 
-    /* XP block */
+    /* XP block (小さめ/控えめ) */
     .xpBlock{
       border:1px solid var(--line);
       border-radius: 12px;
@@ -259,24 +257,7 @@
       font-family:var(--mono);
       background:#fff;
       white-space:nowrap;
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
     }
-    .tinyNum{
-      font-family:var(--mono);
-      font-size:11px;
-      font-weight:1100;
-      padding:2px 6px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:#fff;
-      opacity:.95;
-    }
-    .tinyNum.green{border-color:#bfe8d1; background:#ecfff4}
-    .tinyNum.blue{border-color:#cfe3ff; background:#f3f8ff}
-    .tinyNum.gray{border-color:#e6e6e6; background:#fafafa}
-
     .xpText{
       font-family:var(--mono);
       font-size:12px;
@@ -291,7 +272,7 @@
       font-weight:1000;
       padding:8px 10px;
       cursor:pointer;
-      opacity:.85;
+      opacity:.85; /* 目立たないように */
     }
     .miniLinkBtn:hover{background:#fafafa; opacity:1}
 
@@ -308,7 +289,7 @@
       gap:8px;
       overflow:auto;
       padding-right:2px;
-      max-height: calc(100vh - 470px);
+      max-height: calc(100vh - 430px);
     }
     .sideItem{
       border:1px solid var(--line);
@@ -325,6 +306,7 @@
       display:flex; justify-content:space-between; gap:10px; align-items:flex-start;
       min-width:0;
     }
+    /* 細い時に勝手に潰れないよう、枠に応じて縮む */
     .sideHabit{
       font-weight:1100;
       font-size: clamp(11px, 1.6vw, 13px);
@@ -393,7 +375,7 @@
     .hTitle{
       font-weight:1100;
       letter-spacing:.06em;
-      font-size:16px;
+      font-size:16px; /* タイトル少し大きく */
       display:flex; align-items:center; gap:10px;
       white-space:nowrap;
       flex-wrap:wrap;
@@ -403,19 +385,12 @@
     .todayBadge{
       border:1px solid var(--line);
       border-radius:999px;
-      padding:8px 12px;
+      padding:6px 10px;
       background:#fff;
       font-family:var(--mono);
       font-weight:1100;
       font-size:12px;
       white-space:nowrap;
-      display:flex;
-      align-items:center;
-      gap:8px;
-    }
-    .todayBadge strong{
-      font-size:13px;
-      font-weight:1200;
     }
 
     /* ===== Tag ranking: 横一列（2分割） ===== */
@@ -484,7 +459,7 @@
       min-width:0;
     }
 
-    /* ===== Search row ===== */
+    /* ===== Search row: 検索+カテゴリ+タグ解除 ===== */
     .searchRow{
       padding:12px;
       border-bottom:1px solid var(--line);
@@ -610,7 +585,7 @@
       user-select:none;
     }
     .thumbTitle{
-      font-size:22px; /* 読みやすく */
+      font-size:22px; /* タイトル大きめ */
       font-weight:1100;
       letter-spacing:.02em;
       line-height:1.12;
@@ -697,7 +672,9 @@
     .iconBtn.on{background:#111; color:#fff; border-color:#111}
     .iconBtn svg{display:block}
 
-    .reviewBtn{ position:relative; }
+    .reviewBtn{
+      position:relative;
+    }
     .badgeCount{
       position:absolute;
       top:-6px;
@@ -716,13 +693,13 @@
       pointer-events:none;
     }
 
-    /* JOIN */
+    /* JOIN button（参加→白、参加中→白+赤文字、ボタン少し大きめ） */
     .joinBtn{
       border:1px solid var(--red);
       background: var(--red);
       color:#fff;
       border-radius: 12px;
-      padding:12px 16px;
+      padding:12px 16px; /* 少し大きく */
       cursor:pointer;
       font-weight:1100;
       min-width: 84px;
@@ -742,7 +719,7 @@
       align-items:flex-start;
       justify-content:space-between;
       gap:10px;
-      min-height: 78px;
+      min-height: 72px;
       background:#fff;
       position:relative;
     }
@@ -798,7 +775,6 @@
       border-color:#111;
     }
 
-    /* 4つの数値を “ぱっと見” で */
     .statsRow{
       display:flex;
       flex-direction:column;
@@ -816,16 +792,16 @@
     .statPill{
       border:1px solid var(--line);
       border-radius:999px;
-      padding:8px 12px;   /* 余白詰めつつ見やすく大きく */
+      padding:6px 10px;
       background:#fff;
       font-family:var(--mono);
       font-weight:1100;
-      font-size:13px;     /* 少し大きい */
+      font-size:12px;
       color:#111;
       white-space:nowrap;
-      line-height:1;
     }
 
+    /* createdAt bottom-right subtle（右下・薄く） */
     .createdAt{
       position:absolute;
       right:10px;
@@ -837,8 +813,53 @@
       opacity:.8;
     }
 
-    /* ===== Overlay は完全に排除（ユーザー要望） ===== */
-    .overlay{display:none !important;}
+    /* Overlay */
+    .overlay{
+      position:absolute;
+      inset:0;
+      background: rgba(0,0,0,.65);
+      color:#fff;
+      display:none;
+      padding:12px;
+      z-index: 20;
+    }
+    .habitCard:hover .overlay{display:block}
+    .habitCard.pressing .overlay{display:block}
+    .overlayInner{
+      height:100%;
+      display:flex;
+      flex-direction:column;
+      justify-content:flex-start;
+      gap:10px;
+    }
+    .ovTitle{
+      font-weight:1100;
+      letter-spacing:.06em;
+      font-size:12px;
+      opacity:.92;
+    }
+    .bar{
+      border:1px solid rgba(255,255,255,.25);
+      border-radius:999px;
+      overflow:hidden;
+      height:14px;
+      background: rgba(255,255,255,.10);
+    }
+    .barFill{
+      height:100%;
+      width:0%;
+      background:#fff;
+      transition: width .15s ease;
+    }
+    .ovRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      font-family: var(--mono);
+      font-weight:1100;
+      font-size:12px;
+    }
 
     /* ===== Fixed Post Button ===== */
     .fab{
@@ -850,7 +871,7 @@
       background:#111;
       color:#fff;
       border-radius: 16px;
-      padding:16px 18px;
+      padding:16px 18px; /* 少し大きく */
       font-weight:1100;
       cursor:pointer;
       box-shadow: var(--shadow);
@@ -1067,7 +1088,7 @@
       flex-direction:column;
       align-items:center;
       justify-content:center;
-      gap:10px;
+      gap:12px;
       position:relative;
       overflow:hidden;
     }
@@ -1099,265 +1120,34 @@
       color:#111;
     }
 
-    /* ===== Analysis View ===== */
-    .anaWrap{padding:12px; display:flex; flex-direction:column; gap:12px;}
-    .anaRowHead{
+    /* Creator modal */
+    .creatorHeader{
       display:flex;
-      align-items:center;
       justify-content:space-between;
+      align-items:flex-start;
       gap:10px;
       flex-wrap:wrap;
+      margin-top:10px;
     }
-    .anaGrid3{
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
+    .creatorBig{
+      display:flex;
+      align-items:center;
       gap:10px;
-      align-items:stretch;
-    }
-    @media (max-width: 980px){
-      .anaGrid3{grid-template-columns: 1fr 1fr;}
-    }
-    .anaCard{
-      border:1px solid var(--line);
-      border-radius:14px;
-      background:#fff;
-      box-shadow: var(--shadow);
-      padding:12px;
       min-width:0;
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-      position:relative;
     }
-    .anaCardTitle{
+    .bigAva{
+      width:42px;height:42px;border:1px solid var(--line);border-radius:50%;
+      display:grid;place-items:center;font-weight:1100;
+      overflow:hidden;background:#fff;
+    }
+    .bigAva img{width:100%;height:100%;object-fit:cover}
+    .creatorBigName{
       font-weight:1100;
-      font-size:13px;
-      line-height:1.25;
-      display:-webkit-box;
-      -webkit-line-clamp:2;
-      -webkit-box-orient:vertical;
-      overflow:hidden;
-      min-height: 34px;
-    }
-    .anaMetaRow{
-      display:flex;
-      gap:6px;
-      flex-wrap:wrap;
-      align-items:center;
-      justify-content:flex-start;
-    }
-    .anaMini{
-      border:1px solid var(--line);
-      border-radius:999px;
-      padding:6px 10px;
-      font-family:var(--mono);
-      font-weight:1100;
-      font-size:12px;
-      background:#fff;
-      white-space:nowrap;
-    }
-    .moreBtn{
-      position:absolute;
-      right:10px;
-      bottom:10px;
-      border:1px solid var(--line);
-      background:#fff;
-      border-radius:10px;
-      padding:8px 10px;
-      font-weight:1100;
-      cursor:pointer;
-      font-size:12px;
-      opacity:.9;
-    }
-    .moreBtn:hover{background:#fafafa; opacity:1}
-
-    .chartBox{
-      border:1px solid var(--line);
-      border-radius:14px;
-      background:#fff;
-      box-shadow: var(--shadow);
-      padding:12px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-    .chartTitle{
-      font-weight:1100;
-      font-size:13px;
-      letter-spacing:.06em;
-      color:#111;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      flex-wrap:wrap;
-      margin:0;
-    }
-    .chartCanvas{
-      width:100%;
-      height:240px;
-      border:1px solid var(--line);
-      border-radius:12px;
-      background:#fff;
-    }
-
-    /* ===== Calendar ===== */
-    .calWrap{
-      border:1px solid var(--line);
-      border-radius:14px;
-      background:#fff;
-      box-shadow: var(--shadow);
-      padding:12px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-    .calHead{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    .calHead .hBadge{padding:8px 12px;}
-    .calGrid{
-      display:grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap:6px;
-      align-items:stretch;
-    }
-    .calDow{
-      font-family:var(--mono);
-      font-weight:1100;
-      font-size:11px;
-      color:var(--muted);
-      text-align:center;
-      padding:6px 0;
-    }
-    .calCell{
-      border:1px solid var(--line);
-      border-radius:12px;
-      padding:8px 8px;
-      min-height:56px;
-      background:#fff;
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-      position:relative;
-    }
-    .calDay{
-      font-family:var(--mono);
-      font-weight:1100;
-      font-size:12px;
-      color:#111;
-      opacity:.92;
-    }
-    .calEmoji{
-      font-size:16px;
-      line-height:1;
-    }
-    .calCell.today{
-      border-color:#111;
-    }
-    .calCell.muted{
-      opacity:.35;
-    }
-
-    /* ===== Onboarding (4コマ) ===== */
-    .obCard{
-      width:min(520px, 100%);
-      border:1px solid var(--line);
-      border-radius: 14px;
-      background:#fff;
-      box-shadow: var(--shadow);
-      padding:14px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-    .obTitle{
-      margin:0;
-      font-size:16px;
-      font-weight:1200;
-      letter-spacing:.02em;
-    }
-    .obText{
-      margin:0;
-      font-size:13px;
-      color:#111;
-      line-height:1.55;
-      white-space:pre-wrap;
-    }
-    .obMiniArt{
-      border:1px solid var(--line);
-      border-radius:14px;
-      background:#fff;
-      padding:12px;
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-    }
-    .obDots{display:flex; gap:6px; justify-content:center; align-items:center;}
-    .dot{
-      width:7px;height:7px;border-radius:999px;border:1px solid var(--line); background:#fff;
-    }
-    .dot.on{background:#111; border-color:#111;}
-    .obFooter{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      margin-top:6px;
-    }
-
-    /* ===== Clear choice modal ===== */
-    .forceTitle{
-      margin:0;
-      font-size:15px;
-      font-weight:1200;
-      letter-spacing:.02em;
-    }
-    .forceRow{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:10px;
-      margin-top:12px;
-    }
-    @media (max-width: 520px){
-      .forceRow{grid-template-columns:1fr}
-    }
-    .forceBtn{
-      border:1px solid #111;
-      border-radius:14px;
-      padding:14px 12px;
-      background:#111;
-      color:#fff;
-      font-weight:1200;
-      cursor:pointer;
-    }
-    .forceBtn.sub{
-      background:#fff;
-      color:#111;
-      border-color:var(--line);
-      font-weight:1100;
-    }
-    .forceBtn:hover{filter:brightness(1.02)}
-
-    /* ===== “やった” エフェクト（ボタン→本日達成へ飛ぶ） ===== */
-    .fly{
-      position:fixed;
-      z-index:9999;
-      pointer-events:none;
-      font-family:var(--mono);
-      font-weight:1200;
       font-size:14px;
-      padding:8px 10px;
-      border-radius:999px;
-      border:1px solid #111;
-      background:#111;
-      color:#fff;
-      transform: translate(-50%, -50%);
-      will-change: transform, opacity;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width: 380px;
     }
   </style>
 </head>
@@ -1399,25 +1189,11 @@
         <div class="label">育成</div>
       </button>
 
-      <!-- ★追加：育成アイコンの下に カレンダー / 分析 -->
-      <button class="navBtn" id="navCalendar">
+      <button class="navBtn" id="navRecords">
         <div class="ico">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M8 2v3M16 2v3"/><path d="M3 7h18"/><path d="M5 7v14a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7"/>
-            <path d="M7 11h4"/><path d="M7 15h6"/>
-          </svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2v3M16 2v3"/><path d="M3 7h18"/><path d="M5 7v14a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7"/><path d="M8 11h3"/><path d="M8 15h6"/></svg>
         </div>
-        <div class="label">カレンダー</div>
-      </button>
-
-      <button class="navBtn" id="navAnalysis">
-        <div class="ico">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M4 19V5"/><path d="M4 19h16"/>
-            <path d="M8 17V9"/><path d="M12 17V7"/><path d="M16 17v-5"/>
-          </svg>
-        </div>
-        <div class="label">分析</div>
+        <div class="label">達成記録</div>
       </button>
 
       <button class="navBtn" id="navBookmarks">
@@ -1437,6 +1213,7 @@
       <div class="sep"></div>
 
       <div class="userBox">
+        <!-- Lvリング + アイコン -->
         <div class="lvRingWrap" title="レベル / 経験値">
           <svg class="lvRingSvg" width="46" height="46" viewBox="0 0 46 46" aria-hidden="true">
             <circle class="lvRingBg" cx="23" cy="23" r="18"></circle>
@@ -1456,10 +1233,10 @@
         </div>
       </div>
 
+      <!-- XP / Lv detail -->
       <div class="xpBlock">
         <div class="xpTop">
           <span class="hBadge" id="levelBadge">Lv 1</span>
-          <!-- ★要望：キャラ一覧ボタンは育成の “目立たない所” → 右に小さく -->
           <button class="miniLinkBtn" id="openCharList">キャラ一覧</button>
         </div>
         <div style="display:flex; justify-content:space-between; gap:10px; align-items:center">
@@ -1481,9 +1258,11 @@
       <section class="panel" id="viewHome">
         <div class="headerBar">
           <div class="hTitle">習慣探し</div>
-          <div class="todayBadge" id="todayDoneBadge">本日 <strong>0</strong> 人が達成</div>
+          <!-- 本日 0 人が達成：タイトル右 -->
+          <div class="todayBadge" id="todayDoneBadge">本日 0 人が達成</div>
         </div>
 
+        <!-- TOP tags -->
         <div class="tagWrap">
           <div class="rankBox">
             <div class="rankTitle"><span>おすすめTOP</span></div>
@@ -1495,6 +1274,7 @@
           </div>
         </div>
 
+        <!-- Search + category + tag reset -->
         <div class="searchRow">
           <div class="searchBox">
             <input class="searchInput" id="q" placeholder="検索" />
@@ -1510,15 +1290,19 @@
           <button class="ctrlBtn" id="btnClearTag" title="タグ解除">タグ解除</button>
         </div>
 
+        <!-- list -->
         <div class="feedArea">
           <div class="feedHead">
             <div class="feedHeadLeft">
               <p class="feedLabel">一覧</p>
+
+              <!-- 並び替えを「一覧」横 -->
               <select class="ctrlSel" id="sortBy" title="並び替え">
                 <option value="new">新着</option>
                 <option value="rating">評価</option>
                 <option value="favCreators">フォロー中の人</option>
               </select>
+
               <div class="countSmall">表示 <span id="countShown">0</span></div>
             </div>
           </div>
@@ -1551,10 +1335,6 @@
 
               <div class="creatureBox">
                 <div class="pct" id="trainPct">0%</div>
-
-                <!-- ★追加：%の横に “残り日数/延長残り” を出す（JSで埋める） -->
-                <div class="thin" id="trainRemainText">残り — 日 / 延長 — 日</div>
-
                 <div class="trainBar"><div class="trainFill" id="trainFill"></div></div>
                 <div class="creatureEmoji" id="trainEmoji">🥚</div>
                 <div class="thin" id="trainStage">—</div>
@@ -1567,100 +1347,13 @@
         </div>
       </section>
 
-      <!-- ===== Calendar ===== -->
-      <section class="panel" id="viewCalendar" style="display:none">
+      <!-- ===== Records ===== -->
+      <section class="panel" id="viewRecords" style="display:none">
         <div class="headerBar">
-          <div class="hTitle">カレンダー</div>
-          <div class="hBadge" id="calHint">今月</div>
+          <div class="hTitle">達成記録</div>
+          <div class="hBadge">—</div>
         </div>
-        <div class="anaWrap">
-          <div class="calWrap">
-            <div class="calHead">
-              <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap">
-                <button class="btn" id="calPrev">＜</button>
-                <span class="hBadge" id="calMonthLabel">—</span>
-                <button class="btn" id="calNext">＞</button>
-              </div>
-              <span class="hBadge">絵文字：😊🙂😅</span>
-            </div>
-
-            <div class="calGrid" id="calGrid">
-              <!-- JSで曜日+日付セルを作る -->
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ===== Analysis ===== -->
-      <section class="panel" id="viewAnalysis" style="display:none">
-        <div class="headerBar">
-          <div class="hTitle">分析</div>
-          <div class="hBadge" id="anaHint">—</div>
-        </div>
-
-        <div class="anaWrap">
-          <!-- 上：3つの枠（育成中 / 育成完了 / リタイア） -->
-          <div>
-            <div class="anaRowHead">
-              <span class="hBadge">育成中 <span class="tinyNum blue" id="anaCountActive">0</span></span>
-              <span class="hBadge">育成完了 <span class="tinyNum green" id="anaCountCleared">0</span></span>
-              <span class="hBadge">リタイア <span class="tinyNum gray" id="anaCountRetired">0</span></span>
-            </div>
-
-            <div class="anaGrid3" style="margin-top:10px">
-              <div class="anaCard">
-                <div class="anaCardTitle">育成中（最近3つ）</div>
-                <div class="anaMetaRow" id="anaActiveRow"></div>
-                <button class="moreBtn" id="anaMoreActive">もっと見る</button>
-              </div>
-
-              <div class="anaCard">
-                <div class="anaCardTitle">育成完了（最近3つ）</div>
-                <div class="anaMetaRow" id="anaClearedRow"></div>
-                <button class="moreBtn" id="anaMoreCleared">もっと見る</button>
-              </div>
-
-              <div class="anaCard">
-                <div class="anaCardTitle">リタイア（最近3つ）</div>
-                <div class="anaMetaRow" id="anaRetiredRow"></div>
-                <button class="moreBtn" id="anaMoreRetired">もっと見る</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- 下：グラフ（棒・折れ線） -->
-          <div class="chartBox">
-            <p class="chartTitle">
-              <span>ためになるデータ（仮）</span>
-              <span class="hBadge">あなた/カテゴリ/作成者 比較</span>
-            </p>
-            <canvas class="chartCanvas" id="barChart" width="900" height="240"></canvas>
-          </div>
-
-          <div class="chartBox">
-            <p class="chartTitle">
-              <span>比較グラフ（折れ線）</span>
-              <span class="hBadge">成功率/休み/難易度</span>
-            </p>
-            <canvas class="chartCanvas" id="lineChart" width="900" height="240"></canvas>
-          </div>
-
-          <!-- 下：ランキング/見つけにくい情報（3つ並び） -->
-          <div class="anaGrid3">
-            <div class="anaCard">
-              <div class="anaCardTitle">成功率 高め 作成者TOP</div>
-              <div class="anaMetaRow" id="anaTopCreators"></div>
-            </div>
-            <div class="anaCard">
-              <div class="anaCardTitle">お気に入り育成（続いてる）</div>
-              <div class="anaMetaRow" id="anaTopHabits"></div>
-            </div>
-            <div class="anaCard">
-              <div class="anaCardTitle">失敗しやすい（悩みタグ/カテゴリ）</div>
-              <div class="anaMetaRow" id="anaHardTags"></div>
-            </div>
-          </div>
-        </div>
+        <div style="padding:12px" id="recordList"></div>
       </section>
 
       <!-- ===== Bookmarks ===== -->
@@ -1779,19 +1472,6 @@
     </div>
   </div>
 
-  <!-- ===== 3日クリア時の強制2択（戻れない） ===== -->
-  <div class="modalBg" id="clearChoiceBg">
-    <div class="modal">
-      <p class="forceTitle" id="clearChoiceTitle">クリアおめでとう！！</p>
-      <p class="obText" id="clearChoiceText" style="margin-top:8px">次はどうする？</p>
-
-      <div class="forceRow">
-        <button class="forceBtn" id="btnNewChallenge">新しい習慣に挑戦</button>
-        <button class="forceBtn sub" id="btnExtendChallenge">最後まで育成（残り4日）</button>
-      </div>
-    </div>
-  </div>
-
   <!-- ===== 評価（★☆） ===== -->
   <div class="modalBg" id="ratingBg">
     <div class="modal">
@@ -1814,10 +1494,10 @@
     <div class="modal">
       <h2>作成者</h2>
 
-      <div class="creatorHeader" style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; flex-wrap:wrap; margin-top:10px;">
-        <div class="creatorBig" style="display:flex; align-items:center; gap:10px; min-width:0;">
-          <div class="avatar" id="creatorAva" style="width:42px;height:42px;border-radius:50%">□</div>
-          <div class="creatorBigName" id="creatorName" style="font-weight:1100;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:380px;">—</div>
+      <div class="creatorHeader">
+        <div class="creatorBig">
+          <div class="bigAva" id="creatorAva">□</div>
+          <div class="creatorBigName" id="creatorName">—</div>
         </div>
         <button class="btn" id="creatorClose">閉じる</button>
       </div>
@@ -1837,1558 +1517,2695 @@
     </div>
   </div>
 
-  <!-- ===== Onboarding（初回だけ） ===== -->
-  <div class="modalBg" id="onboardingBg">
-    <div class="obCard">
-      <p class="obTitle" id="obHead">—</p>
-      <p class="obText" id="obBody">—</p>
-
-      <div class="obMiniArt" id="obArt">
-        <!-- JSで簡易イラスト（絵文字＋ミニカード風） -->
-      </div>
-
-      <div class="obDots" id="obDots"></div>
-
-      <div class="obFooter">
-        <button class="btn" id="obSkip">スキップ</button>
-        <button class="btn primary" id="obNext">次へ</button>
-      </div>
-    </div>
-  </div>
-
   <script type="module">
-    /* =========================
-      PART 2 / 3 で続きます
-      ここは “まだ途中” です（連結用）
-    ========================= */
-     /* ====== PART3 追加CSS ====== */
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-analytics.js";
 
-  /* Training（育成中）カード内：進捗を見やすく */
-  .sideMeta{font-family:var(--mono);}
+    import {
+      getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged,
+    } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
-  /* 分析：全件モーダル */
-  .anaAllBg{
-    position:fixed; inset:0;
-    background: rgba(0,0,0,.42);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    padding:18px;
-    z-index:200;
-  }
-  .anaAllBg.show{display:flex}
-  .anaAllCard{
-    width:min(860px, 100%);
-    max-height:min(78vh, 720px);
-    border:1px solid var(--line);
-    border-radius: 16px;
-    background:#fff;
-    box-shadow: var(--shadow);
-    display:flex;
-    flex-direction:column;
-    overflow:hidden;
-  }
-  .anaAllTop{
-    padding:12px 12px 10px;
-    border-bottom:1px solid var(--line);
-    display:flex;
-    align-items:flex-start;
-    justify-content:space-between;
-    gap:10px;
-  }
-  .anaAllTitle{
-    margin:0;
-    font-weight:1100;
-    letter-spacing:.05em;
-    font-size:14px;
-  }
-  .anaAllSub{
-    margin:6px 0 0;
-    color:var(--muted);
-    font-size:12px;
-    font-family:var(--mono);
-  }
-  .anaAllClose{
-    border:1px solid var(--line);
-    background:#fff;
-    border-radius: 12px;
-    padding:10px 12px;
-    font-weight:1100;
-    cursor:pointer;
-    white-space:nowrap;
-  }
-  .anaAllCtrls{
-    padding:10px 12px;
-    display:flex;
-    flex-wrap:wrap;
-    gap:8px;
-    border-bottom:1px solid var(--line);
-  }
-  .anaSel, .anaIn{
-    border:1px solid var(--line);
-    border-radius: 12px;
-    padding:10px 12px;
-    font-weight:1100;
-    background:#fff;
-    font-size:12px;
-  }
-  .anaIn{
-    flex:1;
-    min-width: 200px;
-    font-weight:900;
-  }
-  .anaAllBody{
-    padding:12px;
-    overflow:auto;
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-  }
-  .anaRowItem{
-    border:1px solid var(--line);
-    border-radius: 14px;
-    background:#fff;
-    box-shadow: var(--shadow);
-    padding:10px 12px;
-    display:flex;
-    gap:10px;
-    align-items:flex-start;
-    justify-content:space-between;
-  }
-  .anaRowL{min-width:0;}
-  .anaRowT{
-    margin:0;
-    font-weight:1100;
-    font-size:13px;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
-  .anaRowM{
-    margin-top:6px;
-    display:flex;
-    flex-wrap:wrap;
-    gap:6px;
-  }
-  .anaChip{
-    border:1px solid var(--line);
-    border-radius:999px;
-    padding:6px 8px;
-    font-family:var(--mono);
-    font-size:11px;
-    color:#111;
-    background:#fff;
-  }
-  .anaRowR{
-    display:flex;
-    flex-direction:column;
-    align-items:flex-end;
-    gap:6px;
-    flex-shrink:0;
-  }
-  .anaTag{
-    border:1px solid var(--line);
-    border-radius:999px;
-    padding:6px 8px;
-    font-weight:1100;
-    font-size:11px;
-    background:#fff;
-  }
-  .anaBtn{
-    border:1px solid var(--line);
-    background:#fff;
-    border-radius: 12px;
-    padding:9px 10px;
-    font-weight:1100;
-    cursor:pointer;
-    font-size:12px;
-  }
-</style>
+    import {
+      getFirestore,
+      collection, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc,
+      getDocs, query, orderBy, limit, serverTimestamp,
+      runTransaction, increment
+    } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-<!-- ====== PART3 追加HTML：分析 全件モーダル ====== -->
-<div class="anaAllBg" id="anaAllBg" aria-hidden="true">
-  <div class="anaAllCard">
-    <div class="anaAllTop">
-      <div style="min-width:0">
-        <p class="anaAllTitle">分析：全件</p>
-        <p class="anaAllSub" id="anaAllSub">—</p>
-      </div>
-      <button class="anaAllClose" id="anaAllClose">閉じる</button>
-    </div>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCvdaEW4o2y8rljlafXQJbGE-nuGQn9Q88",
+      authDomain: "zuzutomo-d8fa0.firebaseapp.com",
+      projectId: "zuzutomo-d8fa0",
+      storageBucket: "zuzutomo-d8fa0.firebasestorage.app",
+      messagingSenderId: "637121353766",
+      appId: "1:637121353766:web:dbfb13f85bfaf521616ee7",
+      measurementId: "G-C6K64YE13X"
+    };
 
-    <div class="anaAllCtrls">
-      <select class="anaSel" id="anaAllStatus">
-        <option value="all">すべて</option>
-        <option value="active">育成中</option>
-        <option value="cleared">完了</option>
-        <option value="retired">リタイア</option>
-        <option value="finished">終了</option>
-      </select>
+    const app = initializeApp(firebaseConfig);
+    try{ getAnalytics(app); }catch(e){}
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-      <select class="anaSel" id="anaAllSort">
-        <option value="recent">新しい順</option>
-        <option value="rate">成功率 高い順</option>
-        <option value="streak">継続日数（success）多い順</option>
-        <option value="rest">休み 多い順</option>
-      </select>
+    const $ = (id) => document.getElementById(id);
+    const escapeHtml = (s) => String(s ?? "")
+      .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;").replaceAll("'","&#39;");
 
-      <input class="anaIn" id="anaAllQ" placeholder="タイトルで検索（例：呼吸 / 片付け）" />
-    </div>
+    const nowLocal = () => new Date();
+    const fmtYMD = (d) => {
+      const y = d.getFullYear();
+      const m = String(d.getMonth()+1).padStart(2,"0");
+      const day = String(d.getDate()).padStart(2,"0");
+      return `${y}-${m}-${day}`;
+    };
+    const parseYMD = (s) => {
+      const raw = String(s||"").slice(0,10);
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(raw)) return null;
+      const [y,m,d] = raw.split("-").map(Number);
+      return new Date(y, m-1, d);
+    };
+    const daysBetween = (a, b) => {
+      const A = new Date(a.getFullYear(), a.getMonth(), a.getDate()).getTime();
+      const B = new Date(b.getFullYear(), b.getMonth(), b.getDate()).getTime();
+      return Math.round((B - A) / 86400000);
+    };
+    const msToMidnight = () => {
+      const n = nowLocal();
+      const next = new Date(n.getFullYear(), n.getMonth(), n.getDate()+1, 0,0,0,0);
+      return Math.max(0, next.getTime() - n.getTime());
+    };
+    const fmtCountdown = (ms) => {
+      const s = Math.floor(ms/1000);
+      const hh = String(Math.floor(s/3600)).padStart(2,"0");
+      const mm = String(Math.floor((s%3600)/60)).padStart(2,"0");
+      const ss = String(s%60).padStart(2,"0");
+      return `${hh}:${mm}:${ss}`;
+    };
 
-    <div class="anaAllBody" id="anaAllBody"></div>
-  </div>
-</div>
-
-<script type="module">
-/* =========================
-  PART3 / 3 追加JS
-  ※Part1の<script type="module">内に「追記」でも、末尾に別<script>でもOK
-========================= */
-
-  // ====== DOM ======
-  const anaAllBg = document.getElementById("anaAllBg");
-  const anaAllBody = document.getElementById("anaAllBody");
-  const anaAllClose = document.getElementById("anaAllClose");
-  const anaAllStatus = document.getElementById("anaAllStatus");
-  const anaAllSort = document.getElementById("anaAllSort");
-  const anaAllQ = document.getElementById("anaAllQ");
-  const anaAllSub = document.getElementById("anaAllSub");
-
-  // Part2で取っている anaShowAll / miniAnaMore があれば、それも活用
-  // （無かったら無視されます）
-  //   const anaShowAll = document.getElementById("anaShowAll");
-  //   const miniAnaMore = document.getElementById("miniAnaMore");
-
-  // ====== 進捗% / 残り日 表示を「3日/7日」両対応で厳密化 ======
-
-  function clamp(n,a,b){ return Math.max(a, Math.min(b, n)); }
-
-  function getTotalDays(ch){
-    // totalDays が無い古いデータ対策：3日
-    return Math.max(1, Number(ch.totalDays || 3));
-  }
-
-  function getDisplayDay(ch){
-    const t = getTotalDays(ch);
-    const d = Number(ch.day || 1);
-    // day は「次の予定日」を指して進むことがあるので、表示は 1..t に丸める
-    return clamp(d, 1, t);
-  }
-
-  function getRemainDays(ch){
-    const t = getTotalDays(ch);
-    const d = getDisplayDay(ch);
-    return Math.max(0, t - d + 1);
-  }
-
-  function calcSuccessRate(ch){
-    const done = Number(ch.successDays||0);
-    const rest = Number(ch.restDays||0);
-    const den = Math.max(1, done + rest);
-    return done / den; // 0..1
-  }
-
-  function growthPctDynamic(ch){
-    // 進捗は「日数（表示day）/totalDays」を主軸にしつつ
-    // done率が高いほど少し上振れ（見た目の気持ちよさ）
-    const t = getTotalDays(ch);
-    const d = getDisplayDay(ch);
-    const base = d / t; // 0..1
-    const rate = calcSuccessRate(ch); // 0..1
-    const boost = (rate - 0.5) * 0.10; // -0.05..+0.05 程度
-    return clamp((base + boost) * 100, 1, 100);
-  }
-
-  // ====== refreshSideActive を「残り日/進捗%」を必ず正しい表示へ上書き ======
-  // Part2で refreshSideActive を上書きしてる前提だけど、
-  // さらに表示部分だけここで確実に補正する（関数が存在しない場合は無視）
-  const _refreshSideActive_part3 = (typeof refreshSideActive === "function") ? refreshSideActive : null;
-
-  async function refreshSideActive(){
-    // Part2の refreshSideActive が既に存在するなら、そのまま使うのが一番安全
-    if(typeof _refreshSideActive_part3 === "function"){
-      await _refreshSideActive_part3();
-
-      // その後、描画済みDOMの meta 表示だけ補正（最終保険）
-      // sideActiveList 内の各 .sideItem を見て、data-habitid が無ければ補正できないのでスキップ
-      // → Part2の sideItem は data を持ってないので、ここでは補正しない（＝Part2表示に任せる）
-      return;
-    }
-  }
-
-  // ====== Training（育成中）ビューも「3/7対応」にする ======
-  // Part1の refreshTrain に寄せるより「表示ヘッダだけ」確実に整える
-  const _refreshTrain = (typeof refreshTrain === "function") ? refreshTrain : null;
-
-  async function refreshTrain(){
-    if(typeof _refreshTrain === "function"){
-      await _refreshTrain();
+    // ===== Category color (薄め) =====
+    const CAT_COLORS = {
+      "メンタル": { tint:"#fbfbff", line:"#dfe3ff" },
+      "睡眠":     { tint:"#fbfffb", line:"#d9f0dc" },
+      "運動":     { tint:"#fffafb", line:"#ffd7e4" },
+      "健康":     { tint:"#fbffff", line:"#d6f2f2" },
+      "生活":     { tint:"#fffffb", line:"#f0f0d6" },
+      "勉強":     { tint:"#fbfcff", line:"#e1e6ff" },
+      "英語":     { tint:"#fbffff", line:"#d7f1ff" },
+      "仕事":     { tint:"#fcfcfc", line:"#e6e6e6" },
+      "その他":   { tint:"#ffffff", line:"#e6e6e6" }
+    };
+    function applyCatVars(el, cat){
+      const c = CAT_COLORS[String(cat||"")] || { tint:"#ffffff", line:"#e6e6e6" };
+      el.style.setProperty("--catTint", c.tint);
+      el.style.setProperty("--catLine", c.line);
     }
 
-    // もし trainActiveList があるなら、そこに進捗を追記/補正したいが
-    // Part1のDOM構造が不明なので、ここでは“サブ文言だけ”更新する。
-    // （壊さない方針）
-    try{
-      if(!currentUser) return;
-      const actives = await loadActiveChallenges();
-      if(trainBadge){
-        const a = actives.length;
-        trainBadge.textContent = a ? `育成中 ${a}/3` : "育成中 0/3";
+    // ===== Hourly mascot (投稿後も1時間おきに変わる) =====
+    function hourKey(){
+      const d = nowLocal();
+      return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}-${d.getHours()}`;
+    }
+    function hash32(str){
+      let h = 2166136261;
+      for(let i=0;i<str.length;i++){
+        h ^= str.charCodeAt(i);
+        h = Math.imul(h, 16777619);
       }
-    }catch(e){}
-  }
-
-  // ====== 分析：全件モーダル ======
-  let anaAllCache = []; // loadChallengesの結果を保持
-
-  function statusLabel(st, totalDays){
-    if(st==="active") return "育成中";
-    if(st==="retired") return "リタイア";
-    if(st==="finished") return "終了";
-    if(st==="cleared"){
-      return (Number(totalDays)>=7) ? "育成完了(7)" : "育成完了(3)";
+      return (h>>>0);
     }
-    return String(st||"—");
-  }
-
-  function openAnaAll(){
-    anaAllBg.classList.add("show");
-    renderAnaAll();
-  }
-  function closeAnaAll(){
-    anaAllBg.classList.remove("show");
-  }
-
-  function sortAna(list, mode){
-    const arr = list.slice();
-    if(mode==="rate"){
-      arr.sort((a,b)=> calcSuccessRate(b) - calcSuccessRate(a));
-    }else if(mode==="streak"){
-      arr.sort((a,b)=> Number(b.successDays||0) - Number(a.successDays||0));
-    }else if(mode==="rest"){
-      arr.sort((a,b)=> Number(b.restDays||0) - Number(a.restDays||0));
-    }else{
-      // recent：loadChallenges が新しい順の想定（Part2と同じ）
+    function mascotEmojiFromHabitId(habitId){
+      const k = habitId + ":" + hourKey();
+      const v = hash32(k) % 6;
+      return ["🥚","🥚✨","🥚❖","🌰","🌰✨","🌰❖"][v];
     }
-    return arr;
-  }
 
-  function filterAna(list){
-    const st = anaAllStatus.value;
-    const q = (anaAllQ.value||"").trim().toLowerCase();
+    // ===== Elements =====
+    const navHome = $("navHome");
+    const navTrain = $("navTrain");
+    const navRecords = $("navRecords");
+    const navBookmarks = $("navBookmarks");
+    const navProfile = $("navProfile");
 
-    return list.filter(ch=>{
-      if(st!=="all" && String(ch.status||"")!==st) return false;
-      if(q){
-        const t = String(ch.habitTitle||"").toLowerCase();
-        if(!t.includes(q)) return false;
+    const viewHome = $("viewHome");
+    const viewTrain = $("viewTrain");
+    const viewRecords = $("viewRecords");
+    const viewBookmarks = $("viewBookmarks");
+    const viewProfile = $("viewProfile");
+
+    const loginGate = $("loginGate");
+    const gateLoginBtn = $("gateLoginBtn");
+
+    const userName = $("userName");
+    const userSmall = $("userSmall");
+    const userAvatar = $("userAvatar");
+    const followerMini = $("followerMini");
+
+    const levelBadge = $("levelBadge");
+    const xpText = $("xpText");
+    const xpRemain = $("xpRemain");
+    const todayDoneBadge = $("todayDoneBadge");
+    const openCharList = $("openCharList");
+
+    const lvRingFg = $("lvRingFg");
+    const lvNum = $("lvNum");
+    const xpPop = $("xpPop");
+
+    const sideActiveList = $("sideActiveList");
+
+    // Home
+    const feed = $("feed");
+    const qInput = $("q");
+    const btnSearch = $("btnSearch");
+    const categoryFilter = $("categoryFilter");
+    const sortBy = $("sortBy");
+    const btnClearTag = $("btnClearTag");
+    const rankReco = $("rankReco");
+    const rankTop = $("rankTop");
+    const countShown = $("countShown");
+
+    // FAB
+    const openPost = $("openPost");
+
+    // Post modal
+    const postBg = $("postBg");
+    const postClose = $("postClose");
+    const btnPost = $("btnPost");
+    const newTitle = $("newTitle");
+    const newAction = $("newAction");
+    const newTags = $("newTags");
+    const newCategory = $("newCategory");
+    const postCounter = $("postCounter");
+
+    // Name modal
+    const nameBg = $("nameBg");
+    const nameInput = $("nameInput");
+    const nameSave = $("nameSave");
+    const colorPick = $("colorPick");
+    const nameAvatar = $("nameAvatar");
+
+    // Category modal
+    const catBg = $("catBg");
+    const catList = $("catList");
+    const catClose = $("catClose");
+    const catSave = $("catSave");
+
+    // Difficulty
+    const diffBg = $("diffBg");
+    const diffTitle = $("diffTitle");
+    const diffClose = $("diffClose");
+
+    // Records/bookmarks/profile
+    const recordList = $("recordList");
+    const bmFeed = $("bmFeed");
+    const bmCount = $("bmCount");
+    const profileList = $("profileList");
+    const profileLv = $("profileLv");
+
+    // Profile auth buttons
+    const btnLogin = $("btnLogin");
+    const btnLogout = $("btnLogout");
+
+    // Rating
+    const ratingBg = $("ratingBg");
+    const ratingTitle = $("ratingTitle");
+    const starsRow = $("starsRow");
+    const commentBox = $("commentBox");
+    const ratingClose = $("ratingClose");
+    const ratingSave = $("ratingSave");
+    const reviewList = $("reviewList");
+
+    // Creator modal
+    const creatorBg = $("creatorBg");
+    const creatorClose = $("creatorClose");
+    const creatorAva = $("creatorAva");
+    const creatorName = $("creatorName");
+    const creatorPosts = $("creatorPosts");
+
+    // Char list
+    const charBg = $("charBg");
+    const charList = $("charList");
+    const charClose = $("charClose");
+
+    // Training
+    const trainHint = $("trainHint");
+    const trainSlot = $("trainSlot");
+    const trainHabitTitle = $("trainHabitTitle");
+    const trainPctText = $("trainPctText");
+    const trainPct = $("trainPct");
+    const trainFill = $("trainFill");
+    const trainEmoji = $("trainEmoji");
+    const trainStage = $("trainStage");
+    const trainPrev = $("trainPrev");
+    const trainNext = $("trainNext");
+    const btnSetAvatar = $("btnSetAvatar");
+    const trainCare = $("trainCare");
+
+    // ===== State =====
+    const CATS = ["メンタル","睡眠","運動","健康","生活","勉強","英語","仕事","その他"];
+
+    let currentUser = null;
+    let myProfile = null;
+
+    let selectedTag = "";
+    let cachedFavCreators = new Set();
+    let cachedBookmarks = new Set();
+
+    let activeHabitIds = new Set();
+
+    let diffTargetChallenge = null;
+
+    let ratingTargetHabit = null;
+    let ratingStars = 0;
+
+    let trainChallenges = [];
+    let trainIndex = 0;
+
+    // ===== Character system (一覧で卵/種だけ) =====
+    // ※種類を増やすなら：ここにemojiとminLvを追加していくだけでOK
+    const CHAR_TIERS = [
+      { minLv: 1, name: "卵", emoji: "🥚", type:"egg" },
+      { minLv: 2, name: "水玉卵", emoji: "🥚🫧", type:"egg" },
+      { minLv: 3, name: "光る卵", emoji: "🥚✨", type:"egg" },
+      { minLv: 4, name: "金の卵", emoji: "🥚🟡", type:"egg" },
+      { minLv: 5, name: "不思議な卵", emoji: "🥚❖", type:"egg" },
+      { minLv: 1, name: "種", emoji: "🌰", type:"seed" },
+      { minLv: 2, name: "芽の種", emoji: "🌰🌱", type:"seed" },
+      { minLv: 3, name: "光る種", emoji: "🌰✨", type:"seed" },
+      { minLv: 4, name: "花の種", emoji: "🌰🌸", type:"seed" },
+      { minLv: 5, name: "不思議な種", emoji: "🌰❖", type:"seed" },
+    ];
+
+    // 7段階（育成画面の仮：絵文字/記号で代用）
+    const GROW_STAGES = [
+      { max: 0,   label:"眠り" , emoji:"🥚" },
+      { max: 15,  label:"目覚め", emoji:"🥚🌤️" },
+      { max: 30,  label:"よちよち", emoji:"🐣" },
+      { max: 45,  label:"育ち", emoji:"🐤" },
+      { max: 60,  label:"準備", emoji:"✨" },
+      { max: 75,  label:"進化前", emoji:"❖" },
+      { max: 100, label:"完成", emoji:"👑" },
+    ];
+
+    // ===== XP / Level =====
+    function needXpForLevel(lv){ return 100 + Math.max(0, lv-1)*40; }
+    function computeLevelFromXp(totalXp){
+      let lv = 1;
+      let xp = Math.max(0, Number(totalXp||0));
+      while(true){
+        const need = needXpForLevel(lv);
+        if(xp >= need){ xp -= need; lv++; continue; }
+        return { lv, cur: xp, need };
       }
-      return true;
-    });
-  }
-
-  function renderAnaAll(){
-    if(!anaAllBody) return;
-
-    const base = anaAllCache || [];
-    const filtered = filterAna(base);
-    const sorted = sortAna(filtered, anaAllSort.value);
-
-    anaAllSub.textContent = `件数 ${sorted.length} / 全体 ${base.length}`;
-
-    anaAllBody.innerHTML = "";
-    if(sorted.length===0){
-      const empty = document.createElement("div");
-      empty.className = "review";
-      empty.innerHTML = `<div class="reviewText">データがまだありません。</div>`;
-      anaAllBody.appendChild(empty);
-      return;
     }
 
-    for(const ch of sorted){
-      const total = getTotalDays(ch);
-      const day = getDisplayDay(ch);
-      const remain = getRemainDays(ch);
-      const rate = calcSuccessRate(ch);
-      const prog = growthPctDynamic(ch);
+    function setRingProgress(pct){
+      const r = 18;
+      const C = 2 * Math.PI * r;
+      const p = Math.max(0, Math.min(1, pct));
+      lvRingFg.style.strokeDasharray = String(C);
+      lvRingFg.style.strokeDashoffset = String(C * (1 - p));
+    }
 
-      const row = document.createElement("div");
-      row.className = "anaRowItem";
+    function popXp(add){
+      if(!xpPop) return;
+      xpPop.textContent = `+${add}`;
+      xpPop.classList.add("show");
+      setTimeout(()=> xpPop.classList.remove("show"), 2000);
+    }
 
-      const stLabel = statusLabel(ch.status, total);
+    function setXpUI(){
+      const total = Number(myProfile?.xpTotal||0);
+      const { lv, cur, need } = computeLevelFromXp(total);
 
-      row.innerHTML = `
-        <div class="anaRowL">
-          <p class="anaRowT">${escapeHtml(ch.habitTitle||"")}</p>
-          <div class="anaRowM">
-            <span class="anaChip">${escapeHtml(stLabel)}</span>
-            <span class="anaChip">day ${day}/${total}</span>
-            <span class="anaChip">残り ${remain}</span>
-            <span class="anaChip">成功 ${Number(ch.successDays||0)}</span>
-            <span class="anaChip">休み ${Number(ch.restDays||0)}</span>
-            <span class="anaChip">成功率 ${(rate*100).toFixed(0)}%</span>
-            <span class="anaChip">進捗 ${prog.toFixed(0)}%</span>
-          </div>
-        </div>
-        <div class="anaRowR">
-          <span class="anaTag">${escapeHtml((ch.category||"")) || "—"}</span>
-          <button class="anaBtn" data-act="jump">この習慣を見る</button>
-        </div>
-      `;
+      myProfile.level = lv;
+      myProfile.xpCur = cur;
+      myProfile.xpNeed = need;
 
-      row.querySelector('[data-act="jump"]').addEventListener("click", async ()=>{
-        // 既存UIの検索欄へタイトルを入れてホームに戻す（最小で迷子防止）
-        try{
-          closeAnaAll();
-          navHome?.click?.();
-          if(searchIn){
-            searchIn.value = ch.habitTitle || "";
-            await refreshHome();
-            window.scrollTo({ top: 0, behavior: "smooth" });
-          }
-        }catch(e){}
+      levelBadge.textContent = `Lv ${lv}`;
+      profileLv.textContent = `Lv ${lv}`;
+      lvNum.textContent = String(lv);
+
+      xpText.textContent = `${cur} / ${need}`;
+      xpRemain.textContent = `次まで ${Math.max(0, need - cur)}`;
+
+      setRingProgress(need ? (cur/need) : 0);
+    }
+
+    async function addXp(amount){
+      const add = Math.max(0, Math.floor(amount||0));
+      if(!add) return;
+
+      popXp(add);
+
+      await runTransaction(db, async (tx)=>{
+        const uref = doc(db, "users", currentUser.uid);
+        const us = await tx.get(uref);
+        if(!us.exists()) return;
+        const u = us.data();
+        tx.update(uref, { xpTotal: Number(u.xpTotal||0) + add, updatedAt: serverTimestamp() });
       });
 
-      anaAllBody.appendChild(row);
+      const snap = await getDoc(doc(db,"users",currentUser.uid));
+      myProfile = snap.data();
+      setXpUI();
+      applyUserHeader();
     }
-  }
 
-  anaAllClose?.addEventListener("click", closeAnaAll);
-  anaAllBg?.addEventListener("click", (e)=>{
-    // 背景クリックで閉じる
-    if(e.target === anaAllBg) closeAnaAll();
-  });
-  anaAllStatus?.addEventListener("change", renderAnaAll);
-  anaAllSort?.addEventListener("change", renderAnaAll);
-  anaAllQ?.addEventListener("input", ()=>{
-    // 入力中は軽く間引き
-    clearTimeout(window.__anaQTimer);
-    window.__anaQTimer = setTimeout(renderAnaAll, 120);
-  });
-
-  // Part2の「もっと見る」ボタンから全件モーダルを開く
-  try{
-    const anaShowAll = document.getElementById("anaShowAll");
-    const miniAnaMore = document.getElementById("miniAnaMore");
-
-    anaShowAll?.addEventListener("click", openAnaAll);
-    miniAnaMore?.addEventListener("click", openAnaAll);
-  }catch(e){}
-
-  // ====== refreshAnalytics で「もっと見る」が押せるように：cache更新 ======
-  const _refreshAnalytics_part3 = (typeof refreshAnalytics === "function") ? refreshAnalytics : null;
-
-  async function refreshAnalytics(){
-    if(typeof _refreshAnalytics_part3 === "function"){
-      await _refreshAnalytics_part3();
+    // ===== Helpers =====
+    function setAvatarColor(el, color){
+      el.style.background = String(color||"#111111");
+      el.style.color = "#fff";
+      el.textContent = "□";
     }
-    try{
-      if(!currentUser) return;
-      // 全件モーダル用キャッシュ（最新120件）
-      anaAllCache = await loadChallenges(120);
-    }catch(e){}
-  }
 
-  // ====== 起動時：ログイン済みなら cache 更新 ======
-  if(currentUser){
-    // 既存の描画を壊さない範囲で、分析cacheだけ確保
-    try{
-      anaAllCache = await loadChallenges(120);
-    }catch(e){}
-  }
+    function showOnly(section){
+      viewHome.style.display = section==="home" ? "" : "none";
+      viewTrain.style.display = section==="train" ? "" : "none";
+      viewRecords.style.display = section==="records" ? "" : "none";
+      viewBookmarks.style.display = section==="bookmarks" ? "" : "none";
+      viewProfile.style.display = section==="profile" ? "" : "none";
 
-  /* =========================
-    ここまでで完了！
+      navHome.classList.toggle("active", section==="home");
+      navTrain.classList.toggle("active", section==="train");
+      navRecords.classList.toggle("active", section==="records");
+      navBookmarks.classList.toggle("active", section==="bookmarks");
+      navProfile.classList.toggle("active", section==="profile");
 
-    ✅ Part3で入ったもの
-    - 3日/7日どちらでも「進捗%」「残り日」「day/total」を正しく扱う関数群
-    - 分析の「全件」モーダル（検索・並び替え・ステータス絞り込み）
-    - 「この習慣を見る」ボタン（ホーム検索へジャンプ）
+      openPost.classList.toggle("show", section==="home");
 
-    次やるなら（必要なら言って）
-    - 習慣カードの「平均日数/成功率」を Firestore で自動集計（rating送信時・クリア時に更新）
-    - 分析の“苦手カテゴリ”を本当にカテゴリ別推移で出す（色分け/凡例付き）
-    - 育成キャラの成長段階（卵→…）を day と successRate に合わせて固定ルールで変える
-  ========================= */
+      if(section==="records") refreshRecords();
+      if(section==="bookmarks") refreshBookmarksView();
+      if(section==="profile") refreshProfile();
+      if(section==="train") refreshTrain();
+    }
 
-</script>
-</body>
-</html>
-<!-- =========================
-  PART 1 / 3 ここまで
-========================= -->
-<!-- =========================
-  PART 2 / 3
-  ※Part1の続きとして「そのまま下に貼り足す」想定です
-  （DOCTYPE〜head途中などは重複させないでください）
-========================= -->
+    // ===== Auth =====
+    async function login(){
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+    }
+    async function logout(){
+      await signOut(auth);
+    }
+    gateLoginBtn.addEventListener("click", async ()=>{ try{ await login(); }catch(e){ alert("ログイン失敗"); } });
+    btnLogin.addEventListener("click", async ()=>{ try{ await login(); }catch(e){ alert("ログイン失敗"); } });
+    btnLogout.addEventListener("click", async ()=>{ try{ await logout(); }catch(e){ alert("ログアウト失敗"); } });
 
-<style>
-  /* ====== PART2 追加/上書きCSS ====== */
+    // ===== Name modal =====
+    function openNameModal(){
+      nameInput.value = "";
+      nameSave.disabled = true;
+      const c = myProfile?.avatarColor || "#111111";
+      colorPick.value = c;
+      setAvatarColor(nameAvatar, c);
+      nameBg.classList.add("show");
+    }
+    function closeNameModal(){ nameBg.classList.remove("show"); }
+    nameInput.addEventListener("input", ()=>{ nameSave.disabled = nameInput.value.trim().length<1; });
+    colorPick.addEventListener("change", ()=> setAvatarColor(nameAvatar, colorPick.value));
 
-  /* 画面が黒くなる overlay 機能を完全排除（描画もhoverも無効化） */
-  .overlay{display:none !important;}
-  .habitCard:hover .overlay{display:none !important;}
-  .habitCard.pressing .overlay{display:none !important;}
+    nameSave.addEventListener("click", async ()=>{
+      const nm = nameInput.value.trim().slice(0,16);
+      if(!nm) return;
+      const color = colorPick.value || "#111111";
 
-  /* 4つの指標を「ぱっと見」化：少し大きめ＆詰める */
-  .statPill{
-    padding:7px 10px;
-    font-size:12.5px;
-  }
-  .statLine{gap:8px;}
-  .statsRow{gap:8px;}
+      await updateDoc(doc(db,"users",currentUser.uid), { name: nm, avatarColor: color, updatedAt: serverTimestamp() });
+      myProfile.name = nm;
+      myProfile.avatarColor = color;
 
-  /* カテゴリ線を少し濃く（色を濃く見せる） */
-  .habitCard{ border-width:1.2px; }
-  .thumb{ border-bottom-width:1.2px; }
+      closeNameModal();
 
-  /* 左カラム：育成アイコンの下に置く小パネル */
-  .miniPanel{
-    border:1px solid var(--line);
-    border-radius: 12px;
-    background:#fff;
-    box-shadow: var(--shadow);
-    padding:10px;
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-  }
-  .miniPanelTitle{
-    font-weight:1100;
-    font-size:12px;
-    letter-spacing:.06em;
-    color:var(--muted);
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-  }
+      if(!(myProfile?.preferredCategory||"")) openCategoryModal();
+      await afterLoginWarm();
+    });
 
-  /* ミニカレンダー */
-  .miniCalHead{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:8px;
-  }
-  .miniCalMonth{
-    font-weight:1100;
-    font-size:12px;
-    font-family:var(--mono);
-    color:#111;
-    white-space:nowrap;
-  }
-  .miniCalGrid{
-    display:grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap:6px;
-  }
-  .miniCalDow{
-    font-size:10px;
-    color:var(--muted);
-    text-align:center;
-    font-family:var(--mono);
-  }
-  .miniCalCell{
-    border:1px solid var(--line);
-    border-radius:10px;
-    min-height:34px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    gap:2px;
-    background:#fff;
-    user-select:none;
-  }
-  .miniCalCell.today{
-    border-color:#111;
-  }
-  .miniCalDay{
-    font-size:10px;
-    color:var(--muted);
-    font-family:var(--mono);
-    line-height:1;
-  }
-  .miniCalStamp{
-    font-size:14px;
-    line-height:1;
-    min-height:16px;
-  }
+    // ===== Category modal =====
+    let catSelected = "";
+    function openCategoryModal(){
+      catSelected = "";
+      catSave.disabled = true;
+      catList.innerHTML = "";
+      for(const c of CATS){
+        const b = document.createElement("button");
+        b.className = "btn";
+        b.textContent = c;
+        applyCatButton(b, c, false);
+        b.addEventListener("click", ()=>{
+          catSelected = c;
+          [...catList.querySelectorAll(".btn")].forEach(x=>{
+            x.classList.remove("primary");
+            x.style.borderColor = "var(--line)";
+            x.style.background = "#fff";
+          });
+          b.classList.add("primary");
+          applyCatButton(b, c, true);
+          catSave.disabled = false;
+        });
+        catList.appendChild(b);
+      }
+      catBg.classList.add("show");
+    }
+    function applyCatButton(btn, cat, selected){
+      const c = CAT_COLORS[String(cat)] || { tint:"#fff", line:"#e6e6e6" };
+      btn.style.borderColor = c.line;
+      btn.style.background = selected ? c.line : "#fff";
+    }
+    function closeCategoryModal(){ catBg.classList.remove("show"); }
+    catClose.addEventListener("click", closeCategoryModal);
+    catSave.addEventListener("click", async ()=>{
+      if(!catSelected) return;
+      await updateDoc(doc(db,"users",currentUser.uid), { preferredCategory: catSelected, updatedAt: serverTimestamp() });
+      myProfile.preferredCategory = catSelected;
+      closeCategoryModal();
 
-  /* 分析ミニ */
-  .mini3Grid{
-    display:grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap:8px;
-    align-items:stretch;
-  }
-  .miniCard{
-    border:1px solid var(--line);
-    border-radius: 12px;
-    padding:10px;
-    background:#fff;
-    box-shadow: var(--shadow);
-    min-width:0;
-    position:relative;
-    overflow:hidden;
-  }
-  .miniCardTitle{
-    font-weight:1100;
-    font-size:12px;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    margin:0;
-  }
-  .miniCardSub{
-    margin-top:6px;
-    font-size:11px;
-    color:var(--muted);
-    font-family:var(--mono);
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
-  .miniCorner{
-    position:absolute;
-    top:8px;
-    right:8px;
-    font-family:var(--mono);
-    font-size:10px;
-    font-weight:1100;
-    padding:4px 6px;
-    border-radius:999px;
-    border:1px solid var(--line);
-    background:#fff;
-    color:#111;
-    opacity:.95;
-  }
-  .miniCorner.active{border-color:#0b6cff; color:#0b6cff;}
-  .miniCorner.done3{border-color:#10a85a; color:#10a85a;}
-  .miniCorner.done7{border-color:#ff8a00; color:#ff8a00;}
-  .miniCorner.retired{border-color:#e00000; color:#e00000;}
+      categoryFilter.value = catSelected;
+      await refreshHome();
+    });
 
-  .miniMoreBtn{
-    border:1px solid var(--line);
-    background:#fff;
-    border-radius: 10px;
-    padding:8px 10px;
-    cursor:pointer;
-    font-weight:1100;
-    font-size:12px;
-    width:fit-content;
-    margin-left:auto;
-    opacity:.9;
-  }
-  .miniMoreBtn:hover{background:#fafafa; opacity:1;}
+    // ===== Post modal =====
+    function openPostModal(){
+      newTitle.value = "";
+      newTags.value = "";
+      newCategory.value = "";
+      newAction.value = "";
+      updatePostCounter();
+      postBg.classList.add("show");
+    }
+    function closePostModal(){ postBg.classList.remove("show"); }
+    openPost.addEventListener("click", ()=> openPostModal());
+    postClose.addEventListener("click", closePostModal);
+    postBg.addEventListener("click", (e)=>{ if(e.target===postBg) closePostModal(); });
 
-  /* 右メイン：分析ビュー */
-  .anaWrap{padding:12px; display:flex; flex-direction:column; gap:12px;}
-  .anaRow{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    flex-wrap:wrap;
-  }
-  .anaTitle{
-    font-weight:1100;
-    font-size:13px;
-    letter-spacing:.06em;
-    color:#111;
-  }
-  .anaGrid{
-    display:grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap:10px;
-  }
-  @media (max-width: 980px){
-    .anaGrid{grid-template-columns: repeat(2, 1fr);}
-  }
-  @media (min-width: 1200px){
-    .anaGrid{grid-template-columns: repeat(4, 1fr);}
-  }
+    function updatePostCounter(){ postCounter.textContent = `${newAction.value.length} / 40`; }
+    newAction.addEventListener("input", updatePostCounter);
 
-  /* 簡易チャート */
-  .chartBox{
-    border:1px solid var(--line);
-    border-radius: 14px;
-    background:#fff;
-    box-shadow: var(--shadow);
-    padding:12px;
-  }
-  .chartHead{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    margin-bottom:10px;
-  }
-  .chartTitle{
-    font-weight:1100;
-    font-size:12px;
-    color:var(--muted);
-    letter-spacing:.06em;
-  }
-  canvas.chart{
-    width:100%;
-    height:220px;
-    display:block;
-  }
+    btnPost.addEventListener("click", async ()=>{
+      const title = newTitle.value.trim();
+      const action = newAction.value.trim();
+      const tags = newTags.value.split(",").map(s=>s.trim()).filter(Boolean).slice(0,8);
+      const category = String(newCategory.value||"").trim();
 
-  /* 3日クリア時：強制2択モーダル */
-  .choiceBg{
-    position:fixed; inset:0;
-    background: rgba(0,0,0,.45);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    padding:18px;
-    z-index:180;
-  }
-  .choiceBg.show{display:flex}
-  .choiceCard{
-    width:min(520px, 100%);
-    border:1px solid var(--line);
-    border-radius: 16px;
-    background:#fff;
-    box-shadow: var(--shadow);
-    padding:14px;
-  }
-  .choiceTitle{
-    margin:0;
-    font-weight:1100;
-    font-size:15px;
-    letter-spacing:.04em;
-  }
-  .choiceText{
-    margin:10px 0 0;
-    color:var(--muted);
-    font-size:13px;
-    line-height:1.6;
-  }
-  .choiceBtns{
-    display:grid;
-    grid-template-columns: 1fr 1fr;
-    gap:10px;
-    margin-top:12px;
-  }
-  .choiceBtn{
-    border:1px solid #111;
-    background:#111;
-    color:#fff;
-    border-radius: 14px;
-    padding:12px 12px;
-    font-weight:1100;
-    cursor:pointer;
-    text-align:center;
-  }
-  .choiceBtn.sub{
-    background:#fff;
-    color:#111;
-  }
-  .choiceBtn:hover{filter:brightness(1.03)}
-  .choiceBtn:disabled{opacity:.6; cursor:not-allowed}
+      if(title.length<2){ alert("タイトル短い"); return; }
+      if(action.length<2){ alert("やること短い"); return; }
+      if(action.length>40){ alert("40文字以内"); return; }
 
-  /* Doneエフェクト（ボタン→本日達成へ飛ぶ） */
-  .flyPlus{
-    position:fixed;
-    z-index:999;
-    width:26px; height:26px;
-    border-radius:999px;
-    border:1px solid var(--line);
-    background:#111;
-    color:#fff;
-    font-family:var(--mono);
-    font-weight:1100;
-    font-size:12px;
-    display:grid;
-    place-items:center;
-    pointer-events:none;
-    transform: translate(-50%,-50%);
-    opacity:0;
-  }
+      try{
+        const created = nowLocal();
+        await addDoc(collection(db, "habits"), {
+          title, action, tags, category,
+          creatorUid: currentUser.uid,
+          creatorName: myProfile?.name || (currentUser.displayName || "作成者"),
+          creatorPhoto: currentUser.photoURL || "",
+          creatorColor: myProfile?.avatarColor || "#111111",
 
-  /* オンボーディング（4コマ） */
-  .onbBg{
-    position:fixed; inset:0;
-    background: rgba(0,0,0,.40);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    padding:18px;
-    z-index:190;
-  }
-  .onbBg.show{display:flex}
-  .onbCard{
-    width:min(420px, 100%);
-    border:1px solid var(--line);
-    border-radius: 16px;
-    background:#fff;
-    box-shadow: var(--shadow);
-    padding:14px;
-  }
-  .onbHead{
-    display:flex;
-    align-items:flex-start;
-    justify-content:space-between;
-    gap:10px;
-  }
-  .onbH{
-    margin:0;
-    font-weight:1100;
-    font-size:15px;
-    letter-spacing:.04em;
-  }
-  .onbP{
-    margin:8px 0 0;
-    color:#111;
-    font-size:13px;
-    line-height:1.6;
-  }
-  .onbMini{
-    margin-top:10px;
-    border:1px solid var(--line);
-    border-radius: 14px;
-    padding:10px;
-    background:#fff;
-    box-shadow: var(--shadow);
-  }
-  .onbDots{display:flex; gap:6px; justify-content:center; margin-top:10px;}
-  .dot{
-    width:8px;height:8px;border-radius:999px;
-    border:1px solid var(--line);
-    background:#fff;
-  }
-  .dot.on{background:#111; border-color:#111;}
-  .onbFoot{
-    display:flex;
-    justify-content:space-between;
-    gap:10px;
-    margin-top:12px;
-  }
-  .onbBtn{
-    border:1px solid var(--line);
-    background:#fff;
-    border-radius: 12px;
-    padding:10px 12px;
-    font-weight:1100;
-    cursor:pointer;
-  }
-  .onbBtn.primary{
-    border-color:#111;
-    background:#111;
-    color:#fff;
-  }
-</style>
+          createdAt: serverTimestamp(),
+          createdAtYMD: fmtYMD(created),
+          updatedAt: serverTimestamp(),
 
-<!-- ====== PART2 追加HTML（既存のbody内、左navのxpBlockの直後に挿入） ======
-  1) ミニカレンダー
-  2) ミニ分析（3枚カード）
-  ※Part1のHTMLに「同じ場所」に貼ってください
--->
+          avgRating: 0,
+          ratingCount: 0,
+          participantsCount: 0,
+          avgDays: 0,
+          successRate: 0,
 
-<!--
-  ▼ここを Part1 の「xpBlock」の直後に貼る（sepの前あたりが自然）
--->
-<!--
-<div class="miniPanel" id="miniCalendarPanel">
-  <div class="miniPanelTitle">
-    <span>カレンダー</span>
-    <span class="miniCalMonth" id="miniCalMonth">—</span>
-  </div>
-  <div class="miniCalGrid" id="miniCalGrid"></div>
-</div>
+          baseHabitId: "",
+          version: 1
+        });
 
-<div class="miniPanel" id="miniAnalyticsPanel">
-  <div class="miniPanelTitle">
-    <span>分析</span>
-    <button class="miniMoreBtn" id="miniAnaMore">もっと見る</button>
-  </div>
-  <div class="mini3Grid" id="miniAnaCards"></div>
-</div>
--->
+        await addXp(8);
 
-<!-- ====== PART2 追加HTML（右メイン：Records を “分析” に差し替え） ======
-  Part1の navRecordsラベル「達成記録」を「分析」にして、
-  viewRecords の中身を下の viewAnalytics に差し替えてください。
--->
-<!--
-<section class="panel" id="viewAnalytics" style="display:none">
-  <div class="headerBar">
-    <div class="hTitle">分析</div>
-    <div class="hBadge" id="anaBadge">—</div>
-  </div>
-
-  <div class="anaWrap">
-    <div class="anaRow">
-      <div class="anaTitle">最近の育成</div>
-      <button class="miniMoreBtn" id="anaShowAll">もっと見る</button>
-    </div>
-
-    <div class="anaGrid" id="anaRecentGrid"></div>
-
-    <div class="chartBox">
-      <div class="chartHead">
-        <div class="chartTitle">日別：達成/休み/未報告（棒）</div>
-        <div class="hBadge" id="chartRange1">直近14日</div>
-      </div>
-      <canvas class="chart" id="chartBars"></canvas>
-    </div>
-
-    <div class="chartBox">
-      <div class="chartHead">
-        <div class="chartTitle">カテゴリ別：成功率（折れ線比較）</div>
-        <div class="hBadge" id="chartRange2">直近30件</div>
-      </div>
-      <canvas class="chart" id="chartLines"></canvas>
-    </div>
-
-    <div class="anaRow">
-      <div class="anaTitle">気づき（自動）</div>
-      <div class="hBadge" id="insightBadge">—</div>
-    </div>
-    <div class="review" id="insightBox">
-      <div class="reviewText">—</div>
-    </div>
-  </div>
-</section>
--->
-
-<!-- ====== PART2 追加HTML：3日クリア2択（強制） ====== -->
-<div class="choiceBg" id="clearChoiceBg" aria-hidden="true">
-  <div class="choiceCard">
-    <p class="choiceTitle" id="clearChoiceTitle">クリアおめでとう！！</p>
-    <p class="choiceText" id="clearChoiceText">3日クリア！次へ行く？それとも最後まで育成する？</p>
-    <div class="choiceBtns">
-      <button class="choiceBtn sub" id="btnChoiceNew">新しい習慣に挑戦</button>
-      <button class="choiceBtn" id="btnChoiceExtend">最後まで育成（残り4日）</button>
-    </div>
-  </div>
-</div>
-
-<!-- ====== PART2 追加HTML：オンボーディング（4コマ） ====== -->
-<div class="onbBg" id="onbBg" aria-hidden="true">
-  <div class="onbCard">
-    <div class="onbHead">
-      <div style="min-width:0">
-        <p class="onbH" id="onbH">—</p>
-        <p class="onbP" id="onbP">—</p>
-      </div>
-      <button class="onbBtn" id="onbSkip">スキップ</button>
-    </div>
-
-    <div class="onbMini" id="onbMini">
-      <!-- ここはJSで差し替え（絵文字+ミニカード風） -->
-      <div class="reviewText" id="onbArt" style="margin:0; white-space:pre-line;">—</div>
-    </div>
-
-    <div class="onbDots" id="onbDots"></div>
-
-    <div class="onbFoot">
-      <button class="onbBtn" id="onbBack">戻る</button>
-      <button class="onbBtn primary" id="onbNext">次へ</button>
-    </div>
-  </div>
-</div>
-
-<script type="module">
-/* =========================
-  PART2 / 3 追加JS
-  ※Part1の<script type="module"> の中に「追記」してください
-========================= */
-
-  // ====== 追加DOM（Part1で $ が定義済み前提） ======
-  const miniCalMonth = document.getElementById("miniCalMonth");
-  const miniCalGrid  = document.getElementById("miniCalGrid");
-  const miniAnaCards = document.getElementById("miniAnaCards");
-  const miniAnaMore  = document.getElementById("miniAnaMore");
-
-  const clearChoiceBg = document.getElementById("clearChoiceBg");
-  const btnChoiceNew = document.getElementById("btnChoiceNew");
-  const btnChoiceExtend = document.getElementById("btnChoiceExtend");
-
-  const onbBg   = document.getElementById("onbBg");
-  const onbH    = document.getElementById("onbH");
-  const onbP    = document.getElementById("onbP");
-  const onbArt  = document.getElementById("onbArt");
-  const onbDots = document.getElementById("onbDots");
-  const onbSkip = document.getElementById("onbSkip");
-  const onbBack = document.getElementById("onbBack");
-  const onbNext = document.getElementById("onbNext");
-
-  // 分析ビュー（存在する場合だけ）
-  const viewAnalytics = document.getElementById("viewAnalytics");
-  const anaBadge = document.getElementById("anaBadge");
-  const anaRecentGrid = document.getElementById("anaRecentGrid");
-  const chartBars = document.getElementById("chartBars");
-  const chartLines = document.getElementById("chartLines");
-  const insightBadge = document.getElementById("insightBadge");
-  const insightBox = document.getElementById("insightBox");
-  const anaShowAll = document.getElementById("anaShowAll");
-
-  // navRecords を “分析” にする（Part1側で id は navRecords のまま想定）
-  const navAna = document.getElementById("navRecords");
-
-  // ====== Firestore追加（Part1で import 済み前提） ======
-  // ここでは関数だけ追加で使う（collection/doc/getDocs等は既にimport済み）
-
-  // ====== 3日クリアを基本にするための定数 ======
-  const BASE_CLEAR_DAYS = 3;
-  const EXTEND_TOTAL_DAYS = 7;
-
-  // ====== 日付キー ======
-  const ymd = (d=new Date()) => {
-    const y = d.getFullYear();
-    const m = String(d.getMonth()+1).padStart(2,"0");
-    const day = String(d.getDate()).padStart(2,"0");
-    return `${y}-${m}-${day}`;
-  };
-
-  // ====== カレンダー：今日の絵文字スタンプ保存 ======
-  // 保存先：userDailyStamps/{uid}/items/{YYYY-MM-DD}  { emoji:"😊"|"🙂"|"😅", updatedAt }
-  async function setTodayStamp(emoji){
-    if(!currentUser) return;
-    const id = ymd(new Date());
-    const ref = doc(db, "userDailyStamps", currentUser.uid, "items", id);
-    await setDoc(ref, { emoji, updatedAt: serverTimestamp() }, { merge:true });
-  }
-  async function loadMonthStamps(year, monthIndex0){
-    if(!currentUser) return new Map();
-    // 単純に最近60件を読んで月内だけ拾う（軽量＆実装簡単）
-    const mp = new Map();
-    const qs = await getDocs(query(
-      collection(db, "userDailyStamps", currentUser.uid, "items"),
-      orderBy("updatedAt","desc"),
-      limit(90)
-    ));
-    const ym = `${year}-${String(monthIndex0+1).padStart(2,"0")}-`;
-    qs.forEach(s=>{
-      if(s.id.startsWith(ym)){
-        mp.set(s.id, String(s.data()?.emoji||""));
+        closePostModal();
+        await refreshHome();
+        await refreshProfile();
+      }catch(e){
+        alert("投稿失敗");
       }
     });
-    return mp;
-  }
 
-  function renderMiniCalendar(stampsMap){
-    if(!miniCalGrid || !miniCalMonth) return;
-
-    const now = new Date();
-    const Y = now.getFullYear();
-    const M = now.getMonth(); // 0-index
-    miniCalMonth.textContent = `${Y}-${String(M+1).padStart(2,"0")}`;
-
-    miniCalGrid.innerHTML = "";
-
-    const dows = ["日","月","火","水","木","金","土"];
-    for(const w of dows){
-      const el = document.createElement("div");
-      el.className = "miniCalDow";
-      el.textContent = w;
-      miniCalGrid.appendChild(el);
-    }
-
-    const first = new Date(Y, M, 1);
-    const last  = new Date(Y, M+1, 0);
-    const startPad = first.getDay(); // 0=Sun
-
-    // pad
-    for(let i=0;i<startPad;i++){
-      const empty = document.createElement("div");
-      empty.style.opacity = "0";
-      miniCalGrid.appendChild(empty);
-    }
-
-    const todayKey = ymd(now);
-
-    for(let day=1; day<=last.getDate(); day++){
-      const date = new Date(Y, M, day);
-      const key = ymd(date);
-      const cell = document.createElement("div");
-      cell.className = "miniCalCell" + (key===todayKey ? " today" : "");
-
-      const d = document.createElement("div");
-      d.className = "miniCalDay";
-      d.textContent = String(day);
-
-      const st = document.createElement("div");
-      st.className = "miniCalStamp";
-      st.textContent = stampsMap.get(key) || "";
-
-      cell.appendChild(d);
-      cell.appendChild(st);
-      miniCalGrid.appendChild(cell);
-    }
-  }
-
-  async function refreshMiniCalendar(){
-    if(!currentUser) return;
-    const now = new Date();
-    const stamps = await loadMonthStamps(now.getFullYear(), now.getMonth());
-    renderMiniCalendar(stamps);
-  }
-
-  // ====== ミニ分析（左） ======
-  function statusBadgeInfo(ch){
-    // 3日で終えた：cleared3 / 7日完走：cleared7 / 現在：active / リタイア：retired
-    const st = String(ch.status||"");
-    const total = Number(ch.totalDays||BASE_CLEAR_DAYS);
-    if(st==="active") return { text:"育成中", cls:"active", corner:"育成中", small:`${Number(ch.day||1)}/${total}` };
-    if(st==="retired") return { text:"リタイア", cls:"retired", corner:"リタイア", small:`${Number(ch.day||1)}/${total}` };
-    if(st==="cleared"){
-      if(total>=EXTEND_TOTAL_DAYS) return { text:"育成完了", cls:"done7", corner:"完了", small:"7" };
-      return { text:"育成完了", cls:"done3", corner:"完了", small:"3" };
-    }
-    if(st==="finished"){
-      // 失敗終了扱い
-      return { text:"終了", cls:"retired", corner:"終了", small:`${total}` };
-    }
-    return { text:st, cls:"", corner:st, small:"" };
-  }
-
-  function renderMiniAnaCards(items){
-    if(!miniAnaCards) return;
-    miniAnaCards.innerHTML = "";
-    const list = (items||[]).slice(0,3);
-
-    for(const ch of list){
-      const info = statusBadgeInfo(ch);
-      const box = document.createElement("div");
-      box.className = "miniCard";
-      box.innerHTML = `
-        <div class="miniCorner ${info.cls}">${info.small}</div>
-        <p class="miniCardTitle">${escapeHtml(ch.habitTitle||"")}</p>
-        <div class="miniCardSub">${escapeHtml(info.text)} / 成功 ${Number(ch.successDays||0)} / 休 ${Number(ch.restDays||0)}</div>
-      `;
-      miniAnaCards.appendChild(box);
-    }
-
-    // 足りない分をダミー
-    for(let i=list.length;i<3;i++){
-      const box = document.createElement("div");
-      box.className = "miniCard";
-      box.style.opacity = "0.35";
-      box.innerHTML = `<p class="miniCardTitle">—</p><div class="miniCardSub">—</div>`;
-      miniAnaCards.appendChild(box);
-    }
-  }
-
-  async function refreshMiniAnalytics(){
-    if(!currentUser) return;
-    const all = await loadChallenges(60);
-    // 優先：active→cleared→retired の順に最近
-    const pick = [
-      ...all.filter(x=>x.status==="active"),
-      ...all.filter(x=>x.status==="cleared"),
-      ...all.filter(x=>x.status==="retired"),
-      ...all.filter(x=>x.status==="finished"),
-    ].slice(0,3);
-    renderMiniAnaCards(pick);
-  }
-
-  if(miniAnaMore){
-    miniAnaMore.addEventListener("click", ()=>{
-      // navRecords を分析として使う（Part1の showOnly を拡張）
-      if(navAna) navAna.click();
-    });
-  }
-
-  // ====== showOnly 拡張（Part1の関数を上書きしたくないのでラッパー） ======
-  // Part1 の showOnly が存在すると仮定し、分析ビューがある場合だけ切替
-  const _showOnly = (typeof showOnly === "function") ? showOnly : null;
-  if(_showOnly && navAna && viewAnalytics){
-    // navボタンの表示名を変更（見た目）
-    const lbl = navAna.querySelector(".label");
-    if(lbl) lbl.textContent = "分析";
-
-    navAna.addEventListener("click", ()=>{
-      // Part1のshowOnlyを直接は触らず、手動で切替
-      // 既存 viewRecords は使わない想定
-      viewHome.style.display = "none";
-      viewTrain.style.display = "none";
-      if(viewRecords) viewRecords.style.display = "none";
-      viewBookmarks.style.display = "none";
-      viewProfile.style.display = "none";
-      viewAnalytics.style.display = "";
-
-      navHome.classList.remove("active");
-      navTrain.classList.remove("active");
-      navRecords.classList.add("active");
-      navBookmarks.classList.remove("active");
-      navProfile.classList.remove("active");
-
-      openPost.classList.remove("show");
-
-      refreshAnalytics();
-    });
-  }
-
-  // ====== Done エフェクト：ボタンから本日達成へ飛ぶ ======
-  function flyPlus(fromEl, toEl){
-    if(!fromEl || !toEl) return;
-    const a = fromEl.getBoundingClientRect();
-    const b = toEl.getBoundingClientRect();
-
-    const fx = document.createElement("div");
-    fx.className = "flyPlus";
-    fx.textContent = "+1";
-    document.body.appendChild(fx);
-
-    const sx = a.left + a.width/2;
-    const sy = a.top + a.height/2;
-    const tx = b.left + b.width/2;
-    const ty = b.top + b.height/2;
-
-    fx.style.left = `${sx}px`;
-    fx.style.top  = `${sy}px`;
-
-    // 1.2秒くらいで到達
-    const dur = 1150;
-    const t0 = performance.now();
-    fx.style.opacity = "1";
-
-    function easeOutCubic(x){ return 1 - Math.pow(1-x, 3); }
-
-    function tick(t){
-      const p = Math.max(0, Math.min(1, (t - t0) / dur));
-      const e = easeOutCubic(p);
-      const x = sx + (tx - sx) * e;
-      const y = sy + (ty - sy) * e - (1 - e) * 22; // ふわっと上
-      fx.style.left = `${x}px`;
-      fx.style.top  = `${y}px`;
-      fx.style.transform = `translate(-50%,-50%) scale(${1 - p*0.25})`;
-      fx.style.opacity = `${1 - p*0.15}`;
-
-      if(p < 1) requestAnimationFrame(tick);
-      else{
-        fx.style.opacity = "0";
-        setTimeout(()=> fx.remove(), 180);
-      }
-    }
-    requestAnimationFrame(tick);
-  }
-
-  // ====== 3日クリア2択モーダル制御 ======
-  let pendingChoice = null; // {habitId, chSnapshot}
-  function openClearChoice(ch){
-    pendingChoice = { habitId: ch.habitId, chSnapshot: ch };
-    clearChoiceBg.classList.add("show");
-  }
-  function closeClearChoice(){
-    pendingChoice = null;
-    clearChoiceBg.classList.remove("show");
-  }
-
-  btnChoiceNew?.addEventListener("click", async ()=>{
-    if(!pendingChoice) return;
-    // 3日で終了 → status=cleared, totalDays=3（明示）
-    const ref = doc(db, "userChallenges", currentUser.uid, "items", pendingChoice.habitId);
-    await updateDoc(ref, { status:"cleared", totalDays: BASE_CLEAR_DAYS, updatedAt: serverTimestamp() });
-
-    closeClearChoice();
-    // 口コミ（強制ではないが表示）
-    try{
+    // ===== Profile doc =====
+    async function ensureProfile(){
+      const ref = doc(db, "users", currentUser.uid);
       const snap = await getDoc(ref);
-      const ch = snap.exists() ? { habitId: pendingChoice.habitId, ...snap.data() } : pendingChoice.chSnapshot;
-      await maybePromptRating(pendingChoice.habitId, ch, "finish");
-    }catch(e){}
-
-    await refreshActiveHabitIds();
-    await refreshSideActive();
-    await refreshHome();
-    await refreshMiniCalendar();
-    await refreshMiniAnalytics();
-    if(viewAnalytics) await refreshAnalytics();
-  });
-
-  btnChoiceExtend?.addEventListener("click", async ()=>{
-    if(!pendingChoice) return;
-    // 延長 → totalDays=7, extended=true（dayはそのまま進行）
-    const ref = doc(db, "userChallenges", currentUser.uid, "items", pendingChoice.habitId);
-    await updateDoc(ref, { totalDays: EXTEND_TOTAL_DAYS, extended:true, updatedAt: serverTimestamp() });
-
-    closeClearChoice();
-
-    await refreshActiveHabitIds();
-    await refreshSideActive();
-    await refreshHome();
-    await refreshMiniCalendar();
-    await refreshMiniAnalytics();
-    if(viewAnalytics) await refreshAnalytics();
-  });
-
-  // ====== applyReport を “3日基準+延長” に対応させる（Part1関数を差し替え） ======
-  // Part1で applyReport が定義済み想定 → ここで上書きします
-  const _applyReport = (typeof applyReport === "function") ? applyReport : null;
-
-  async function applyReport(ch, payload){
-    const today = ymd(new Date());
-    const ref = doc(db, "userChallenges", currentUser.uid, "items", ch.habitId);
-    const snap = await getDoc(ref);
-    if(!snap.exists()) return;
-    const cur = snap.data();
-
-    // 1日1回制限
-    if((payload.type==="done" || payload.type==="rest") && String(cur.lastActionYMD||"") === today){
-      return;
+      if(!snap.exists()){
+        const initial = {
+          name: "",
+          photoURL: currentUser.photoURL || "",
+          avatarColor: "#111111",
+          preferredCategory: "",
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+          clearCount: 0,
+          totalChallenges: 0,
+          ratingRank: 1,
+          xpTotal: 0,
+          followerCount: 0
+        };
+        await setDoc(ref, initial);
+        myProfile = initial;
+      }else{
+        myProfile = snap.data();
+      }
+      setXpUI();
+      applyUserHeader();
     }
 
-    const totalDays = Math.max(1, Number(cur.totalDays||BASE_CLEAR_DAYS));
-    const dayNow = Math.max(1, Number(cur.day||1));
-
-    // エフェクト：done のときだけ（押した瞬間に飛ばす）
-    if(payload.type==="done"){
-      // どのボタンから押したかを特定（sideActiveの “やった” ボタン）
-      // payload._fromEl が渡されたらそれを使う（下で渡す）
-      try{ flyPlus(payload._fromEl, todayDoneBadge); }catch(e){}
+    function applyUserHeader(){
+      const nm = (myProfile?.name || "").trim();
+      userName.textContent = nm || "—";
+      userSmall.textContent = currentUser.email || "—";
+      setAvatarColor(userAvatar, myProfile?.avatarColor || "#111111");
+      followerMini.textContent = `フォロー ${Number(myProfile?.followerCount||0)}`;
     }
 
-    const update = {};
+    async function warmCaches(){
+      cachedFavCreators = new Set();
+      cachedBookmarks = new Set();
 
-    if(payload.type==="done"){
-      update.successDays = Number(cur.successDays||0) + 1;
-      update.day = Math.min(totalDays + 1, dayNow + 1);
-      update.lastActionYMD = today;
-      update.streakMiss = 0;
+      {
+        const qs = await getDocs(query(
+          collection(db, "userCreatorFavs", currentUser.uid, "items"),
+          orderBy("createdAt","desc"),
+          limit(300)
+        ));
+        qs.forEach(s=> cachedFavCreators.add(s.id));
+      }
+      {
+        const qs = await getDocs(query(
+          collection(db, "userBookmarks", currentUser.uid, "items"),
+          orderBy("createdAt","desc"),
+          limit(500)
+        ));
+        qs.forEach(s=> cachedBookmarks.add(s.id));
+      }
+    }
 
-      const d = cur.difficulty || {easy:0,mid:0,hard:0};
-      d[payload.diff] = Number(d[payload.diff]||0)+1;
-      update.difficulty = d;
+    // ===== Daily done count =====
+    function dailyDocId(){ return fmtYMD(nowLocal()); }
+    async function ensureDailyStatsDoc(){
+      const ref = doc(db, "dailyStats", dailyDocId());
+      const snap = await getDoc(ref);
+      if(!snap.exists()){
+        await setDoc(ref, { doneCount: 0, date: dailyDocId(), updatedAt: serverTimestamp() });
+      }
+    }
+    async function refreshDailyDoneCount(){
+      try{
+        const ref = doc(db, "dailyStats", dailyDocId());
+        const snap = await getDoc(ref);
+        const done = snap.exists() ? Number(snap.data().doneCount||0) : 0;
+        todayDoneBadge.textContent = `本日 ${done} 人が達成`;
+      }catch(e){
+        todayDoneBadge.textContent = `本日 0 人が達成`;
+      }
+    }
+    async function incDailyDoneCount(){
+      await runTransaction(db, async (tx)=>{
+        const ref = doc(db, "dailyStats", dailyDocId());
+        const snap = await tx.get(ref);
+        if(!snap.exists()){
+          tx.set(ref, { doneCount: 1, date: dailyDocId(), updatedAt: serverTimestamp() });
+        }else{
+          tx.update(ref, { doneCount: increment(1), updatedAt: serverTimestamp() });
+        }
+      });
+      await refreshDailyDoneCount();
+    }
 
-      // 今日スタンプ（難易度絵文字をそのままカレンダーに）
-      const stamp = payload.diff==="easy" ? "😊" : payload.diff==="mid" ? "🙂" : "😅";
-      await setTodayStamp(stamp);
+    async function afterLoginWarm(){
+      await warmCaches();
+      await autoRetireIfMissed();
+      await ensureDailyStatsDoc();
+      await refreshDailyDoneCount();
 
-      await incDailyDoneCount();
-      await addXp(12);
-
-    }else if(payload.type==="rest"){
-      update.restDays = Number(cur.restDays||0) + 1;
-      update.day = Math.min(totalDays + 1, dayNow + 1);
-      update.lastActionYMD = today;
-      update.streakMiss = 0;
-
-      // 休みもスタンプ（薄く🙂に統一）
-      await setTodayStamp("🙂");
-
-      await addXp(3);
-
-    }else if(payload.type==="retire"){
-      update.status = "retired";
-      update.updatedAt = serverTimestamp();
-      await updateDoc(ref, update);
-
-      await maybePromptRating(ch.habitId, { ...cur, habitId: ch.habitId }, "retire");
       await refreshActiveHabitIds();
       await refreshSideActive();
       await refreshHome();
-      await refreshMiniCalendar();
-      await refreshMiniAnalytics();
-      if(viewAnalytics) await refreshAnalytics();
+      await refreshRecords();
+      await refreshBookmarksView();
+      await refreshProfile();
       await refreshTrain();
-      return;
     }
 
-    update.updatedAt = serverTimestamp();
-    await updateDoc(ref, update);
-
-    // ===== 終了判定 =====
-    if(payload.type==="done" || payload.type==="rest"){
-      const nextDay = Math.min(totalDays + 1, dayNow + 1);
-
-      // 3日目（BASE_CLEAR_DAYS）を終えた瞬間：強制2択（doneの時だけでOK）
-      // dayNow==3 ではなく「次Dayが4になるタイミング」を見る（done/restどちらでも到達するが、ここはdone優先）
-      if(totalDays===BASE_CLEAR_DAYS && nextDay===BASE_CLEAR_DAYS + 1){
-        // まず status は active のまま止める（ユーザー選択待ち）
-        // day は既に 4 になってるが、UI上は choice を出してブロックする
-        const afterSnap = await getDoc(ref);
-        const after = afterSnap.exists() ? { habitId: ch.habitId, ...afterSnap.data() } : { habitId: ch.habitId, ...cur, ...update };
-
-        openClearChoice(after);
-
-        // 選択が終わるまで戻れない（背景クリック閉じ禁止）
-        // ※ここでは close を用意しない
-      }
-
-      // 7日完走：強制終了＆口コミ
-      if(totalDays>=EXTEND_TOTAL_DAYS && nextDay===EXTEND_TOTAL_DAYS + 1){
-        // 成功条件：とりあえず「成功日>=5」維持（Part1と同じ）
-        const afterSuccess = Number(cur.successDays||0) + (payload.type==="done" ? 1 : 0);
-        if(afterSuccess >= 5){
-          await updateDoc(ref, { status:"cleared", totalDays: EXTEND_TOTAL_DAYS, updatedAt: serverTimestamp() });
-          await runTransaction(db, async (tx)=>{
-            const uref = doc(db, "users", currentUser.uid);
-            const us = await tx.get(uref);
-            if(!us.exists()) return;
-            const u = us.data();
-            tx.update(uref, { clearCount: Number(u.clearCount||0)+1, updatedAt: serverTimestamp() });
-          });
-        }else{
-          await updateDoc(ref, { status:"finished", totalDays: EXTEND_TOTAL_DAYS, updatedAt: serverTimestamp() });
-        }
-
-        const finalSnap = await getDoc(ref);
-        const finalCh = finalSnap.exists() ? { habitId: ch.habitId, ...finalSnap.data() } : { habitId: ch.habitId, ...cur };
-        await maybePromptRating(ch.habitId, finalCh, "finish");
-      }
+    // ===== Active set for cards =====
+    async function refreshActiveHabitIds(){
+      activeHabitIds = new Set();
+      const actives = await loadActiveChallenges();
+      for(const ch of actives) activeHabitIds.add(ch.habitId);
     }
 
-    await refreshActiveHabitIds();
-    await refreshSideActive();
-    await refreshHome();
-    await refreshMiniCalendar();
-    await refreshMiniAnalytics();
-    if(viewAnalytics) await refreshAnalytics();
-    await refreshTrain();
-  }
+    // ===== Auth state =====
+    onAuthStateChanged(auth, async (user)=>{
+      currentUser = user || null;
 
-  // ====== sideActive の “やった” から applyReport へ押した要素を渡す ======
-  // Part1の refreshSideActive を差し替え（最小変更でdoneに _fromEl を付ける）
-  const _refreshSideActive = (typeof refreshSideActive === "function") ? refreshSideActive : null;
+      if(!currentUser){
+        loginGate.classList.add("show");
+        btnLogout.disabled = true;
 
-  async function refreshSideActive(){
-    if(!currentUser) return;
+        userName.textContent = "—";
+        userSmall.textContent = "—";
+        followerMini.textContent = "フォロー 0";
+        userAvatar.textContent = "□";
+        userAvatar.style.background = "#fff";
+        userAvatar.style.color = "#111";
 
-    const actives = await loadActiveChallenges();
-    activeHabitIds = new Set(actives.map(x=>x.habitId));
+        sideActiveList.innerHTML = "";
+        feed.innerHTML = "";
+        recordList.innerHTML = "";
+        bmFeed.innerHTML = "";
+        bmCount.textContent = "0";
+        profileList.innerHTML = "";
 
-    sideActiveList.innerHTML = "";
+        cachedFavCreators = new Set();
+        cachedBookmarks = new Set();
+        activeHabitIds = new Set();
 
-    if(countdownTimer) clearInterval(countdownTimer);
-    countdownTimer = setInterval(()=>{
-      document.querySelectorAll("[data-care]").forEach(el=>{
-        el.textContent = `次のお世話まで ${fmtCountdown(msToMidnight())}`;
-      });
-      if(trainCare) trainCare.textContent = `次のお世話まで ${fmtCountdown(msToMidnight())}`;
+        showOnly("home");
+        return;
+      }
 
-      if(msToMidnight() < 900){
-        refreshDailyDoneCount();
-        refreshSideActive();
-        refreshHome();
-        refreshTrain();
+      loginGate.classList.remove("show");
+      btnLogout.disabled = false;
+
+      await ensureProfile();
+
+      const nm = (myProfile?.name || "").trim();
+      if(!nm){
+        openNameModal();
+        return;
+      }
+      if(!(myProfile?.preferredCategory||"")){
+        openCategoryModal();
       }else{
-        refreshTrain();
+        categoryFilter.value = myProfile.preferredCategory;
       }
-    }, 1000);
 
-    for(const ch of actives){
-      const box = document.createElement("div");
-      box.className = "sideItem";
+      await afterLoginWarm();
+    });
 
-      const can = canCareToday(ch);
-      const care = `次のお世話まで ${fmtCountdown(msToMidnight())}`;
+    // ===== Navigation =====
+    navHome.addEventListener("click", ()=> showOnly("home"));
+    navTrain.addEventListener("click", ()=> showOnly("train"));
+    navRecords.addEventListener("click", ()=> showOnly("records"));
+    navBookmarks.addEventListener("click", ()=> showOnly("bookmarks"));
+    navProfile.addEventListener("click", ()=> showOnly("profile"));
 
-      const totalDays = Math.max(1, Number(ch.totalDays||BASE_CLEAR_DAYS));
-      const day = Math.max(1, Math.min(totalDays, Number(ch.day||1)));
-      const prog = growthPctDynamic(ch); // 見た目だけ（内部は後でPart3で合わせる）
+    // ===== Search/filters =====
+    btnSearch.addEventListener("click", refreshHome);
+    qInput.addEventListener("keydown", (e)=>{ if(e.key==="Enter") refreshHome(); });
+    categoryFilter.addEventListener("change", refreshHome);
+    sortBy.addEventListener("change", refreshHome);
+    btnClearTag.addEventListener("click", async ()=>{
+      selectedTag = "";
+      highlightRankChips();
+      await refreshHome();
+    });
 
-      const remain = Math.max(0, totalDays - day + 1);
-      const remainText = `残り${remain}日`;
+    // ===== Home =====
+    async function refreshHome(){
+      if(!currentUser) return;
 
-      box.innerHTML = `
-        <div class="sideTop">
-          <div class="sideHabit">${escapeHtml(ch.habitTitle||"")}</div>
-          <div class="sideMeta">${day}/${totalDays}</div>
+      await refreshActiveHabitIds();
+
+      const keyword = qInput.value.trim().toLowerCase();
+      const cat = categoryFilter.value.trim();
+      const sort = sortBy.value;
+
+      let habits = [];
+      const qs = await getDocs(query(collection(db,"habits"), orderBy("createdAt","desc"), limit(300)));
+      qs.forEach(s=> habits.push({ id:s.id, ...s.data() }));
+
+      // tag ranking
+      const tagCounts = new Map();
+      for(const h of habits){
+        (h.tags||[]).forEach(t=>{
+          const k = String(t||"").trim();
+          if(!k) return;
+          tagCounts.set(k, (tagCounts.get(k)||0)+1);
+        });
+      }
+      const top3 = [...tagCounts.entries()].sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
+
+      // reco：自分のカテゴリ優先
+      const pref = (myProfile?.preferredCategory||"").trim();
+      const pool = pref ? habits.filter(h => String(h.category||"").trim() === pref) : habits;
+      const recoCounts = new Map();
+      for(const h of pool){
+        (h.tags||[]).forEach(t=>{
+          const k = String(t||"").trim();
+          if(!k) return;
+          recoCounts.set(k, (recoCounts.get(k)||0)+1);
+        });
+      }
+      const reco3 = [...recoCounts.entries()].sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
+
+      renderRank(rankReco, reco3);
+      renderRank(rankTop, top3);
+      highlightRankChips();
+
+      // filter
+      let filtered = habits.filter(h=>{
+        const hCat = String(h.category||"").trim();
+        if(cat && hCat !== cat) return false;
+        if(selectedTag && !(h.tags||[]).includes(selectedTag)) return false;
+        if(keyword){
+          const blob = [h.title, h.action, (h.tags||[]).join(" "), h.category, h.creatorName].join(" ").toLowerCase();
+          if(!blob.includes(keyword)) return false;
+        }
+        if(sort==="favCreators"){
+          return cachedFavCreators.has(h.creatorUid);
+        }
+        return true;
+      });
+
+      // sort
+      filtered.sort((a,b)=>{
+        const ca = a.createdAt?.seconds ? a.createdAt.seconds : 0;
+        const cb = b.createdAt?.seconds ? b.createdAt.seconds : 0;
+
+        const ra = Number(a.avgRating||0);
+        const rb = Number(b.avgRating||0);
+
+        if(sort==="rating") return (rb-ra) || (cb-ca);
+        return (cb-ca);
+      });
+
+      countShown.textContent = String(filtered.length);
+
+      feed.innerHTML = "";
+      for(const h of filtered){
+        feed.appendChild(renderHabitCard(h));
+      }
+    }
+
+    function renderRank(container, tags){
+      container.innerHTML = "";
+      const list = (tags||[]).slice(0,3);
+      for(let i=0;i<list.length;i++){
+        const t = list[i];
+        const chip = document.createElement("div");
+        chip.className = "rankChip";
+        chip.dataset.tag = t;
+        chip.innerHTML = `<span class="rk">${i+1}位</span><span class="tagName">#${escapeHtml(t)}</span>`;
+        chip.addEventListener("click", async ()=>{
+          selectedTag = t;
+          highlightRankChips();
+          await refreshHome();
+        });
+        container.appendChild(chip);
+      }
+      for(let i=list.length;i<3;i++){
+        const dummy = document.createElement("div");
+        dummy.className = "rankChip";
+        dummy.style.opacity = "0.25";
+        dummy.style.pointerEvents = "none";
+        dummy.innerHTML = `<span class="rk">${i+1}位</span><span class="tagName">—</span>`;
+        container.appendChild(dummy);
+      }
+    }
+    function highlightRankChips(){
+      document.querySelectorAll(".rankChip").forEach(el=>{
+        el.classList.toggle("active", (el.dataset.tag||"") === selectedTag);
+      });
+    }
+
+    function bookmarkSvg(filled){
+      if(filled){
+        return `
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M6 3h12a1 1 0 0 1 1 1v18l-7-4-7 4V4a1 1 0 0 1 1-1z"/>
+          </svg>`;
+      }
+      return `
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M6 3h12a1 1 0 0 1 1 1v18l-7-4-7 4V4a1 1 0 0 1 1-1z"/>
+        </svg>`;
+    }
+
+    function bubbleSvg(){
+      return `
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/>
+        </svg>`;
+    }
+
+    function renderHabitCard(h){
+      const card = document.createElement("div");
+      card.className = "habitCard";
+
+      const isMine = h.creatorUid === currentUser.uid;
+      const bookmarked = cachedBookmarks.has(h.id);
+      const creatorFav = cachedFavCreators.has(h.creatorUid);
+      const isActive = activeHabitIds.has(h.id);
+
+      const avgRating = Number(h.avgRating||0);
+      const ratingCount = Number(h.ratingCount||0);
+      const participants = Number(h.participantsCount||0);
+
+      const createdAtStr = String(h.createdAtYMD||"") || "";
+
+      const avgDays = Math.max(0, Math.min(14, Number(h.avgDays||0)));
+      const successRate = Math.max(0, Math.min(100, Number(h.successRate||0)));
+      const daysPct = Math.max(0, Math.min(100, (avgDays/14)*100));
+
+      applyCatVars(card, h.category);
+
+      card.innerHTML = `
+        <div class="thumb">
+          <div class="mascotBg">${escapeHtml(mascotEmojiFromHabitId(h.id))}</div>
+
+          <p class="thumbTitle">${escapeHtml(h.title||"")}</p>
+          <div class="thumbAction">${escapeHtml(h.action||"")}</div>
+
+          <div class="thumbActions">
+            <button class="iconBtn tipBtn reviewBtn" data-act="reviews" data-tip="口コミ">
+              ${bubbleSvg()}
+              <span class="badgeCount">${Math.min(99, ratingCount)}</span>
+            </button>
+
+            <button class="iconBtn tipBtn ${bookmarked ? "on":""}" data-act="bookmark" data-tip="保存">
+              ${bookmarkSvg(bookmarked)}
+            </button>
+
+            ${isMine
+              ? `<button class="joinBtn tipBtn activeMode" data-act="edit" data-tip="編集">編集</button>`
+              : `<button class="joinBtn tipBtn ${isActive ? "activeMode":""}" data-act="join" data-tip="${isActive ? "育成中" : "参加"}">${isActive ? "育成中" : "参加"}</button>`
+            }
+          </div>
+
+          <div class="overlay">
+            <div class="overlayInner">
+              <div class="ovTitle">継続</div>
+              <div class="ovRow"><span>平均日数</span><span>${avgDays ? avgDays.toFixed(1) : "—"}日</span></div>
+              <div class="bar"><div class="barFill" style="width:${daysPct}%"></div></div>
+
+              <div class="ovTitle" style="margin-top:6px">成功</div>
+              <div class="ovRow"><span>成功率</span><span>${Number.isFinite(successRate) ? successRate.toFixed(0) : "—"}%</span></div>
+              <div class="bar"><div class="barFill" style="width:${successRate}%"></div></div>
+            </div>
+          </div>
         </div>
 
-        <div class="sideTop" style="align-items:center">
-          <div class="sideCare" data-care="1">${care}</div>
-          <div class="sideMeta">${prog.toFixed(0)}% / ${remainText}</div>
-        </div>
+        <div class="metaBar">
+          <div class="creatorCol">
+            <div class="miniAva" data-act="creator">${h.creatorPhoto ? `<img src="${escapeHtml(h.creatorPhoto)}" alt="">` : "□"}</div>
+            <div class="creatorText">
+              <div class="creatorName" data-act="creator">${escapeHtml(h.creatorName||"作成者")}</div>
+              <button class="followSmall ${creatorFav ? "on":""}" data-act="follow">フォロー</button>
+            </div>
+          </div>
 
-        <div class="sideBtns">
-          <button class="btnMini" data-act="done" ${can ? "" : "disabled"}>やった</button>
-          <button class="btnMini" data-act="rest" ${can ? "" : "disabled"}>休む</button>
-          <button class="btnMini" data-act="retire">リタイア</button>
-          <button class="btnMini" data-act="rate" ${ch.ratingSubmitted ? "disabled" : ""}>評価</button>
+          <div class="statsRow">
+            <div class="statLine">
+              <span class="statPill">参加者 ${participants}</span>
+              <span class="statPill">評価 ${avgRating ? avgRating.toFixed(1) : "—"}</span>
+            </div>
+          </div>
+
+          <div class="createdAt">${escapeHtml(createdAtStr)}</div>
         </div>
       `;
 
-      const doneBtn = box.querySelector('[data-act="done"]');
-      doneBtn.addEventListener("click", ()=> openDiffModal(ch, doneBtn));
+      card.addEventListener("pointerdown", ()=> card.classList.add("pressing"));
+      card.addEventListener("pointerup", ()=> card.classList.remove("pressing"));
+      card.addEventListener("pointercancel", ()=> card.classList.remove("pressing"));
+      card.addEventListener("pointerleave", ()=> card.classList.remove("pressing"));
 
-      box.querySelector('[data-act="rest"]').addEventListener("click", ()=> applyReport(ch, { type:"rest" }));
-      box.querySelector('[data-act="retire"]').addEventListener("click", async ()=>{
-        if(!confirm("リタイア？")) return;
-        await applyReport(ch, { type:"retire" });
-      });
-      box.querySelector('[data-act="rate"]').addEventListener("click", async ()=>{
-        await openRatingModalByChallenge(ch, "manual");
+      card.querySelectorAll('[data-act="creator"]').forEach(el=>{
+        el.addEventListener("click", ()=> openCreatorModal(h.creatorUid, h.creatorName, h.creatorPhoto, h.creatorColor));
       });
 
-      sideActiveList.appendChild(box);
+      card.querySelector('[data-act="follow"]').addEventListener("click", async (e)=>{
+        e.stopPropagation();
+        await toggleCreatorFav(h.creatorUid);
+      });
+
+      card.querySelector('[data-act="bookmark"]').addEventListener("click", async (e)=>{
+        e.stopPropagation();
+        await toggleBookmark(h.id);
+      });
+
+      card.querySelector('[data-act="reviews"]').addEventListener("click", async (e)=>{
+        e.stopPropagation();
+        await openRatingsViewer(h.id);
+      });
+
+      const joinBtn = card.querySelector('[data-act="join"]');
+      if(joinBtn) joinBtn.addEventListener("click", async (e)=>{
+        e.stopPropagation();
+        if(isActive) return;
+        await startChallenge(h);
+      });
+
+      const editBtn = card.querySelector('[data-act="edit"]');
+      if(editBtn) editBtn.addEventListener("click", (e)=>{
+        e.stopPropagation();
+        alert("編集は次段階で。今は自分の投稿は参加が出ない状態です。");
+      });
+
+      return card;
+    }
+
+    // ===== Fav/Bookmark =====
+    async function toggleCreatorFav(creatorUid){
+      if(!creatorUid) return;
+      const ref = doc(db, "userCreatorFavs", currentUser.uid, "items", creatorUid);
+      if(cachedFavCreators.has(creatorUid)){
+        await deleteDoc(ref);
+        cachedFavCreators.delete(creatorUid);
+      }else{
+        await setDoc(ref, { createdAt: serverTimestamp() });
+        cachedFavCreators.add(creatorUid);
+      }
+      await refreshHome();
+      await refreshProfile();
+    }
+
+    async function toggleBookmark(habitId){
+      if(!habitId) return;
+      const ref = doc(db, "userBookmarks", currentUser.uid, "items", habitId);
+      if(cachedBookmarks.has(habitId)){
+        await deleteDoc(ref);
+        cachedBookmarks.delete(habitId);
+      }else{
+        await setDoc(ref, { createdAt: serverTimestamp() });
+        cachedBookmarks.add(habitId);
+      }
+      await refreshHome();
+      await refreshBookmarksView();
+      await refreshProfile();
+    }
+
+    // ===== Challenges =====
+    async function loadChallenges(limitN=200){
+      const qs = await getDocs(query(
+        collection(db, "userChallenges", currentUser.uid, "items"),
+        orderBy("updatedAt","desc"),
+        limit(limitN)
+      ));
+      const arr = [];
+      qs.forEach(s=> arr.push({ id:s.id, ...s.data() }));
+      return arr;
+    }
+    async function loadActiveChallenges(){
+      const all = await loadChallenges(200);
+      return all.filter(x => x.status === "active").slice(0, 50);
+    }
+
+    function canCareToday(ch){
+      const today = fmtYMD(nowLocal());
+      const last = String(ch.lastActionYMD||"").slice(0,10);
+      return last !== today;
+    }
+
+    function growthPctDynamic(ch){
+      const day = Number(ch.day||1);
+      const base = Math.max(0, Math.min(7, day-1)) / 7 * 100;
+
+      const today = fmtYMD(nowLocal());
+      const cared = String(ch.lastActionYMD||"").slice(0,10) === today;
+
+      const totalMs = 86400000;
+      const remain = msToMidnight();
+      const elapsed = Math.max(0, Math.min(totalMs, totalMs - remain));
+      const frac = elapsed / totalMs;
+
+      const add = cared ? (frac * (100/7)) : 0;
+      return Math.max(0, Math.min(100, base + add));
+    }
+
+    async function startChallenge(h){
+      const actives = await loadActiveChallenges();
+      if(actives.length >= 3){ alert("依頼は最大3"); return; }
+      if(h.creatorUid === currentUser.uid){ return; }
+
+      const today = fmtYMD(nowLocal());
+      const ref = doc(db, "userChallenges", currentUser.uid, "items", h.id);
+      const snap = await getDoc(ref);
+      if(snap.exists() && snap.data()?.status === "active") return;
+
+      await setDoc(ref, {
+        habitId: h.id,
+        habitTitle: h.title || "",
+        creatorUid: h.creatorUid || "",
+        status: "active",
+        startDate: today,
+        day: 1,
+        successDays: 0,
+        restDays: 0,
+        lastActionYMD: "",
+        streakMiss: 0,
+        difficulty: { easy:0, mid:0, hard:0 },
+        ratingSubmitted: false,
+        updatedAt: serverTimestamp()
+      });
+
+      await runTransaction(db, async (tx)=>{
+        const href = doc(db, "habits", h.id);
+        const hs = await tx.get(href);
+        if(!hs.exists()) return;
+        const cur = hs.data();
+        tx.update(href, { participantsCount: Number(cur.participantsCount||0)+1, updatedAt: serverTimestamp() });
+      });
+
+      await runTransaction(db, async (tx)=>{
+        const uref = doc(db,"users",currentUser.uid);
+        const us = await tx.get(uref);
+        if(!us.exists()) return;
+        const u = us.data();
+        tx.update(uref, { totalChallenges: Number(u.totalChallenges||0)+1, updatedAt: serverTimestamp() });
+      });
+
+      await refreshActiveHabitIds();
+      await refreshSideActive();
+      await refreshRecords();
+      await refreshHome();
+      await refreshProfile();
+      await refreshTrain();
+    }
+
+    // ===== Side active list =====
+    let countdownTimer = null;
+    async function refreshSideActive(){
+      if(!currentUser) return;
+
+      const actives = await loadActiveChallenges();
+      activeHabitIds = new Set(actives.map(x=>x.habitId));
+
+      sideActiveList.innerHTML = "";
+
+      if(countdownTimer) clearInterval(countdownTimer);
+      countdownTimer = setInterval(()=>{
+        document.querySelectorAll("[data-care]").forEach(el=>{
+          el.textContent = `次のお世話まで ${fmtCountdown(msToMidnight())}`;
+        });
+        if(trainCare) trainCare.textContent = `次のお世話まで ${fmtCountdown(msToMidnight())}`;
+
+        if(msToMidnight() < 900){
+          refreshDailyDoneCount();
+          refreshSideActive();
+          refreshHome();
+          refreshTrain();
+        }else{
+          refreshTrain();
+        }
+      }, 1000);
+
+      for(const ch of actives){
+        const box = document.createElement("div");
+        box.className = "sideItem";
+
+        const can = canCareToday(ch);
+        const care = `次のお世話まで ${fmtCountdown(msToMidnight())}`;
+
+        const day = Math.max(1, Math.min(7, Number(ch.day||1)));
+        const prog = growthPctDynamic(ch);
+
+        box.innerHTML = `
+          <div class="sideTop">
+            <div class="sideHabit">${escapeHtml(ch.habitTitle||"")}</div>
+            <div class="sideMeta">${day}/7</div>
+          </div>
+
+          <div class="sideTop" style="align-items:center">
+            <div class="sideCare" data-care="1">${care}</div>
+            <div class="sideMeta">${prog.toFixed(0)}%</div>
+          </div>
+
+          <div class="sideBtns">
+            <button class="btnMini" data-act="done" ${can ? "" : "disabled"}>やった</button>
+            <button class="btnMini" data-act="rest" ${can ? "" : "disabled"}>休む</button>
+            <button class="btnMini" data-act="retire">リタイア</button>
+            <button class="btnMini" data-act="rate" ${ch.ratingSubmitted ? "disabled" : ""}>評価</button>
+          </div>
+        `;
+
+        box.querySelector('[data-act="done"]').addEventListener("click", ()=> openDiffModal(ch));
+        box.querySelector('[data-act="rest"]').addEventListener("click", ()=> applyReport(ch, { type:"rest" }));
+        box.querySelector('[data-act="retire"]').addEventListener("click", async ()=>{
+          if(!confirm("リタイア？")) return;
+          await applyReport(ch, { type:"retire" });
+        });
+        box.querySelector('[data-act="rate"]').addEventListener("click", async ()=>{
+          await openRatingModalByChallenge(ch, "manual");
+        });
+
+        sideActiveList.appendChild(box);
+      }
+    }
+
+    function openDiffModal(ch){
+      diffTargetChallenge = ch;
+      diffTitle.textContent = ch.habitTitle || "難易度";
+      diffBg.classList.add("show");
+    }
+    function closeDiffModal(){
+      diffTargetChallenge = null;
+      diffBg.classList.remove("show");
+    }
+    diffClose.addEventListener("click", closeDiffModal);
+    diffBg.addEventListener("click", (e)=>{ if(e.target===diffBg) closeDiffModal(); });
+    diffBg.querySelectorAll("[data-diff]").forEach(btn=>{
+      btn.addEventListener("click", async ()=>{
+        if(!diffTargetChallenge) return;
+        await applyReport(diffTargetChallenge, { type:"done", diff: btn.dataset.diff });
+        closeDiffModal();
+      });
+    });
+
+    // ===== Apply report =====
+    async function applyReport(ch, payload){
+      const today = fmtYMD(nowLocal());
+      const ref = doc(db, "userChallenges", currentUser.uid, "items", ch.habitId);
+      const snap = await getDoc(ref);
+      if(!snap.exists()) return;
+      const cur = snap.data();
+
+      if((payload.type==="done" || payload.type==="rest") && String(cur.lastActionYMD||"") === today){
+        return;
+      }
+
+      const update = {};
+
+      if(payload.type==="done"){
+        update.successDays = Number(cur.successDays||0)+1;
+        update.day = Math.min(8, Number(cur.day||1)+1);
+        update.lastActionYMD = today;
+        update.streakMiss = 0;
+
+        const d = cur.difficulty || {easy:0,mid:0,hard:0};
+        d[payload.diff] = Number(d[payload.diff]||0)+1;
+        update.difficulty = d;
+
+        await incDailyDoneCount();
+        await addXp(12);
+
+      }else if(payload.type==="rest"){
+        update.restDays = Number(cur.restDays||0)+1;
+        update.day = Math.min(8, Number(cur.day||1)+1);
+        update.lastActionYMD = today;
+        update.streakMiss = 0;
+
+        await addXp(3);
+
+      }else if(payload.type==="retire"){
+        update.status = "retired";
+        update.updatedAt = serverTimestamp();
+        await updateDoc(ref, update);
+
+        await maybePromptRating(ch.habitId, { ...cur, habitId: ch.habitId }, "retire");
+        await refreshActiveHabitIds();
+        await refreshSideActive();
+        await refreshRecords();
+        await refreshHome();
+        await refreshProfile();
+        await refreshTrain();
+        return;
+      }
+
+      update.updatedAt = serverTimestamp();
+      await updateDoc(ref, update);
+
+      if(payload.type==="done" || payload.type==="rest"){
+        const afterDay = Math.min(8, Number(cur.day||1)+1);
+        if(afterDay === 8){
+          const afterSuccess = Number(cur.successDays||0) + (payload.type==="done" ? 1 : 0);
+          if(afterSuccess >= 5){
+            await updateDoc(ref, { status:"cleared", updatedAt: serverTimestamp() });
+            await runTransaction(db, async (tx)=>{
+              const uref = doc(db, "users", currentUser.uid);
+              const us = await tx.get(uref);
+              if(!us.exists()) return;
+              const u = us.data();
+              tx.update(uref, { clearCount: Number(u.clearCount||0)+1, updatedAt: serverTimestamp() });
+            });
+          }else{
+            await updateDoc(ref, { status:"finished", updatedAt: serverTimestamp() });
+          }
+
+          const finalSnap = await getDoc(ref);
+          const finalCh = finalSnap.exists() ? finalSnap.data() : cur;
+          await maybePromptRating(ch.habitId, { ...finalCh, habitId: ch.habitId }, "finish");
+        }
+      }
+
+      await refreshActiveHabitIds();
+      await refreshSideActive();
+      await refreshRecords();
+      await refreshHome();
+      await refreshProfile();
+      await refreshTrain();
+    }
+
+    // ===== Auto retire (3日未報告) =====
+    async function autoRetireIfMissed(){
+      const today = nowLocal();
+      const qs = await getDocs(query(
+        collection(db, "userChallenges", currentUser.uid, "items"),
+        orderBy("updatedAt","desc"),
+        limit(200)
+      ));
+      const updates = [];
+      qs.forEach(s=>{
+        const ch = s.data();
+        if(ch.status !== "active") return;
+
+        const startD = parseYMD(ch.startDate);
+        const lastD = parseYMD(ch.lastActionYMD);
+
+        let miss = 0;
+        if(lastD){
+          const gap = daysBetween(lastD, today);
+          miss = Math.max(0, gap - 1);
+        }else if(startD){
+          const gap = daysBetween(startD, today);
+          miss = Math.max(0, gap - 1);
+        }
+
+        const ref = doc(db, "userChallenges", currentUser.uid, "items", ch.habitId);
+        if(miss >= 3){
+          updates.push(updateDoc(ref, {
+            status:"retired",
+            streakMiss: miss,
+            updatedAt: serverTimestamp()
+          }));
+        }else{
+          updates.push(updateDoc(ref, { streakMiss: miss, updatedAt: serverTimestamp() }));
+        }
+      });
+      await Promise.allSettled(updates);
+    }
+
+    // ===== Records =====
+    async function refreshRecords(){
+      if(!currentUser) return;
+      const qs = await getDocs(query(
+        collection(db, "userChallenges", currentUser.uid, "items"),
+        orderBy("updatedAt","desc"),
+        limit(150)
+      ));
+      const items = [];
+      qs.forEach(s=> items.push(s.data()));
+
+      recordList.innerHTML = "";
+      for(const ch of items){
+        const row = document.createElement("div");
+        row.className = "review";
+        const day = Math.max(1, Math.min(7, Number(ch.day||1)));
+        row.innerHTML = `
+          <div class="reviewTop">
+            <div class="reviewName">${escapeHtml(ch.habitTitle||"")}</div>
+            <div class="reviewMeta">${escapeHtml(String(ch.status||""))}</div>
+          </div>
+          <div class="reviewText">${day}/7 / 成功 ${Number(ch.successDays||0)} / 休 ${Number(ch.restDays||0)} / 未報告 ${Number(ch.streakMiss||0)} / 育成 ${growthPctDynamic(ch).toFixed(0)}%</div>
+        `;
+        recordList.appendChild(row);
+      }
+    }
+
+    // ===== Bookmarks =====
+    async function refreshBookmarksView(){
+      if(!currentUser) return;
+      bmCount.textContent = String(cachedBookmarks.size);
+      bmFeed.innerHTML = "";
+      if(cachedBookmarks.size === 0) return;
+
+      await refreshActiveHabitIds();
+
+      const qs = await getDocs(query(collection(db,"habits"), orderBy("createdAt","desc"), limit(300)));
+      const habits = [];
+      qs.forEach(s=> habits.push({ id:s.id, ...s.data() }));
+      const filtered = habits.filter(h => cachedBookmarks.has(h.id));
+      bmCount.textContent = String(filtered.length);
+      for(const h of filtered){
+        bmFeed.appendChild(renderHabitCard(h));
+      }
+    }
+
+    // ===== Profile =====
+    async function refreshProfile(){
+      if(!currentUser) return;
+
+      const actives = await loadActiveChallenges();
+      const myPosts = await countMyPosts();
+
+      const total = Number(myProfile?.xpTotal||0);
+      const { lv, cur, need } = computeLevelFromXp(total);
+      profileLv.textContent = `Lv ${lv}`;
+
+      profileList.innerHTML = `
+        <div class="review">
+          <div class="reviewTop">
+            <div class="reviewName">${escapeHtml(myProfile?.name||"—")}</div>
+            <div class="reviewMeta">Lv ${lv}</div>
+          </div>
+          <div class="reviewText">
+            XP ${cur} / ${need}
+            \n次まで ${Math.max(0, need-cur)}
+            \nクリア ${Number(myProfile?.clearCount||0)} / 挑戦中 ${actives.length} / 総挑戦 ${Number(myProfile?.totalChallenges||0)}
+            \nフォロー ${cachedFavCreators.size} / 保存 ${cachedBookmarks.size} / 投稿 ${myPosts}
+            \nフォロワー ${Number(myProfile?.followerCount||0)}
+          </div>
+        </div>
+
+        <div class="review">
+          <div class="reviewTop">
+            <div class="reviewName">色</div>
+            <div class="reviewMeta">—</div>
+          </div>
+          <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:10px">
+            <select class="selectKeep" id="profileColor">
+              <option value="#111111">黒</option>
+              <option value="#e00000">赤</option>
+              <option value="#0b6cff">青</option>
+              <option value="#00a86b">緑</option>
+              <option value="#ff8a00">橙</option>
+            </select>
+            <button class="btn primary" id="saveProfileColor">保存</button>
+          </div>
+        </div>
+      `;
+
+      const profileColor = document.getElementById("profileColor");
+      const saveProfileColor = document.getElementById("saveProfileColor");
+      if(profileColor && saveProfileColor){
+        profileColor.value = myProfile?.avatarColor || "#111111";
+        saveProfileColor.addEventListener("click", async ()=>{
+          const c = profileColor.value || "#111111";
+          await updateDoc(doc(db,"users",currentUser.uid), { avatarColor: c, updatedAt: serverTimestamp() });
+          const snap = await getDoc(doc(db,"users",currentUser.uid));
+          myProfile = snap.data();
+          setXpUI();
+          applyUserHeader();
+          await refreshHome();
+        });
+      }
+    }
+
+    async function countMyPosts(){
+      const qs = await getDocs(query(collection(db,"habits"), orderBy("createdAt","desc"), limit(450)));
+      let c = 0;
+      qs.forEach(s=>{
+        const h = s.data();
+        if(h.creatorUid === currentUser.uid) c++;
+      });
+      return c;
+    }
+
+    // ===== Rating rules =====
+    async function canRate(habitId, ch){
+      const didAny = (Number(ch.successDays||0) + Number(ch.restDays||0)) > 0;
+      const finishedLike = ["cleared","finished","retired"].includes(String(ch.status||""));
+      return didAny || finishedLike;
+    }
+
+    async function maybePromptRating(habitId, ch, reason){
+      const ref = doc(db, "userChallenges", currentUser.uid, "items", habitId);
+      const snap = await getDoc(ref);
+      if(snap.exists() && snap.data()?.ratingSubmitted) return;
+
+      if(!(await canRate(habitId, ch))) return;
+
+      const rref = doc(db, "habits", habitId, "ratings", currentUser.uid);
+      const rsnap = await getDoc(rref);
+      if(rsnap.exists()) {
+        await updateDoc(ref, { ratingSubmitted: true, updatedAt: serverTimestamp() });
+        return;
+      }
+
+      await openRatingModalByChallenge(ch, reason);
+    }
+
+    function openRatingModal(){
+      ratingStars = 0;
+      commentBox.value = "";
+      renderStars();
+      ratingBg.classList.add("show");
+    }
+    function closeRatingModal(){
+      ratingBg.classList.remove("show");
+      ratingTargetHabit = null;
+    }
+    ratingClose.addEventListener("click", closeRatingModal);
+    ratingBg.addEventListener("click", (e)=>{ if(e.target===ratingBg) closeRatingModal(); });
+
+    function renderStars(){
+      starsRow.innerHTML = "";
+      for(let i=1;i<=5;i++){
+        const b = document.createElement("div");
+        b.className = "starBtn";
+        b.textContent = i<=ratingStars ? "★" : "☆";
+        b.classList.toggle("active", i<=ratingStars);
+        b.addEventListener("click", ()=>{
+          ratingStars = i;
+          renderStars();
+        });
+        starsRow.appendChild(b);
+      }
+    }
+
+    async function openRatingModalByChallenge(ch, reason){
+      const ok = await canRate(ch.habitId, ch);
+      if(!ok){ alert("参加者のみ"); return; }
+
+      ratingTargetHabit = ch.habitId;
+
+      ratingTitle.textContent = reason==="retire" ? `評価（リタイア）` :
+                                reason==="finish" ? `評価（7日終了）` :
+                                `評価`;
+
+      openRatingModal();
+      await loadRatingsList(ch.habitId);
+
+      ratingSave.onclick = async ()=>{
+        if(ratingStars < 1){ alert("星を選ぶ"); return; }
+
+        await setDoc(doc(db, "habits", ch.habitId, "ratings", currentUser.uid), {
+          uid: currentUser.uid,
+          displayName: myProfile?.name || currentUser.displayName || "ユーザー",
+          photoURL: currentUser.photoURL || "",
+          stars: ratingStars,
+          comment: (commentBox.value || "").trim().slice(0, 300),
+          updatedAt: serverTimestamp()
+        }, { merge:true });
+
+        await updateDoc(doc(db, "userChallenges", currentUser.uid, "items", ch.habitId), {
+          ratingSubmitted: true,
+          updatedAt: serverTimestamp()
+        });
+
+        await recomputeRatingAgg(ch.habitId);
+
+        closeRatingModal();
+        await refreshHome();
+        await refreshProfile();
+      };
+    }
+
+    async function loadRatingsList(habitId){
+      reviewList.innerHTML = "";
+      const qs = await getDocs(query(
+        collection(db, "habits", habitId, "ratings"),
+        orderBy("updatedAt","desc"),
+        limit(40)
+      ));
+      const arr = [];
+      qs.forEach(s=> arr.push(s.data()));
+      for(const r of arr){
+        const box = document.createElement("div");
+        box.className = "review";
+        const stars = "★".repeat(Math.max(0, Math.min(5, Number(r.stars||0))))
+                    + "☆".repeat(Math.max(0, 5-Number(r.stars||0)));
+        box.innerHTML = `
+          <div class="reviewTop">
+            <div class="reviewName">${escapeHtml(r.displayName||"ユーザー")}</div>
+            <div class="reviewMeta">${stars}</div>
+          </div>
+          <div class="reviewText">${escapeHtml(r.comment||"")}</div>
+        `;
+        reviewList.appendChild(box);
+      }
+    }
+
+    async function recomputeRatingAgg(habitId){
+      const rs = await getDocs(query(collection(db, "habits", habitId, "ratings"), limit(500)));
+      let sum = 0;
+      let cnt = 0;
+      rs.forEach(s=>{
+        const r = s.data();
+        const stars = Number(r.stars||0);
+        if(stars>=1 && stars<=5){
+          sum += stars;
+          cnt += 1;
+        }
+      });
+      const avg = cnt ? (sum/cnt) : 0;
+
+      await updateDoc(doc(db, "habits", habitId), {
+        avgRating: Number.isFinite(avg) ? avg : 0,
+        ratingCount: cnt,
+        updatedAt: serverTimestamp()
+      });
+    }
+
+    async function openRatingsViewer(habitId){
+      ratingTitle.textContent = "口コミ";
+      ratingStars = 0;
+      commentBox.value = "";
+      renderStars();
+      ratingSave.onclick = null;
+      ratingBg.classList.add("show");
+      await loadRatingsList(habitId);
+    }
+
+    // ===== Creator modal =====
+    function openCreatorModal(uid, name, photo, color){
+      creatorName.textContent = name || "—";
+      creatorAva.innerHTML = "";
+      if(photo){
+        const img = document.createElement("img");
+        img.src = photo;
+        creatorAva.appendChild(img);
+      }else{
+        creatorAva.textContent = "□";
+        creatorAva.style.background = color || "#111111";
+        creatorAva.style.color = "#fff";
+      }
+      creatorPosts.innerHTML = "";
+      creatorBg.classList.add("show");
+      loadCreatorPosts(uid);
+    }
+    function closeCreatorModal(){ creatorBg.classList.remove("show"); }
+    creatorClose.addEventListener("click", closeCreatorModal);
+    creatorBg.addEventListener("click", (e)=>{ if(e.target===creatorBg) closeCreatorModal(); });
+
+    async function loadCreatorPosts(uid){
+      const qs = await getDocs(query(collection(db,"habits"), orderBy("createdAt","desc"), limit(300)));
+      const arr = [];
+      qs.forEach(s=>{
+        const h = s.data();
+        if(h.creatorUid === uid) arr.push({ id:s.id, ...h });
+      });
+
+      if(arr.length===0){
+        const box = document.createElement("div");
+        box.className = "review";
+        box.innerHTML = `<div class="reviewText">投稿なし</div>`;
+        creatorPosts.appendChild(box);
+        return;
+      }
+
+      for(const h of arr){
+        const box = document.createElement("div");
+        box.className = "review";
+        box.innerHTML = `
+          <div class="reviewTop">
+            <div class="reviewName">${escapeHtml(h.title||"")}</div>
+            <div class="reviewMeta">${escapeHtml(String(h.createdAtYMD||""))}</div>
+          </div>
+          <div class="reviewText">${escapeHtml(h.action||"")}</div>
+        `;
+        creatorPosts.appendChild(box);
+      }
+    }
+
+    // ===== Char list modal =====
+    function openCharModal(){
+      const lv = Number(myProfile?.level||1);
+      charList.innerHTML = "";
+
+      const maxLv = Math.max(10, lv+2);
+      for(let L=1; L<=maxLv; L++){
+        const eggs = CHAR_TIERS.filter(x=>x.type==="egg" && x.minLv<=L);
+        const seeds = CHAR_TIERS.filter(x=>x.type==="seed" && x.minLv<=L);
+        const eggShow = eggs.length ? eggs[eggs.length-1] : null;
+        const seedShow = seeds.length ? seeds[seeds.length-1] : null;
+
+        const row = document.createElement("div");
+        row.className = "review";
+        row.innerHTML = `
+          <div class="reviewTop">
+            <div class="reviewName">Lv ${L}</div>
+            <div class="reviewMeta">${L===lv ? "現在" : ""}</div>
+          </div>
+          <div class="reviewText">
+            卵：${eggShow ? `${eggShow.emoji} ${eggShow.name}` : "—"}
+            \n種：${seedShow ? `${seedShow.emoji} ${seedShow.name}` : "—"}
+            \n次のLv：${L+1}
+          </div>
+        `;
+        charList.appendChild(row);
+      }
+
+      charBg.classList.add("show");
+    }
+    function closeCharModal(){ charBg.classList.remove("show"); }
+    openCharList.addEventListener("click", openCharModal);
+    charClose.addEventListener("click", closeCharModal);
+    charBg.addEventListener("click", (e)=>{ if(e.target===charBg) closeCharModal(); });
+
+    // ===== Training view =====
+    function growthStageInfo(pct){
+      const p = Math.max(0, Math.min(100, Math.floor(pct||0)));
+      for(const s of GROW_STAGES){
+        if(p <= s.max) return s;
+      }
+      return GROW_STAGES[GROW_STAGES.length-1];
+    }
+
+    async function refreshTrain(){
+      if(!currentUser) return;
+      trainChallenges = await loadActiveChallenges();
+      if(trainChallenges.length===0){
+        trainHint.textContent = "挑戦中なし";
+        trainSlot.textContent = "—";
+        trainHabitTitle.textContent = "—";
+        trainPctText.textContent = "0%";
+        trainPct.textContent = "0%";
+        trainFill.style.width = "0%";
+        trainEmoji.textContent = "🥚";
+        trainStage.textContent = "—";
+        trainCare.textContent = `次のお世話まで ${fmtCountdown(msToMidnight())}`;
+        btnSetAvatar.disabled = true;
+        return;
+      }
+
+      trainHint.textContent = `挑戦中 ${trainChallenges.length} / 3`;
+      trainIndex = Math.max(0, Math.min(trainIndex, trainChallenges.length-1));
+      renderTrainCurrent();
+    }
+
+    function renderTrainCurrent(){
+      const ch = trainChallenges[trainIndex];
+      const slot = `${trainIndex+1} / ${trainChallenges.length}`;
+
+      const pct = growthPctDynamic(ch);
+      const info = growthStageInfo(pct);
+
+      const day = Math.max(1, Math.min(7, Number(ch.day||1)));
+      trainSlot.textContent = slot;
+      trainHabitTitle.textContent = `${ch.habitTitle || "—"}（${day}/7）`;
+      trainPctText.textContent = `${pct.toFixed(0)}%`;
+      trainPct.textContent = `${pct.toFixed(0)}%`;
+      trainFill.style.width = `${pct}%`;
+      trainStage.textContent = info.label;
+      trainCare.textContent = `次のお世話まで ${fmtCountdown(msToMidnight())}`;
+
+      // 仮イラスト：段階ごとに絵文字変化
+      const base = mascotEmojiFromHabitId(ch.habitId);
+      trainEmoji.textContent = pct>=100 ? "👑" : (pct<15 ? base : info.emoji);
+
+      const canSet = (String(ch.status||"")==="cleared") || (pct>=100);
+      btnSetAvatar.disabled = !canSet;
+
+      btnSetAvatar.onclick = async ()=>{
+        if(!canSet) return;
+        await updateDoc(doc(db,"users",currentUser.uid), {
+          avatarSetFrom:"creature",
+          avatarCreature: String(trainEmoji.textContent||""),
+          updatedAt: serverTimestamp()
+        });
+        alert("保存しました（将来この子の画像をアイコンにできます）");
+      };
+    }
+
+    trainPrev.addEventListener("click", ()=>{
+      if(trainChallenges.length===0) return;
+      trainIndex = (trainIndex - 1 + trainChallenges.length) % trainChallenges.length;
+      renderTrainCurrent();
+    });
+    trainNext.addEventListener("click", ()=>{
+      if(trainChallenges.length===0) return;
+      trainIndex = (trainIndex + 1) % trainChallenges.length;
+      renderTrainCurrent();
+    });
+
+    // ===== Init + timers =====
+    setInterval(()=>{
+      if(!currentUser) return;
+      refreshDailyDoneCount();
+      refreshHome(); // 1時間おき卵変化にも追従
+    }, 60000);
+
+    showOnly("home");
+    updatePostCounter();
+    openPost.classList.add("show");
+/* ==== ここから追加パッチコード（下にそのまま貼る） ==== */
+(() => {
+  // 1) 追加スタイル
+  const extraStyle = document.createElement("style");
+  extraStyle.textContent = `
+  /* カレンダー */
+  .calendarPanel{
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:#fff;
+    box-shadow:var(--shadow);
+    padding:10px;
+    margin-top:10px;
+    font-size:12px;
+  }
+  .calendarHeader{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:6px;
+  }
+  .calendarTitle{
+    font-weight:1000;
+    letter-spacing:.06em;
+  }
+  .calendarGrid{
+    display:grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap:4px;
+  }
+  .calendarWeekHead{
+    font-size:10px;
+    color:var(--muted);
+    text-align:center;
+  }
+  .calendarCell{
+    border-radius:8px;
+    min-height:32px;
+    padding:2px 2px 4px;
+    text-align:center;
+    border:1px solid #f0f0f0;
+    background:#fafafa;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+  }
+  .calendarCell.is-today{
+    border-color:#111;
+    background:#fff;
+  }
+  .calendarCell-day{
+    font-size:10px;
+    color:var(--muted);
+  }
+  .calendarCell-emoji{
+    font-size:16px;
+    line-height:1.1;
+  }
+
+  /* 本日バッジを少し目立たせる */
+  #todayDoneBadge{
+    border-color:#111;
+    background:#111;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(0,0,0,.18);
+  }
+  .todayBadgePulse{
+    animation: badgePulse .9s ease;
+  }
+  @keyframes badgePulse{
+    0%{transform:scale(1); box-shadow:0 0 0 0 rgba(0,0,0,0);}
+    40%{transform:scale(1.08); box-shadow:0 0 0 8px rgba(0,0,0,.08);}
+    100%{transform:scale(1); box-shadow:0 0 0 0 rgba(0,0,0,0);}
+  }
+
+  /* ホバー時の黒いオーバーレイを完全に無効化 */
+  .habitCard .overlay{
+    display:none !important;
+  }
+
+  /* XPカードは非表示（キャラ一覧は別ボタンで出す） */
+  .xpBlock{
+    display:none;
+  }
+
+  /* カード内の継続/クリア率用 */
+  .statPill--days{
+    border-color:#0b6cff;
+    color:#0b6cff;
+  }
+  .statPill--rate{
+    border-color:#10a85a;
+    color:#10a85a;
+  }
+
+  /* 分析ビュー */
+  .analysisSection{
+    margin-bottom:16px;
+  }
+  .analysisTitle{
+    font-size:13px;
+    font-weight:1000;
+    letter-spacing:.06em;
+    margin-bottom:6px;
+    color:var(--muted);
+  }
+
+  .analysisStatusGrid{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:10px;
+  }
+  @media(max-width:980px){
+    .analysisStatusGrid{
+      grid-template-columns:repeat(1,minmax(0,1fr));
+    }
+  }
+  .analysisStatusCard{
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:#fff;
+    box-shadow:var(--shadow);
+    padding:10px;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    font-size:12px;
+  }
+  .analysisStatusHead{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:6px;
+  }
+  .analysisStatusHeadTitle{
+    font-weight:1000;
+    letter-spacing:.04em;
+  }
+  .analysisStatusCount{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--muted);
+  }
+  .analysisList{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    margin-top:4px;
+  }
+  .analysisItem{
+    border-bottom:1px solid var(--line);
+    padding:3px 0;
+  }
+  .analysisItem:last-child{
+    border-bottom:none;
+  }
+  .analysisItemTitle{
+    font-size:12px;
+    font-weight:1000;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .analysisItemMeta{
+    font-size:11px;
+    color:var(--muted);
+    display:flex;
+    justify-content:space-between;
+    gap:4px;
+  }
+  .analysisTagBadge{
+    border-radius:999px;
+    border:1px solid var(--line);
+    padding:2px 6px;
+    font-size:10px;
+    font-family:var(--mono);
+  }
+  .analysisTagBadge-3{
+    border-color:#10a85a;
+    color:#10a85a;
+  }
+  .analysisTagBadge-7{
+    border-color:#0b6cff;
+    color:#0b6cff;
+  }
+  .analysisMoreBtn{
+    margin-top:6px;
+    align-self:flex-end;
+    border:none;
+    background:none;
+    color:var(--muted);
+    font-size:11px;
+    cursor:pointer;
+    padding:2px 4px;
+  }
+
+  .analysisChartWrap{
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:#fff;
+    box-shadow:var(--shadow);
+    padding:10px;
+    font-size:12px;
+  }
+  .analysisChartRow{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-top:4px;
+  }
+  .analysisChartLabel{
+    width:80px;
+    font-size:11px;
+  }
+  .analysisChartBars{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+  }
+  .analysisChartBar{
+    border-radius:999px;
+    background:#f3f3f3;
+    overflow:hidden;
+    position:relative;
+    height:16px;
+  }
+  .analysisChartBarFill{
+    height:100%;
+    width:0%;
+    background:#111;
+  }
+  .analysisChartBarFill.retired{
+    opacity:0.45;
+  }
+  .analysisChartValue{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:10px;
+    color:#fff;
+    font-family:var(--mono);
+  }
+
+  .analysisSmallGrid{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:10px;
+  }
+  @media(max-width:980px){
+    .analysisSmallGrid{
+      grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+  }
+  .analysisSmallCard{
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:#fff;
+    box-shadow:var(--shadow);
+    padding:8px;
+    font-size:11px;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .analysisSmallTitle{
+    font-weight:1000;
+    letter-spacing:.04em;
+  }
+  .analysisSmallList{
+    list-style:none;
+    padding:0;
+    margin:0;
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+  }
+  .analysisSmallList li{
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  /* オンボーディング4コマ */
+  .onboardTitle{
+    font-size:16px;
+    font-weight:1100;
+    margin:0 0 6px;
+  }
+  .onboardSub{
+    font-size:13px;
+    color:var(--muted);
+    white-space:pre-line;
+  }
+  .onboardIllust{
+    margin-top:10px;
+    font-size:22px;
+  }
+  .onboardDots{
+    display:flex;
+    gap:4px;
+    align-items:center;
+    justify-content:center;
+    margin-top:10px;
+  }
+  .onboardDot{
+    width:6px;
+    height:6px;
+    border-radius:999px;
+    background:#ddd;
+  }
+  .onboardDot.active{
+    background:#111;
+  }
+  .onboardFooterBtns{
+    display:flex;
+    justify-content:space-between;
+    gap:8px;
+    margin-top:14px;
+  }
+  .onboardBtn{
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:8px 10px;
+    background:#fff;
+    font-weight:1000;
+    cursor:pointer;
+    font-size:13px;
+  }
+  .onboardBtn.primary{
+    background:#111;
+    color:#fff;
+    border-color:#111;
+  }
+  `;
+  document.head.appendChild(extraStyle);
+
+  /* カテゴリ色を少し濃くする */
+  if (typeof CAT_COLORS === "object") {
+    Object.assign(CAT_COLORS, {
+      "メンタル": { tint:"#eef0ff", line:"#b5befa" },
+      "睡眠":     { tint:"#edfff0", line:"#b8e7c3" },
+      "運動":     { tint:"#fff0f5", line:"#ffb7cf" },
+      "健康":     { tint:"#edffff", line:"#b7e9ea" },
+      "生活":     { tint:"#fffbe8", line:"#e8dda6" },
+      "勉強":     { tint:"#eef2ff", line:"#b7c4ff" },
+      "英語":     { tint:"#eefbff", line:"#b7e0ff" },
+      "仕事":     { tint:"#f4f4f4", line:"#d0d0d0" },
+      "その他":   { tint:"#ffffff", line:"#e6e6e6" }
+    });
+  }
+
+  /* 2) カレンダー（育成アイコンの下） */
+  function buildCalendarSkeleton() {
+    const nav = document.querySelector(".nav");
+    const xpBlockEl = document.querySelector(".xpBlock");
+    if (!nav || !xpBlockEl) return;
+    if (document.getElementById("emojiCalendarWrap")) return;
+
+    const wrap = document.createElement("div");
+    wrap.id = "emojiCalendarWrap";
+    wrap.className = "calendarPanel";
+    wrap.innerHTML = `
+      <div class="calendarHeader">
+        <div class="calendarTitle" id="calTitle">達成カレンダー</div>
+      </div>
+      <div class="calendarGrid" id="calGrid"></div>
+    `;
+    nav.insertBefore(wrap, xpBlockEl.nextSibling);
+  }
+
+  function renderCalendarDom(year, month, emojiByDay) {
+    const titleEl = document.getElementById("calTitle");
+    const grid = document.getElementById("calGrid");
+    if (!titleEl || !grid) return;
+
+    const now = nowLocal();
+    titleEl.textContent = `${year}年${month + 1}月`;
+
+    grid.innerHTML = "";
+    const weekNames = ["日","月","火","水","木","金","土"];
+    for (const w of weekNames) {
+      const head = document.createElement("div");
+      head.className = "calendarWeekHead";
+      head.textContent = w;
+      grid.appendChild(head);
+    }
+
+    const first = new Date(year, month, 1);
+    const firstWeekday = first.getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    for (let i = 0; i < firstWeekday; i++) {
+      const blank = document.createElement("div");
+      blank.className = "calendarCell";
+      grid.appendChild(blank);
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const d = new Date(year, month, day);
+      const cell = document.createElement("div");
+      cell.className = "calendarCell";
+      const ymd = fmtYMD(d);
+      if (ymd === fmtYMD(now)) {
+        cell.classList.add("is-today");
+      }
+
+      const num = document.createElement("div");
+      num.className = "calendarCell-day";
+      num.textContent = String(day);
+
+      const em = document.createElement("div");
+      em.className = "calendarCell-emoji";
+      em.textContent = emojiByDay[ymd] || "";
+
+      cell.appendChild(num);
+      cell.appendChild(em);
+      grid.appendChild(cell);
     }
   }
 
-  // diffModal：openDiffModal を少し改造して “押したボタン要素” を覚える
-  let diffFromEl = null;
-  const _openDiffModal = (typeof openDiffModal === "function") ? openDiffModal : null;
+  async function refreshEmojiCalendar() {
+    if (!currentUser) return;
+    buildCalendarSkeleton();
 
-  function openDiffModal(ch, fromEl){
-    diffTargetChallenge = ch;
-    diffFromEl = fromEl || null;
-    diffTitle.textContent = ch.habitTitle || "難易度";
-    diffBg.classList.add("show");
+    const today = nowLocal();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+
+    const emojiByDay = {};
+    try {
+      const qs = await getDocs(query(
+        collection(db, "userDayEmojis", currentUser.uid, "days"),
+        limit(400)
+      ));
+      qs.forEach(s => {
+        const id = String(s.id || "").slice(0,10);
+        const d = parseYMD(id);
+        if (!d) return;
+        if (d.getFullYear() === year && d.getMonth() === month) {
+          const data = s.data() || {};
+          if (data.emoji) emojiByDay[id] = data.emoji;
+        }
+      });
+    } catch (e) {
+      console.warn("calendar load error", e);
+    }
+    renderCalendarDom(year, month, emojiByDay);
   }
 
-  // diff選択 → applyReport に _fromEl を渡す
-  diffBg.querySelectorAll("[data-diff]").forEach(btn=>{
-    btn.addEventListener("click", async ()=>{
-      if(!diffTargetChallenge) return;
-      await applyReport(diffTargetChallenge, { type:"done", diff: btn.dataset.diff, _fromEl: diffFromEl });
-      closeDiffModal();
-      diffFromEl = null;
-    });
+  /* 3) 「やった」→ 難易度絵文字を保存 & 今日達成バッジ演出 & 3日クリアモーダル */
+
+  function emojiForDiff(diff) {
+    if (diff === "easy") return "😊";
+    if (diff === "mid") return "🙂";
+    if (diff === "hard") return "😅";
+    return "";
+  }
+
+  function pulseTodayBadge() {
+    const badge = document.getElementById("todayDoneBadge");
+    if (!badge) return;
+    badge.classList.remove("todayBadgePulse");
+    // reflowしてアニメ再スタート
+    // eslint-disable-next-line no-unused-expressions
+    badge.offsetWidth;
+    badge.classList.add("todayBadgePulse");
+  }
+
+  // 3日クリアモーダルDOM
+  const shortBg = document.createElement("div");
+  shortBg.className = "modalBg";
+  shortBg.id = "shortClearBg";
+  shortBg.innerHTML = `
+    <div class="modal">
+      <h2>3日クリアおめでとう！</h2>
+      <p style="margin:10px 0 0; font-size:13px; white-space:pre-line;">
+3日間おつかれさま！
+この習慣は一度「クリア」として
+新しい習慣に行ってもOKです。
+      </p>
+      <div class="modalFooter" style="justify-content:space-between">
+        <button class="btn" id="shortClearNew">新しい習慣に挑戦</button>
+        <button class="btn primary" id="shortClearContinue">最後まで育成（残り4日）</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(shortBg);
+
+  let shortClearTargetHabitId = null;
+
+  function openShortClearModal(habitId) {
+    shortClearTargetHabitId = habitId;
+    shortBg.classList.add("show");
+  }
+  function closeShortClearModal() {
+    shortBg.classList.remove("show");
+    shortClearTargetHabitId = null;
+  }
+
+  shortBg.addEventListener("click", (e) => {
+    if (e.target === shortBg) closeShortClearModal();
   });
 
-  // ====== 習慣カードの “4つ指標” を追加（参加者/評価/平均日数/成功率） ======
-  // Part1の renderHabitCard を差し替え（overlayは削除済み）
-  const _renderHabitCard = (typeof renderHabitCard === "function") ? renderHabitCard : null;
+  const shortNewBtn = shortBg.querySelector("#shortClearNew");
+  const shortContBtn = shortBg.querySelector("#shortClearContinue");
 
-  function renderHabitCard(h){
+  if (shortNewBtn) {
+    shortNewBtn.addEventListener("click", async () => {
+      const habitId = shortClearTargetHabitId;
+      closeShortClearModal();
+      if (!habitId || !currentUser) return;
+      try {
+        const ref = doc(db, "userChallenges", currentUser.uid, "items", habitId);
+        await updateDoc(ref, { status: "clearedShort", updatedAt: serverTimestamp() });
+        const snap = await getDoc(ref);
+        const ch = snap.exists() ? { ...snap.data(), habitId } : { habitId };
+        // 評価モーダル（3日卒業）
+        await maybePromptRating(habitId, ch, "short3");
+        await refreshActiveHabitIds();
+        await refreshSideActive();
+        await refreshRecords();
+        await refreshHome();
+        await refreshProfile();
+        await refreshTrain();
+      } catch (e) {
+        console.warn("short clear error", e);
+      }
+    });
+  }
+  if (shortContBtn) {
+    shortContBtn.addEventListener("click", () => {
+      closeShortClearModal();
+    });
+  }
+
+  // applyReport をラップして、絵文字保存 & 3日クリア判定 & バッジ演出を追加
+  const applyReportOriginal = applyReport;
+  applyReport = async function(ch, payload) {
+    const ret = await applyReportOriginal(ch, payload);
+
+    try {
+      if (!currentUser || !payload) return ret;
+
+      // 「やった」のときだけ
+      if (payload.type === "done") {
+        // 1) 絵文字保存
+        const em = emojiForDiff(payload.diff);
+        if (em) {
+          const ymd = fmtYMD(nowLocal());
+          const ref = doc(db, "userDayEmojis", currentUser.uid, "days", ymd);
+          await setDoc(ref, { emoji: em, updatedAt: serverTimestamp() }, { merge: true });
+          refreshEmojiCalendar();
+        }
+
+        // 2) 今日バッジ演出
+        pulseTodayBadge();
+
+        // 3) 3日クリア判定（successDays>=3 & active & まだ表示してない）
+        const cref = doc(db, "userChallenges", currentUser.uid, "items", ch.habitId);
+        const snap = await getDoc(cref);
+        if (snap.exists()) {
+          const cur = snap.data();
+          if (!cur.shortPhaseDone &&
+              String(cur.status || "") === "active" &&
+              Number(cur.successDays || 0) >= 3) {
+            await updateDoc(cref, { shortPhaseDone: true, updatedAt: serverTimestamp() });
+            openShortClearModal(ch.habitId);
+          }
+        }
+      }
+    } catch (e) {
+      console.warn("applyReport patch error", e);
+    }
+    return ret;
+  };
+
+  /* 4) 達成記録 → 分析ビューに差し替え */
+
+  // ナビとタイトルの文字を「分析」に変更
+  const navLabel = document.querySelector("#navRecords .label");
+  if (navLabel) navLabel.textContent = "分析";
+  const headerRecords = document.querySelector("#viewRecords .headerBar .hTitle");
+  if (headerRecords) headerRecords.textContent = "分析";
+
+  function makeDaysBadgeNode(ch) {
+    const sd = Number(ch.successDays || 0);
+    let d = 0;
+    let cls = "";
+    if (sd >= 7) { d = 7; cls = "analysisTagBadge-7"; }
+    else if (sd >= 3) { d = 3; cls = "analysisTagBadge-3"; }
+    else return null;
+
+    const span = document.createElement("span");
+    span.className = "analysisTagBadge " + cls;
+    span.textContent = `${d}日`;
+    return span;
+  }
+
+  function challengeMetaText(ch) {
+    const day = Math.max(1, Math.min(7, Number(ch.day || 1)));
+    const succ = Number(ch.successDays || 0);
+    const rest = Number(ch.restDays || 0);
+    const miss = Number(ch.streakMiss || 0);
+    return `${day}/7日目 成功${succ} 休${rest} 未報告${miss}`;
+  }
+
+  function sortByUpdated(a, b) {
+    const sa = a.updatedAt?.seconds || 0;
+    const sb = b.updatedAt?.seconds || 0;
+    return sb - sa;
+  }
+
+  const refreshRecordsOriginal = refreshRecords;
+  refreshRecords = async function() {
+    if (!currentUser) return;
+    try {
+      const qs = await getDocs(query(
+        collection(db, "userChallenges", currentUser.uid, "items"),
+        orderBy("updatedAt", "desc"),
+        limit(300)
+      ));
+      const challenges = [];
+      qs.forEach(s => challenges.push({ id: s.id, ...s.data() }));
+
+      const active = challenges.filter(ch => String(ch.status || "") === "active").sort(sortByUpdated);
+      const finished = challenges.filter(ch => {
+        const st = String(ch.status || "");
+        return st === "cleared" || st === "finished" || st === "clearedShort";
+      }).sort(sortByUpdated);
+      const retired = challenges.filter(ch => String(ch.status || "") === "retired").sort(sortByUpdated);
+
+      recordList.innerHTML = "";
+
+      // --- ① 育成中/完了/リタイア の3カード ---
+      const sec1 = document.createElement("div");
+      sec1.className = "analysisSection";
+      const title1 = document.createElement("div");
+      title1.className = "analysisTitle";
+      title1.textContent = "育成の状況";
+      sec1.appendChild(title1);
+
+      const grid = document.createElement("div");
+      grid.className = "analysisStatusGrid";
+      sec1.appendChild(grid);
+
+      function makeStatusCard(label, items) {
+        const card = document.createElement("div");
+        card.className = "analysisStatusCard";
+
+        const head = document.createElement("div");
+        head.className = "analysisStatusHead";
+        const hTitle = document.createElement("div");
+        hTitle.className = "analysisStatusHeadTitle";
+        hTitle.textContent = label;
+        const hCount = document.createElement("div");
+        hCount.className = "analysisStatusCount";
+        hCount.textContent = `${items.length}件`;
+        head.appendChild(hTitle);
+        head.appendChild(hCount);
+        card.appendChild(head);
+
+        const list = document.createElement("div");
+        list.className = "analysisList";
+        card.appendChild(list);
+
+        let expanded = false;
+        function renderList() {
+          list.innerHTML = "";
+          const src = expanded ? items : items.slice(0, 3);
+          src.forEach(ch => {
+            const row = document.createElement("div");
+            row.className = "analysisItem";
+
+            const t = document.createElement("div");
+            t.className = "analysisItemTitle";
+            t.textContent = ch.habitTitle || "—";
+
+            const meta = document.createElement("div");
+            meta.className = "analysisItemMeta";
+
+            const left = document.createElement("span");
+            left.textContent = challengeMetaText(ch);
+
+            const right = document.createElement("span");
+            const badge = makeDaysBadgeNode(ch);
+            if (badge) right.appendChild(badge);
+
+            meta.appendChild(left);
+            meta.appendChild(right);
+
+            row.appendChild(t);
+            row.appendChild(meta);
+            list.appendChild(row);
+          });
+        }
+        renderList();
+
+        if (items.length > 3) {
+          const more = document.createElement("button");
+          more.className = "analysisMoreBtn";
+          more.textContent = "もっと見る";
+          more.addEventListener("click", () => {
+            expanded = !expanded;
+            more.textContent = expanded ? "閉じる" : "もっと見る";
+            renderList();
+          });
+          card.appendChild(more);
+        }
+
+        grid.appendChild(card);
+      }
+
+      makeStatusCard("育成中", active);
+      makeStatusCard("育成完了", finished);
+      makeStatusCard("リタイア", retired);
+
+      recordList.appendChild(sec1);
+
+      // --- ② カテゴリ別のグラフ ---
+      const habitsSnap = await getDocs(query(collection(db, "habits"), limit(400)));
+      const habitMap = new Map();
+      habitsSnap.forEach(s => habitMap.set(s.id, { id: s.id, ...s.data() }));
+
+      const catStats = new Map();
+      const creatorStats = new Map();
+
+      for (const ch of challenges) {
+        const h = habitMap.get(ch.habitId) || {};
+        const cat = String(h.category || "その他");
+        const creator = String(h.creatorName || "不明");
+        const status = String(ch.status || "");
+        const successDays = Number(ch.successDays || 0);
+        const totalDays = Number(ch.successDays || 0) + Number(ch.restDays || 0);
+
+        let catRec = catStats.get(cat);
+        if (!catRec) {
+          catRec = { total: 0, cleared: 0, retired: 0, successDaysTotal: 0, daysTotal: 0 };
+          catStats.set(cat, catRec);
+        }
+        catRec.total++;
+        catRec.successDaysTotal += successDays;
+        catRec.daysTotal += totalDays;
+
+        const isSuccess = (status === "cleared" ||
+                           status === "clearedShort" ||
+                           (status === "finished" && successDays >= 5));
+        if (isSuccess) catRec.cleared++;
+        if (status === "retired") catRec.retired++;
+
+        let cr = creatorStats.get(creator);
+        if (!cr) {
+          cr = { total: 0, cleared: 0 };
+          creatorStats.set(creator, cr);
+        }
+        cr.total++;
+        if (isSuccess) cr.cleared++;
+      }
+
+      const cats = [...catStats.entries()].map(([cat, rec]) => {
+        const successRate = rec.total ? (rec.cleared / rec.total) * 100 : 0;
+        const retiredRate = rec.total ? (rec.retired / rec.total) * 100 : 0;
+        const avgDays = rec.total ? (rec.daysTotal / rec.total || 0) : 0;
+        return { cat, successRate, retiredRate, avgDays, total: rec.total };
+      }).sort((a, b) => b.successRate - a.successRate);
+
+      if (cats.length) {
+        const sec2 = document.createElement("div");
+        sec2.className = "analysisSection";
+
+        const title2 = document.createElement("div");
+        title2.className = "analysisTitle";
+        title2.textContent = "カテゴリ別 成功率 / リタイア率";
+        sec2.appendChild(title2);
+
+        const chart = document.createElement("div");
+        chart.className = "analysisChartWrap";
+        sec2.appendChild(chart);
+
+        const maxRate = cats.reduce((m, c) => Math.max(m, c.successRate), 0) || 1;
+
+        cats.forEach(c => {
+          const row = document.createElement("div");
+          row.className = "analysisChartRow";
+
+          const label = document.createElement("div");
+          label.className = "analysisChartLabel";
+          label.textContent = c.cat;
+
+          const bars = document.createElement("div");
+          bars.className = "analysisChartBars";
+
+          const bar1 = document.createElement("div");
+          bar1.className = "analysisChartBar";
+          const fill1 = document.createElement("div");
+          fill1.className = "analysisChartBarFill";
+          fill1.style.width = `${(c.successRate / maxRate) * 100}%`;
+          const val1 = document.createElement("span");
+          val1.className = "analysisChartValue";
+          val1.textContent = `成功 ${c.successRate.toFixed(0)}%`;
+          bar1.appendChild(fill1);
+          bar1.appendChild(val1);
+
+          const bar2 = document.createElement("div");
+          bar2.className = "analysisChartBar";
+          const fill2 = document.createElement("div");
+          fill2.className = "analysisChartBarFill retired";
+          fill2.style.width = `${(c.retiredRate / maxRate) * 100}%`;
+          const val2 = document.createElement("span");
+          val2.className = "analysisChartValue";
+          val2.textContent = `リタイア ${c.retiredRate.toFixed(0)}%`;
+          bar2.appendChild(fill2);
+          bar2.appendChild(val2);
+
+          bars.appendChild(bar1);
+          bars.appendChild(bar2);
+
+          row.appendChild(label);
+          row.appendChild(bars);
+          chart.appendChild(row);
+        });
+
+        recordList.appendChild(sec2);
+      }
+
+      // --- ③ 自分の傾向（3カード） ---
+      const creatorsArr = [...creatorStats.entries()].map(([name, rec]) => {
+        const rate = rec.total ? (rec.cleared / rec.total) * 100 : 0;
+        return { name, rate, total: rec.total };
+      }).filter(c => c.total >= 2).sort((a, b) => b.rate - a.rate);
+
+      if (cats.length || creatorsArr.length) {
+        const sec3 = document.createElement("div");
+        sec3.className = "analysisSection";
+        const title3 = document.createElement("div");
+        title3.className = "analysisTitle";
+        title3.textContent = "自分の傾向";
+        sec3.appendChild(title3);
+
+        const smallGrid = document.createElement("div");
+        smallGrid.className = "analysisSmallGrid";
+        sec3.appendChild(smallGrid);
+
+        function makeSmallCard(title, items, toText) {
+          const card = document.createElement("div");
+          card.className = "analysisSmallCard";
+          const t = document.createElement("div");
+          t.className = "analysisSmallTitle";
+          t.textContent = title;
+          card.appendChild(t);
+
+          const ul = document.createElement("ul");
+          ul.className = "analysisSmallList";
+          items.slice(0, 3).forEach(it => {
+            const li = document.createElement("li");
+            li.textContent = toText(it);
+            ul.appendChild(li);
+          });
+          card.appendChild(ul);
+          smallGrid.appendChild(card);
+        }
+
+        if (cats.length) {
+          makeSmallCard("得意なカテゴリ", cats.slice(0, 3), c =>
+            `${c.cat} … 成功${c.successRate.toFixed(0)}%（${c.total}件）`
+          );
+          const catsLow = [...cats].reverse();
+          makeSmallCard("つまずきやすいカテゴリ", catsLow.slice(0, 3), c =>
+            `${c.cat} … 成功${c.successRate.toFixed(0)}%（${c.total}件）`
+          );
+        } else {
+          makeSmallCard("得意なカテゴリ", [], () => "");
+          makeSmallCard("つまずきやすいカテゴリ", [], () => "");
+        }
+
+        makeSmallCard("成功率が高い投稿者", creatorsArr.slice(0, 3), c =>
+          `${c.name} … ${c.rate.toFixed(0)}%（${c.total}件）`
+        );
+
+        recordList.appendChild(sec3);
+      }
+
+    } catch (e) {
+      console.warn("refreshRecords patched error", e);
+      // 万一エラーが出たら旧バージョンをフォールバックで表示
+      try { await refreshRecordsOriginal(); } catch {}
+    }
+  };
+
+  /* 5) 育成画面：残り日数表示＋キャラ一覧ボタンをここに移動 */
+
+  // 小さめキャラ一覧ボタンを育成ヘッダーに追加
+  const trainHeader = document.querySelector("#viewTrain .headerBar");
+  if (trainHeader) {
+    const smallCharBtn = document.createElement("button");
+    smallCharBtn.className = "miniLinkBtn";
+    smallCharBtn.style.opacity = ".7";
+    smallCharBtn.textContent = "キャラ一覧";
+    smallCharBtn.addEventListener("click", () => {
+      try { openCharModal(); } catch {}
+    });
+    trainHeader.appendChild(smallCharBtn);
+  }
+
+  // renderTrainCurrent を上書きして「残り○日」を追加表示
+  const renderTrainCurrentOriginal = renderTrainCurrent;
+  renderTrainCurrent = function() {
+    if (!trainChallenges || !trainChallenges.length) return;
+    const ch = trainChallenges[trainIndex];
+    const slot = `${trainIndex + 1} / ${trainChallenges.length}`;
+
+    const pct = growthPctDynamic(ch);
+    const info = growthStageInfo(pct);
+
+    const day = Math.max(1, Math.min(7, Number(ch.day || 1)));
+    const daysDone = day - 1;
+    const to3 = Math.max(0, 3 - daysDone);
+    const to7 = Math.max(0, 7 - daysDone);
+
+    trainSlot.textContent = slot;
+    trainHabitTitle.textContent = `${ch.habitTitle || "—"}（${day}/7）`;
+    trainPctText.textContent = `${pct.toFixed(0)}%`;
+    trainPct.textContent = `${pct.toFixed(0)}%`;
+    trainFill.style.width = `${pct}%`;
+    trainStage.textContent = `${info.label}｜3日まで残り${to3}日 / 7日まで残り${to7}日`;
+    trainCare.textContent = `次のお世話まで ${fmtCountdown(msToMidnight())}`;
+
+    const base = mascotEmojiFromHabitId(ch.habitId);
+    trainEmoji.textContent = pct >= 100 ? "👑" : (pct < 15 ? base : info.emoji);
+
+    const canSet = (String(ch.status || "") === "cleared") || (pct >= 100);
+    btnSetAvatar.disabled = !canSet;
+    btnSetAvatar.onclick = async () => {
+      if (!canSet) return;
+      try {
+        await updateDoc(doc(db, "users", currentUser.uid), {
+          avatarSetFrom: "creature",
+          avatarCreature: String(trainEmoji.textContent || ""),
+          updatedAt: serverTimestamp()
+        });
+        alert("保存しました（将来この子の画像をアイコンにできます）");
+      } catch (e) {
+        console.warn("set avatar error", e);
+      }
+    };
+  };
+
+  /* 6) カード下部に継続日数/クリア率を表示するよう renderHabitCard を差し替え */
+
+  const renderHabitCardOriginal = renderHabitCard;
+  renderHabitCard = function(h) {
     const card = document.createElement("div");
     card.className = "habitCard";
 
-    const isMine = h.creatorUid === currentUser.uid;
+    const isMine = h.creatorUid === (currentUser && currentUser.uid);
     const bookmarked = cachedBookmarks.has(h.id);
     const creatorFav = cachedFavCreators.has(h.creatorUid);
     const isActive = activeHabitIds.has(h.id);
 
-    const avgRating = Number(h.avgRating||0);
-    const ratingCount = Number(h.ratingCount||0);
-    const participants = Number(h.participantsCount||0);
+    const avgRating = Number(h.avgRating || 0);
+    const ratingCount = Number(h.ratingCount || 0);
+    const participants = Number(h.participantsCount || 0);
 
-    const createdAtStr = String(h.createdAtYMD||"") || "";
+    const createdAtStr = String(h.createdAtYMD || "") || "";
 
-    const avgDays = Math.max(0, Math.min(14, Number(h.avgDays||0)));
-    const successRate = Math.max(0, Math.min(100, Number(h.successRate||0)));
+    const avgDaysVal = Math.max(0, Math.min(14, Number(h.avgDays || 0)));
+    const successRateVal = Math.max(0, Math.min(100, Number(h.successRate || 0)));
 
     applyCatVars(card, h.category);
 
-    // 余白を詰めた「4つ指標」
     card.innerHTML = `
       <div class="thumb">
         <div class="mascotBg">${escapeHtml(mascotEmojiFromHabitId(h.id))}</div>
 
-        <p class="thumbTitle">${escapeHtml(h.title||"")}</p>
-        <div class="thumbAction">${escapeHtml(h.action||"")}</div>
+        <p class="thumbTitle">${escapeHtml(h.title || "")}</p>
+        <div class="thumbAction">${escapeHtml(h.action || "")}</div>
 
         <div class="thumbActions">
           <button class="iconBtn tipBtn reviewBtn" data-act="reviews" data-tip="口コミ">
-            ${bubbleSvg()}
+            ${ (function(){return `
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/>
+              </svg>`; })() }
             <span class="badgeCount">${Math.min(99, ratingCount)}</span>
           </button>
 
-          <button class="iconBtn tipBtn ${bookmarked ? "on":""}" data-act="bookmark" data-tip="保存">
+          <button class="iconBtn tipBtn ${bookmarked ? "on" : ""}" data-act="bookmark" data-tip="保存">
             ${bookmarkSvg(bookmarked)}
           </button>
 
           ${isMine
             ? `<button class="joinBtn tipBtn activeMode" data-act="edit" data-tip="編集">編集</button>`
-            : `<button class="joinBtn tipBtn ${isActive ? "activeMode":""}" data-act="join" data-tip="${isActive ? "育成中" : "参加"}">${isActive ? "育成中" : "参加"}</button>`
+            : `<button class="joinBtn tipBtn ${isActive ? "activeMode" : ""}" data-act="join" data-tip="${isActive ? "育成中" : "参加"}">${isActive ? "育成中" : "参加"}</button>`
           }
         </div>
       </div>
@@ -3397,8 +4214,8 @@
         <div class="creatorCol">
           <div class="miniAva" data-act="creator">${h.creatorPhoto ? `<img src="${escapeHtml(h.creatorPhoto)}" alt="">` : "□"}</div>
           <div class="creatorText">
-            <div class="creatorName" data-act="creator">${escapeHtml(h.creatorName||"作成者")}</div>
-            <button class="followSmall ${creatorFav ? "on":""}" data-act="follow">フォロー</button>
+            <div class="creatorName" data-act="creator">${escapeHtml(h.creatorName || "作成者")}</div>
+            <button class="followSmall ${creatorFav ? "on" : ""}" data-act="follow">フォロー</button>
           </div>
         </div>
 
@@ -3406,8 +4223,10 @@
           <div class="statLine">
             <span class="statPill">参加者 ${participants}</span>
             <span class="statPill">評価 ${avgRating ? avgRating.toFixed(1) : "—"}</span>
-            <span class="statPill">平均日数 ${avgDays ? avgDays.toFixed(1) : "—"}</span>
-            <span class="statPill">成功率 ${Number.isFinite(successRate) ? successRate.toFixed(0) : "—"}%</span>
+          </div>
+          <div class="statLine">
+            <span class="statPill statPill--days">継続 ${avgDaysVal ? avgDaysVal.toFixed(1) : "—"}日</span>
+            <span class="statPill statPill--rate">クリア率 ${Number.isFinite(successRateVal) ? successRateVal.toFixed(0) : "—"}%</span>
           </div>
         </div>
 
@@ -3415,470 +4234,165 @@
       </div>
     `;
 
-    // クリック類（Part1と同様）
-    card.addEventListener("pointerdown", ()=> card.classList.add("pressing"));
-    card.addEventListener("pointerup", ()=> card.classList.remove("pressing"));
-    card.addEventListener("pointercancel", ()=> card.classList.remove("pressing"));
-    card.addEventListener("pointerleave", ()=> card.classList.remove("pressing"));
-
-    card.querySelectorAll('[data-act="creator"]').forEach(el=>{
-      el.addEventListener("click", ()=> openCreatorModal(h.creatorUid, h.creatorName, h.creatorPhoto, h.creatorColor));
+    // 作成者クリック
+    card.querySelectorAll('[data-act="creator"]').forEach(el => {
+      el.addEventListener("click", () =>
+        openCreatorModal(h.creatorUid, h.creatorName, h.creatorPhoto, h.creatorColor)
+      );
     });
 
-    card.querySelector('[data-act="follow"]').addEventListener("click", async (e)=>{
-      e.stopPropagation();
-      await toggleCreatorFav(h.creatorUid);
-    });
+    // フォロー
+    const followBtn = card.querySelector('[data-act="follow"]');
+    if (followBtn) {
+      followBtn.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        await toggleCreatorFav(h.creatorUid);
+      });
+    }
 
-    card.querySelector('[data-act="bookmark"]').addEventListener("click", async (e)=>{
-      e.stopPropagation();
-      await toggleBookmark(h.id);
-    });
+    // 保存
+    const bmBtn = card.querySelector('[data-act="bookmark"]');
+    if (bmBtn) {
+      bmBtn.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        await toggleBookmark(h.id);
+      });
+    }
 
-    card.querySelector('[data-act="reviews"]').addEventListener("click", async (e)=>{
-      e.stopPropagation();
-      await openRatingsViewer(h.id);
-    });
+    // 口コミ
+    const revBtn = card.querySelector('[data-act="reviews"]');
+    if (revBtn) {
+      revBtn.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        await openRatingsViewer(h.id);
+      });
+    }
 
+    // 参加 / 編集
     const joinBtn = card.querySelector('[data-act="join"]');
-    if(joinBtn) joinBtn.addEventListener("click", async (e)=>{
-      e.stopPropagation();
-      if(isActive) return;
-      await startChallenge(h);
-    });
-
+    if (joinBtn) {
+      joinBtn.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        if (isActive) return;
+        await startChallenge(h);
+      });
+    }
     const editBtn = card.querySelector('[data-act="edit"]');
-    if(editBtn) editBtn.addEventListener("click", (e)=>{
-      e.stopPropagation();
-      alert("編集は次段階で。今は自分の投稿は参加が出ない状態です。");
-    });
+    if (editBtn) {
+      editBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        alert("編集は次段階で。今は自分の投稿は参加が出ない状態です。");
+      });
+    }
 
     return card;
-  }
+  };
 
-  // ====== startChallenge：totalDays=3で開始 ======
-  const _startChallenge = (typeof startChallenge === "function") ? startChallenge : null;
+  /* 7) オンボーディング4コマ */
 
-  async function startChallenge(h){
-    const actives = await loadActiveChallenges();
-    if(actives.length >= 3){ alert("依頼は最大3"); return; }
-    if(h.creatorUid === currentUser.uid){ return; }
+  const onboardBg = document.createElement("div");
+  onboardBg.className = "modalBg";
+  onboardBg.id = "onboardBg";
+  onboardBg.innerHTML = `
+    <div class="modal">
+      <div id="onboardContent"></div>
+    </div>
+  `;
+  document.body.appendChild(onboardBg);
 
-    const today = ymd(new Date());
-    const ref = doc(db, "userChallenges", currentUser.uid, "items", h.id);
-    const snap = await getDoc(ref);
-    if(snap.exists() && snap.data()?.status === "active") return;
-
-    await setDoc(ref, {
-      habitId: h.id,
-      habitTitle: h.title || "",
-      creatorUid: h.creatorUid || "",
-      status: "active",
-      startDate: today,
-      day: 1,
-      totalDays: BASE_CLEAR_DAYS,
-      extended: false,
-      successDays: 0,
-      restDays: 0,
-      lastActionYMD: "",
-      streakMiss: 0,
-      difficulty: { easy:0, mid:0, hard:0 },
-      ratingSubmitted: false,
-      updatedAt: serverTimestamp()
-    });
-
-    // participants + totalChallenges はPart1と同じ
-    await runTransaction(db, async (tx)=>{
-      const href = doc(db, "habits", h.id);
-      const hs = await tx.get(href);
-      if(!hs.exists()) return;
-      const cur = hs.data();
-      tx.update(href, { participantsCount: Number(cur.participantsCount||0)+1, updatedAt: serverTimestamp() });
-    });
-
-    await runTransaction(db, async (tx)=>{
-      const uref = doc(db,"users",currentUser.uid);
-      const us = await tx.get(uref);
-      if(!us.exists()) return;
-      const u = us.data();
-      tx.update(uref, { totalChallenges: Number(u.totalChallenges||0)+1, updatedAt: serverTimestamp() });
-    });
-
-    await refreshActiveHabitIds();
-    await refreshSideActive();
-    await refreshHome();
-    await refreshMiniCalendar();
-    await refreshMiniAnalytics();
-    if(viewAnalytics) await refreshAnalytics();
-    await refreshProfile();
-    await refreshTrain();
-  }
-
-  // ====== オンボーディング（初回だけ） ======
-  const ONB_KEY = "onboardingDone_v1";
-  const onbPages = [
+  const onboardSlides = [
     {
-      h:"5分の習慣を、楽しく探す。",
-      p:"みんなの投稿から選んで、自分に合う“続くやつ”だけ残そう。",
-      art:"🗂️  ミニカードが並ぶ\n・深呼吸\n・机リセット\n・英単語3つ"
+      title: "5分の習慣を、楽しく探す。",
+      sub: "みんなの投稿から選んで\n自分に合う“続くやつ”だけ残そう",
+      illust: "🃏🃏🃏"
     },
     {
-      h:"3日でクリアでもOK。",
-      p:"合わなかったら卒業して次へ。続けられない自分を責めない仕組み。",
-      art:"🗓️  3マス埋まる → CLEAR!\n→ 次の習慣へ"
+      title: "3日でクリアでもOK。",
+      sub: "合わなかったら卒業して、次へ。\n“続けられない自分”を責めない設計です。",
+      illust: "📅📅📅 → CLEAR!"
     },
     {
-      h:"口コミと数字で、選びやすい。",
-      p:"評価・参加者・平均日数・成功率を見て、ハズレを減らして選べる。",
-      art:"👥 参加者 128\n⭐ 評価 4.3\n📅 平均日数 5.2\n✅ 成功率 62%"
+      title: "口コミと数字で、ハズレを減らす。",
+      sub: "「評価」「参加者」「平均日数」「成功率」\nぱっと見で“合いそう”が分かります。\nすべて1日5分で終わるメニューだけ。",
+      illust: "⭐ 参加者128 / 成功率80%"
     },
     {
-      h:"続けると、育つ。集まる。",
-      p:"挑戦でキャラが育つ。投稿をまとめて“自分のメニュー”も作れる。",
-      art:"🥚 → 🐣 → 👑\n投稿で世界が増える（SNS型）"
-    },
+      title: "続けると、育つ。集まる。",
+      sub: "挑戦すると卵/種が育ちます。\n好きな人の投稿をまとめて\n“自分のメニュー”として投稿することもできます。",
+      illust: "🥚 → 🐣 → 👑"
+    }
   ];
-  let onbIndex = 0;
 
-  function renderOnb(){
-    const pg = onbPages[onbIndex];
-    onbH.textContent = pg.h;
-    onbP.textContent = pg.p;
-    onbArt.textContent = pg.art;
+  let onboardIndex = 0;
 
-    onbDots.innerHTML = "";
-    for(let i=0;i<onbPages.length;i++){
-      const d = document.createElement("div");
-      d.className = "dot" + (i===onbIndex ? " on":"");
-      onbDots.appendChild(d);
-    }
+  function renderOnboard() {
+    const container = document.getElementById("onboardContent");
+    if (!container) return;
+    const slide = onboardSlides[onboardIndex];
 
-    onbBack.disabled = onbIndex===0;
-    onbNext.textContent = (onbIndex===onbPages.length-1) ? "はじめる" : "次へ";
-  }
+    const dots = onboardSlides.map((_, i) =>
+      `<span class="onboardDot ${i === onboardIndex ? "active" : ""}"></span>`
+    ).join("");
 
-  function openOnb(){
-    onbIndex = 0;
-    renderOnb();
-    onbBg.classList.add("show");
-  }
-  function closeOnb(){
-    onbBg.classList.remove("show");
-  }
+    container.innerHTML = `
+      <h2 class="onboardTitle">${slide.title}</h2>
+      <div class="onboardSub">${slide.sub.replace(/\n/g,"<br>")}</div>
+      <div class="onboardIllust">${slide.illust}</div>
+      <div class="onboardDots">${dots}</div>
+      <div class="onboardFooterBtns">
+        <button class="onboardBtn" id="onboardSkip">${onboardIndex === 0 ? "スキップ" : "とじる"}</button>
+        <button class="onboardBtn primary" id="onboardNext">${onboardIndex === onboardSlides.length - 1 ? "はじめる" : "次へ"}</button>
+      </div>
+    `;
 
-  onbSkip?.addEventListener("click", ()=>{
-    localStorage.setItem(ONB_KEY, "true");
-    closeOnb();
-  });
-  onbBack?.addEventListener("click", ()=>{
-    onbIndex = Math.max(0, onbIndex-1);
-    renderOnb();
-  });
-  onbNext?.addEventListener("click", ()=>{
-    if(onbIndex===onbPages.length-1){
-      localStorage.setItem(ONB_KEY, "true");
-      closeOnb();
-      // 1回ガイド（軽く）：今回は省略（Part3で追加可）
-      return;
-    }
-    onbIndex = Math.min(onbPages.length-1, onbIndex+1);
-    renderOnb();
-  });
-
-  // ====== afterLoginWarm の最後でオンボーディング出す（初回のみ） ======
-  const _afterLoginWarm = (typeof afterLoginWarm === "function") ? afterLoginWarm : null;
-  async function afterLoginWarm(){
-    await warmCaches();
-    await autoRetireIfMissed();
-    await ensureDailyStatsDoc();
-    await refreshDailyDoneCount();
-
-    await refreshActiveHabitIds();
-    await refreshSideActive();
-    await refreshHome();
-    await refreshBookmarksView();
-    await refreshProfile();
-    await refreshTrain();
-
-    await refreshMiniCalendar();
-    await refreshMiniAnalytics();
-
-    if(viewAnalytics) await refreshAnalytics();
-
-    // 初回だけ
-    const done = localStorage.getItem(ONB_KEY)==="true";
-    if(!done){
-      openOnb();
-    }
-  }
-
-  // ====== 分析ページ（右） ======
-  function drawBars(canvas, series){
-    if(!canvas) return;
-    const ctx = canvas.getContext("2d");
-    const w = canvas.width = canvas.clientWidth * devicePixelRatio;
-    const h = canvas.height = canvas.clientHeight * devicePixelRatio;
-
-    ctx.clearRect(0,0,w,h);
-
-    const pad = 18 * devicePixelRatio;
-    const innerW = w - pad*2;
-    const innerH = h - pad*2;
-
-    const days = series.days || [];
-    const done = series.done || [];
-    const rest = series.rest || [];
-    const miss = series.miss || [];
-
-    const maxV = Math.max(1, ...done, ...rest, ...miss);
-
-    // 軸
-    ctx.globalAlpha = 1;
-    ctx.lineWidth = 1 * devicePixelRatio;
-    ctx.strokeStyle = "#e6e6e6";
-    ctx.beginPath();
-    ctx.moveTo(pad, pad);
-    ctx.lineTo(pad, pad+innerH);
-    ctx.lineTo(pad+innerW, pad+innerH);
-    ctx.stroke();
-
-    // 棒（3系列を並べる：done/rest/miss）
-    const n = days.length;
-    if(n===0) return;
-    const groupW = innerW / n;
-    const barW = Math.max(2*devicePixelRatio, groupW * 0.20);
-
-    for(let i=0;i<n;i++){
-      const x0 = pad + groupW*i + groupW*0.18;
-      const baseY = pad + innerH;
-
-      const vals = [
-        { v: done[i]||0, c:"#111" },
-        { v: rest[i]||0, c:"#777" },
-        { v: miss[i]||0, c:"#e00000" },
-      ];
-
-      for(let k=0;k<vals.length;k++){
-        const v = vals[k].v;
-        const bh = (v/maxV) * innerH;
-        const x = x0 + k*(barW*1.25);
-        ctx.fillStyle = vals[k].c;
-        ctx.fillRect(x, baseY - bh, barW, bh);
+    const skip = document.getElementById("onboardSkip");
+    const next = document.getElementById("onboardNext");
+    if (skip) skip.addEventListener("click", closeOnboard);
+    if (next) next.addEventListener("click", () => {
+      if (onboardIndex === onboardSlides.length - 1) {
+        closeOnboard();
+      } else {
+        onboardIndex++;
+        renderOnboard();
       }
-    }
+    });
   }
 
-  function drawLines(canvas, lines){
-    if(!canvas) return;
-    const ctx = canvas.getContext("2d");
-    const w = canvas.width = canvas.clientWidth * devicePixelRatio;
-    const h = canvas.height = canvas.clientHeight * devicePixelRatio;
-    ctx.clearRect(0,0,w,h);
-
-    const pad = 18 * devicePixelRatio;
-    const innerW = w - pad*2;
-    const innerH = h - pad*2;
-
-    // 軸
-    ctx.lineWidth = 1 * devicePixelRatio;
-    ctx.strokeStyle = "#e6e6e6";
-    ctx.beginPath();
-    ctx.moveTo(pad, pad);
-    ctx.lineTo(pad, pad+innerH);
-    ctx.lineTo(pad+innerW, pad+innerH);
-    ctx.stroke();
-
-    const series = lines.series || []; // [{name, points:[0..1], color?}]
-    if(series.length===0) return;
-
-    // 0..1 を 0..100 として描く
-    const n = Math.max(2, ...series.map(s=>s.points.length));
-    const stepX = innerW / (n-1);
-
-    for(let si=0; si<series.length; si++){
-      const s = series[si];
-      // 色は固定しない（要望に沿い、ここは線色を少し変えたいが…）
-      // → 代わりに alpha と線幅で区別（色指定なし）
-      ctx.globalAlpha = 0.85 - si*0.08;
-      ctx.lineWidth = (2.2 - si*0.15) * devicePixelRatio;
-      ctx.strokeStyle = "#111"; // 色は同一（指定回避）
-      ctx.beginPath();
-      for(let i=0;i<s.points.length;i++){
-        const px = pad + stepX*i;
-        const py = pad + innerH - (Math.max(0,Math.min(1,s.points[i])) * innerH);
-        if(i===0) ctx.moveTo(px,py);
-        else ctx.lineTo(px,py);
-      }
-      ctx.stroke();
-    }
-    ctx.globalAlpha = 1;
+  function openOnboard() {
+    renderOnboard();
+    onboardBg.classList.add("show");
+  }
+  function closeOnboard() {
+    onboardBg.classList.remove("show");
   }
 
-  function computeInsights(challs){
-    // 直近30件から：
-    // - カテゴリ別成功率（成功日/(成功+休) ざっくり）
-    // - 苦手カテゴリ（成功率低い）
-    // - 得意投稿者（成功率高い creatorUid 上位）
-    const byCat = new Map();
-    const byCreator = new Map();
-
-    for(const ch of challs){
-      const cat = String(ch.category||"その他");
-      const done = Number(ch.successDays||0);
-      const rest = Number(ch.restDays||0);
-      const den = Math.max(1, done + rest);
-      const rate = done / den;
-
-      byCat.set(cat, (byCat.get(cat)||[]).concat(rate));
-
-      const uid = String(ch.creatorUid||"");
-      if(uid){
-        byCreator.set(uid, (byCreator.get(uid)||[]).concat(rate));
-      }
-    }
-
-    function avg(arr){ return arr.reduce((a,b)=>a+b,0) / Math.max(1, arr.length); }
-
-    let worstCat = null;
-    let worstVal = 1;
-    for(const [k,arr] of byCat.entries()){
-      const v = avg(arr);
-      if(v < worstVal){ worstVal = v; worstCat = k; }
-    }
-
-    let bestCreator = null;
-    let bestVal = 0;
-    for(const [k,arr] of byCreator.entries()){
-      const v = avg(arr);
-      if(arr.length>=2 && v > bestVal){ bestVal = v; bestCreator = k; }
-    }
-
-    return { worstCat, worstVal, bestCreator, bestVal };
+  function tryShowOnboard() {
+    if (!currentUser || !myProfile) return;
+    if (!myProfile.preferredCategory) return;
+    const key = `habit_onboard_v1_${currentUser.uid}`;
+    if (localStorage.getItem(key) === "1") return;
+    localStorage.setItem(key, "1");
+    openOnboard();
   }
 
-  async function refreshAnalytics(){
-    if(!currentUser || !viewAnalytics) return;
-
-    const all = await loadChallenges(120);
-
-    // 最近のカード：active/cleared/retired/finished を混ぜて最新順
-    const recent = all.slice(0,12);
-
-    if(anaBadge){
-      const a = all.filter(x=>x.status==="active").length;
-      const c = all.filter(x=>x.status==="cleared").length;
-      const r = all.filter(x=>x.status==="retired").length;
-      anaBadge.textContent = `育成中 ${a} / 完了 ${c} / リタイア ${r}`;
-    }
-
-    if(anaRecentGrid){
-      anaRecentGrid.innerHTML = "";
-      for(const ch of recent){
-        const info = statusBadgeInfo(ch);
-        const el = document.createElement("div");
-        el.className = "miniCard";
-        el.innerHTML = `
-          <div class="miniCorner ${info.cls}">${info.small}</div>
-          <p class="miniCardTitle">${escapeHtml(ch.habitTitle||"")}</p>
-          <div class="miniCardSub">${escapeHtml(info.text)} / 成功 ${Number(ch.successDays||0)} / 休 ${Number(ch.restDays||0)}</div>
-        `;
-        anaRecentGrid.appendChild(el);
-      }
-    }
-
-    // 日別棒（直近14日）：done/rest/miss（missは streakMiss の合計っぽく）
-    const days = [];
-    const done = [];
-    const rest = [];
-    const miss = [];
-
-    for(let i=13;i>=0;i--){
-      const d = new Date();
-      d.setDate(d.getDate()-i);
-      const key = ymd(d);
-      days.push(key);
-
-      // stampがある＝何かした と仮定して done/rest を推定するのは難しいので
-      // → 直近チャレンジの lastActionYMD を集計
-      let dn=0, rs=0, ms=0;
-      for(const ch of all){
-        if(String(ch.lastActionYMD||"").slice(0,10) === key){
-          // difficultyのどれか増えてれば done とみなす（雑）
-          const dif = ch.difficulty || {};
-          const sumDif = Number(dif.easy||0)+Number(dif.mid||0)+Number(dif.hard||0);
-          if(sumDif>0) dn++;
-          else rs++;
-        }
-        ms += Number(ch.streakMiss||0) > 0 ? 0 : 0;
-      }
-      done.push(dn);
-      rest.push(rs);
-      miss.push(0);
-    }
-
-    drawBars(chartBars, { days, done, rest, miss });
-
-    // カテゴリ別折れ線：各カテゴリの成功率推移（直近に出た順でポイント）
-    // 直近30件をカテゴリに分け、各カテゴリの rate を配列化して描く
-    const recent30 = all.slice(0,30);
-    const catMap = new Map();
-    for(const ch of recent30){
-      const cat = String(ch.category||"その他");
-      const dn = Number(ch.successDays||0);
-      const rs = Number(ch.restDays||0);
-      const den = Math.max(1, dn+rs);
-      const rate = dn/den;
-      if(!catMap.has(cat)) catMap.set(cat, []);
-      catMap.get(cat).push(rate);
-    }
-    const series = [];
-    for(const [cat, pts] of catMap.entries()){
-      series.push({ name: cat, points: pts.slice(0,10) }); // 10点まで
-    }
-    drawLines(chartLines, { series: series.slice(0,5) }); // 多すぎると見にくいので5カテゴリまで
-
-    // 気づき
-    const ins = computeInsights(recent30);
-    if(insightBadge){
-      insightBadge.textContent = `苦手: ${ins.worstCat||"—"} / 得意作成者: ${ins.bestCreator ? "あり" : "—"}`;
-    }
-    if(insightBox){
-      const t = [];
-      if(ins.worstCat){
-        t.push(`・あなたは「${ins.worstCat}」でミスりやすいかも（推定成功率 ${(ins.worstVal*100).toFixed(0)}%）`);
-      }
-      if(ins.bestCreator){
-        t.push(`・相性が良い作成者がいそう（推定成功率 ${(ins.bestVal*100).toFixed(0)}%）`);
-      }
-      if(t.length===0) t.push("・データがたまると、苦手カテゴリ/相性の良い投稿が出ます。");
-      const box = insightBox.querySelector(".reviewText");
-      if(box) box.textContent = t.join("\n");
-    }
+  // カテゴリ保存後に1回だけ表示
+  const catSaveBtn = document.getElementById("catSave");
+  if (catSaveBtn) {
+    catSaveBtn.addEventListener("click", () => {
+      setTimeout(tryShowOnboard, 800);
+    });
   }
 
-  anaShowAll?.addEventListener("click", ()=>{
-    alert("もっと見る（全件フィルタ/ランキング表示）は Part3 で実装します。");
-  });
+  // afterLoginWarm にもフックしておく（既存ユーザー向け）
+  const afterLoginWarmOriginal = afterLoginWarm;
+  afterLoginWarm = async function() {
+    await afterLoginWarmOriginal();
+    try { await refreshEmojiCalendar(); } catch {}
+    tryShowOnboard();
+  };
 
-  // ====== afterLoginWarm/refresh系に紐づけ ======
-  // 既に onAuthStateChanged 内で afterLoginWarm を呼んでいる想定なので、
-  // Part1側の afterLoginWarm 呼び出しはそのまま、この上書きが効きます。
-
-  // ====== 初期ロード時（ログイン中なら反映） ======
-  if(currentUser){
-    refreshMiniCalendar();
-    refreshMiniAnalytics();
-  }
-
-</script>
-
-<!-- =========================
-  PART2 ここまで
-  次は Part3 を送ります（残り：育成%/残日表示の厳密化、Training画面の7日対応、分析ランキング/苦手タグ/成功率高いのに失敗しやすい一覧等の追加）
-========================= --><!-- =========================
-  PART 3 / 3
-  ※Part1の「一番下」にそのまま貼り足しOK（重複CSS/HTMLは上書きする前提）
-  ※Part2で「analysisビュー/オンボ/3日2択」を入れている前提
-========================= -->
-
-
+})(); 
+/* ==== 追加パッチコードここまで ==== */
+  </script>
+</body>
+</html>
