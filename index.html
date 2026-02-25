@@ -1861,6 +1861,456 @@
       PART 2 / 3 で続きます
       ここは “まだ途中” です（連結用）
     ========================= */
+     /* ====== PART3 追加CSS ====== */
+
+  /* Training（育成中）カード内：進捗を見やすく */
+  .sideMeta{font-family:var(--mono);}
+
+  /* 分析：全件モーダル */
+  .anaAllBg{
+    position:fixed; inset:0;
+    background: rgba(0,0,0,.42);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:18px;
+    z-index:200;
+  }
+  .anaAllBg.show{display:flex}
+  .anaAllCard{
+    width:min(860px, 100%);
+    max-height:min(78vh, 720px);
+    border:1px solid var(--line);
+    border-radius: 16px;
+    background:#fff;
+    box-shadow: var(--shadow);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+  .anaAllTop{
+    padding:12px 12px 10px;
+    border-bottom:1px solid var(--line);
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:10px;
+  }
+  .anaAllTitle{
+    margin:0;
+    font-weight:1100;
+    letter-spacing:.05em;
+    font-size:14px;
+  }
+  .anaAllSub{
+    margin:6px 0 0;
+    color:var(--muted);
+    font-size:12px;
+    font-family:var(--mono);
+  }
+  .anaAllClose{
+    border:1px solid var(--line);
+    background:#fff;
+    border-radius: 12px;
+    padding:10px 12px;
+    font-weight:1100;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .anaAllCtrls{
+    padding:10px 12px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    border-bottom:1px solid var(--line);
+  }
+  .anaSel, .anaIn{
+    border:1px solid var(--line);
+    border-radius: 12px;
+    padding:10px 12px;
+    font-weight:1100;
+    background:#fff;
+    font-size:12px;
+  }
+  .anaIn{
+    flex:1;
+    min-width: 200px;
+    font-weight:900;
+  }
+  .anaAllBody{
+    padding:12px;
+    overflow:auto;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .anaRowItem{
+    border:1px solid var(--line);
+    border-radius: 14px;
+    background:#fff;
+    box-shadow: var(--shadow);
+    padding:10px 12px;
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+    justify-content:space-between;
+  }
+  .anaRowL{min-width:0;}
+  .anaRowT{
+    margin:0;
+    font-weight:1100;
+    font-size:13px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .anaRowM{
+    margin-top:6px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  .anaChip{
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:6px 8px;
+    font-family:var(--mono);
+    font-size:11px;
+    color:#111;
+    background:#fff;
+  }
+  .anaRowR{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:6px;
+    flex-shrink:0;
+  }
+  .anaTag{
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:6px 8px;
+    font-weight:1100;
+    font-size:11px;
+    background:#fff;
+  }
+  .anaBtn{
+    border:1px solid var(--line);
+    background:#fff;
+    border-radius: 12px;
+    padding:9px 10px;
+    font-weight:1100;
+    cursor:pointer;
+    font-size:12px;
+  }
+</style>
+
+<!-- ====== PART3 追加HTML：分析 全件モーダル ====== -->
+<div class="anaAllBg" id="anaAllBg" aria-hidden="true">
+  <div class="anaAllCard">
+    <div class="anaAllTop">
+      <div style="min-width:0">
+        <p class="anaAllTitle">分析：全件</p>
+        <p class="anaAllSub" id="anaAllSub">—</p>
+      </div>
+      <button class="anaAllClose" id="anaAllClose">閉じる</button>
+    </div>
+
+    <div class="anaAllCtrls">
+      <select class="anaSel" id="anaAllStatus">
+        <option value="all">すべて</option>
+        <option value="active">育成中</option>
+        <option value="cleared">完了</option>
+        <option value="retired">リタイア</option>
+        <option value="finished">終了</option>
+      </select>
+
+      <select class="anaSel" id="anaAllSort">
+        <option value="recent">新しい順</option>
+        <option value="rate">成功率 高い順</option>
+        <option value="streak">継続日数（success）多い順</option>
+        <option value="rest">休み 多い順</option>
+      </select>
+
+      <input class="anaIn" id="anaAllQ" placeholder="タイトルで検索（例：呼吸 / 片付け）" />
+    </div>
+
+    <div class="anaAllBody" id="anaAllBody"></div>
+  </div>
+</div>
+
+<script type="module">
+/* =========================
+  PART3 / 3 追加JS
+  ※Part1の<script type="module">内に「追記」でも、末尾に別<script>でもOK
+========================= */
+
+  // ====== DOM ======
+  const anaAllBg = document.getElementById("anaAllBg");
+  const anaAllBody = document.getElementById("anaAllBody");
+  const anaAllClose = document.getElementById("anaAllClose");
+  const anaAllStatus = document.getElementById("anaAllStatus");
+  const anaAllSort = document.getElementById("anaAllSort");
+  const anaAllQ = document.getElementById("anaAllQ");
+  const anaAllSub = document.getElementById("anaAllSub");
+
+  // Part2で取っている anaShowAll / miniAnaMore があれば、それも活用
+  // （無かったら無視されます）
+  //   const anaShowAll = document.getElementById("anaShowAll");
+  //   const miniAnaMore = document.getElementById("miniAnaMore");
+
+  // ====== 進捗% / 残り日 表示を「3日/7日」両対応で厳密化 ======
+
+  function clamp(n,a,b){ return Math.max(a, Math.min(b, n)); }
+
+  function getTotalDays(ch){
+    // totalDays が無い古いデータ対策：3日
+    return Math.max(1, Number(ch.totalDays || 3));
+  }
+
+  function getDisplayDay(ch){
+    const t = getTotalDays(ch);
+    const d = Number(ch.day || 1);
+    // day は「次の予定日」を指して進むことがあるので、表示は 1..t に丸める
+    return clamp(d, 1, t);
+  }
+
+  function getRemainDays(ch){
+    const t = getTotalDays(ch);
+    const d = getDisplayDay(ch);
+    return Math.max(0, t - d + 1);
+  }
+
+  function calcSuccessRate(ch){
+    const done = Number(ch.successDays||0);
+    const rest = Number(ch.restDays||0);
+    const den = Math.max(1, done + rest);
+    return done / den; // 0..1
+  }
+
+  function growthPctDynamic(ch){
+    // 進捗は「日数（表示day）/totalDays」を主軸にしつつ
+    // done率が高いほど少し上振れ（見た目の気持ちよさ）
+    const t = getTotalDays(ch);
+    const d = getDisplayDay(ch);
+    const base = d / t; // 0..1
+    const rate = calcSuccessRate(ch); // 0..1
+    const boost = (rate - 0.5) * 0.10; // -0.05..+0.05 程度
+    return clamp((base + boost) * 100, 1, 100);
+  }
+
+  // ====== refreshSideActive を「残り日/進捗%」を必ず正しい表示へ上書き ======
+  // Part2で refreshSideActive を上書きしてる前提だけど、
+  // さらに表示部分だけここで確実に補正する（関数が存在しない場合は無視）
+  const _refreshSideActive_part3 = (typeof refreshSideActive === "function") ? refreshSideActive : null;
+
+  async function refreshSideActive(){
+    // Part2の refreshSideActive が既に存在するなら、そのまま使うのが一番安全
+    if(typeof _refreshSideActive_part3 === "function"){
+      await _refreshSideActive_part3();
+
+      // その後、描画済みDOMの meta 表示だけ補正（最終保険）
+      // sideActiveList 内の各 .sideItem を見て、data-habitid が無ければ補正できないのでスキップ
+      // → Part2の sideItem は data を持ってないので、ここでは補正しない（＝Part2表示に任せる）
+      return;
+    }
+  }
+
+  // ====== Training（育成中）ビューも「3/7対応」にする ======
+  // Part1の refreshTrain に寄せるより「表示ヘッダだけ」確実に整える
+  const _refreshTrain = (typeof refreshTrain === "function") ? refreshTrain : null;
+
+  async function refreshTrain(){
+    if(typeof _refreshTrain === "function"){
+      await _refreshTrain();
+    }
+
+    // もし trainActiveList があるなら、そこに進捗を追記/補正したいが
+    // Part1のDOM構造が不明なので、ここでは“サブ文言だけ”更新する。
+    // （壊さない方針）
+    try{
+      if(!currentUser) return;
+      const actives = await loadActiveChallenges();
+      if(trainBadge){
+        const a = actives.length;
+        trainBadge.textContent = a ? `育成中 ${a}/3` : "育成中 0/3";
+      }
+    }catch(e){}
+  }
+
+  // ====== 分析：全件モーダル ======
+  let anaAllCache = []; // loadChallengesの結果を保持
+
+  function statusLabel(st, totalDays){
+    if(st==="active") return "育成中";
+    if(st==="retired") return "リタイア";
+    if(st==="finished") return "終了";
+    if(st==="cleared"){
+      return (Number(totalDays)>=7) ? "育成完了(7)" : "育成完了(3)";
+    }
+    return String(st||"—");
+  }
+
+  function openAnaAll(){
+    anaAllBg.classList.add("show");
+    renderAnaAll();
+  }
+  function closeAnaAll(){
+    anaAllBg.classList.remove("show");
+  }
+
+  function sortAna(list, mode){
+    const arr = list.slice();
+    if(mode==="rate"){
+      arr.sort((a,b)=> calcSuccessRate(b) - calcSuccessRate(a));
+    }else if(mode==="streak"){
+      arr.sort((a,b)=> Number(b.successDays||0) - Number(a.successDays||0));
+    }else if(mode==="rest"){
+      arr.sort((a,b)=> Number(b.restDays||0) - Number(a.restDays||0));
+    }else{
+      // recent：loadChallenges が新しい順の想定（Part2と同じ）
+    }
+    return arr;
+  }
+
+  function filterAna(list){
+    const st = anaAllStatus.value;
+    const q = (anaAllQ.value||"").trim().toLowerCase();
+
+    return list.filter(ch=>{
+      if(st!=="all" && String(ch.status||"")!==st) return false;
+      if(q){
+        const t = String(ch.habitTitle||"").toLowerCase();
+        if(!t.includes(q)) return false;
+      }
+      return true;
+    });
+  }
+
+  function renderAnaAll(){
+    if(!anaAllBody) return;
+
+    const base = anaAllCache || [];
+    const filtered = filterAna(base);
+    const sorted = sortAna(filtered, anaAllSort.value);
+
+    anaAllSub.textContent = `件数 ${sorted.length} / 全体 ${base.length}`;
+
+    anaAllBody.innerHTML = "";
+    if(sorted.length===0){
+      const empty = document.createElement("div");
+      empty.className = "review";
+      empty.innerHTML = `<div class="reviewText">データがまだありません。</div>`;
+      anaAllBody.appendChild(empty);
+      return;
+    }
+
+    for(const ch of sorted){
+      const total = getTotalDays(ch);
+      const day = getDisplayDay(ch);
+      const remain = getRemainDays(ch);
+      const rate = calcSuccessRate(ch);
+      const prog = growthPctDynamic(ch);
+
+      const row = document.createElement("div");
+      row.className = "anaRowItem";
+
+      const stLabel = statusLabel(ch.status, total);
+
+      row.innerHTML = `
+        <div class="anaRowL">
+          <p class="anaRowT">${escapeHtml(ch.habitTitle||"")}</p>
+          <div class="anaRowM">
+            <span class="anaChip">${escapeHtml(stLabel)}</span>
+            <span class="anaChip">day ${day}/${total}</span>
+            <span class="anaChip">残り ${remain}</span>
+            <span class="anaChip">成功 ${Number(ch.successDays||0)}</span>
+            <span class="anaChip">休み ${Number(ch.restDays||0)}</span>
+            <span class="anaChip">成功率 ${(rate*100).toFixed(0)}%</span>
+            <span class="anaChip">進捗 ${prog.toFixed(0)}%</span>
+          </div>
+        </div>
+        <div class="anaRowR">
+          <span class="anaTag">${escapeHtml((ch.category||"")) || "—"}</span>
+          <button class="anaBtn" data-act="jump">この習慣を見る</button>
+        </div>
+      `;
+
+      row.querySelector('[data-act="jump"]').addEventListener("click", async ()=>{
+        // 既存UIの検索欄へタイトルを入れてホームに戻す（最小で迷子防止）
+        try{
+          closeAnaAll();
+          navHome?.click?.();
+          if(searchIn){
+            searchIn.value = ch.habitTitle || "";
+            await refreshHome();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }
+        }catch(e){}
+      });
+
+      anaAllBody.appendChild(row);
+    }
+  }
+
+  anaAllClose?.addEventListener("click", closeAnaAll);
+  anaAllBg?.addEventListener("click", (e)=>{
+    // 背景クリックで閉じる
+    if(e.target === anaAllBg) closeAnaAll();
+  });
+  anaAllStatus?.addEventListener("change", renderAnaAll);
+  anaAllSort?.addEventListener("change", renderAnaAll);
+  anaAllQ?.addEventListener("input", ()=>{
+    // 入力中は軽く間引き
+    clearTimeout(window.__anaQTimer);
+    window.__anaQTimer = setTimeout(renderAnaAll, 120);
+  });
+
+  // Part2の「もっと見る」ボタンから全件モーダルを開く
+  try{
+    const anaShowAll = document.getElementById("anaShowAll");
+    const miniAnaMore = document.getElementById("miniAnaMore");
+
+    anaShowAll?.addEventListener("click", openAnaAll);
+    miniAnaMore?.addEventListener("click", openAnaAll);
+  }catch(e){}
+
+  // ====== refreshAnalytics で「もっと見る」が押せるように：cache更新 ======
+  const _refreshAnalytics_part3 = (typeof refreshAnalytics === "function") ? refreshAnalytics : null;
+
+  async function refreshAnalytics(){
+    if(typeof _refreshAnalytics_part3 === "function"){
+      await _refreshAnalytics_part3();
+    }
+    try{
+      if(!currentUser) return;
+      // 全件モーダル用キャッシュ（最新120件）
+      anaAllCache = await loadChallenges(120);
+    }catch(e){}
+  }
+
+  // ====== 起動時：ログイン済みなら cache 更新 ======
+  if(currentUser){
+    // 既存の描画を壊さない範囲で、分析cacheだけ確保
+    try{
+      anaAllCache = await loadChallenges(120);
+    }catch(e){}
+  }
+
+  /* =========================
+    ここまでで完了！
+
+    ✅ Part3で入ったもの
+    - 3日/7日どちらでも「進捗%」「残り日」「day/total」を正しく扱う関数群
+    - 分析の「全件」モーダル（検索・並び替え・ステータス絞り込み）
+    - 「この習慣を見る」ボタン（ホーム検索へジャンプ）
+
+    次やるなら（必要なら言って）
+    - 習慣カードの「平均日数/成功率」を Firestore で自動集計（rating送信時・クリア時に更新）
+    - 分析の“苦手カテゴリ”を本当にカテゴリ別推移で出す（色分け/凡例付き）
+    - 育成キャラの成長段階（卵→…）を day と successRate に合わせて固定ルールで変える
+  ========================= */
+
 </script>
 </body>
 </html>
@@ -3431,454 +3881,4 @@
   ※Part2で「analysisビュー/オンボ/3日2択」を入れている前提
 ========================= -->
 
-<style>
-  /* ====== PART3 追加CSS ====== */
 
-  /* Training（育成中）カード内：進捗を見やすく */
-  .sideMeta{font-family:var(--mono);}
-
-  /* 分析：全件モーダル */
-  .anaAllBg{
-    position:fixed; inset:0;
-    background: rgba(0,0,0,.42);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    padding:18px;
-    z-index:200;
-  }
-  .anaAllBg.show{display:flex}
-  .anaAllCard{
-    width:min(860px, 100%);
-    max-height:min(78vh, 720px);
-    border:1px solid var(--line);
-    border-radius: 16px;
-    background:#fff;
-    box-shadow: var(--shadow);
-    display:flex;
-    flex-direction:column;
-    overflow:hidden;
-  }
-  .anaAllTop{
-    padding:12px 12px 10px;
-    border-bottom:1px solid var(--line);
-    display:flex;
-    align-items:flex-start;
-    justify-content:space-between;
-    gap:10px;
-  }
-  .anaAllTitle{
-    margin:0;
-    font-weight:1100;
-    letter-spacing:.05em;
-    font-size:14px;
-  }
-  .anaAllSub{
-    margin:6px 0 0;
-    color:var(--muted);
-    font-size:12px;
-    font-family:var(--mono);
-  }
-  .anaAllClose{
-    border:1px solid var(--line);
-    background:#fff;
-    border-radius: 12px;
-    padding:10px 12px;
-    font-weight:1100;
-    cursor:pointer;
-    white-space:nowrap;
-  }
-  .anaAllCtrls{
-    padding:10px 12px;
-    display:flex;
-    flex-wrap:wrap;
-    gap:8px;
-    border-bottom:1px solid var(--line);
-  }
-  .anaSel, .anaIn{
-    border:1px solid var(--line);
-    border-radius: 12px;
-    padding:10px 12px;
-    font-weight:1100;
-    background:#fff;
-    font-size:12px;
-  }
-  .anaIn{
-    flex:1;
-    min-width: 200px;
-    font-weight:900;
-  }
-  .anaAllBody{
-    padding:12px;
-    overflow:auto;
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-  }
-  .anaRowItem{
-    border:1px solid var(--line);
-    border-radius: 14px;
-    background:#fff;
-    box-shadow: var(--shadow);
-    padding:10px 12px;
-    display:flex;
-    gap:10px;
-    align-items:flex-start;
-    justify-content:space-between;
-  }
-  .anaRowL{min-width:0;}
-  .anaRowT{
-    margin:0;
-    font-weight:1100;
-    font-size:13px;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
-  .anaRowM{
-    margin-top:6px;
-    display:flex;
-    flex-wrap:wrap;
-    gap:6px;
-  }
-  .anaChip{
-    border:1px solid var(--line);
-    border-radius:999px;
-    padding:6px 8px;
-    font-family:var(--mono);
-    font-size:11px;
-    color:#111;
-    background:#fff;
-  }
-  .anaRowR{
-    display:flex;
-    flex-direction:column;
-    align-items:flex-end;
-    gap:6px;
-    flex-shrink:0;
-  }
-  .anaTag{
-    border:1px solid var(--line);
-    border-radius:999px;
-    padding:6px 8px;
-    font-weight:1100;
-    font-size:11px;
-    background:#fff;
-  }
-  .anaBtn{
-    border:1px solid var(--line);
-    background:#fff;
-    border-radius: 12px;
-    padding:9px 10px;
-    font-weight:1100;
-    cursor:pointer;
-    font-size:12px;
-  }
-</style>
-
-<!-- ====== PART3 追加HTML：分析 全件モーダル ====== -->
-<div class="anaAllBg" id="anaAllBg" aria-hidden="true">
-  <div class="anaAllCard">
-    <div class="anaAllTop">
-      <div style="min-width:0">
-        <p class="anaAllTitle">分析：全件</p>
-        <p class="anaAllSub" id="anaAllSub">—</p>
-      </div>
-      <button class="anaAllClose" id="anaAllClose">閉じる</button>
-    </div>
-
-    <div class="anaAllCtrls">
-      <select class="anaSel" id="anaAllStatus">
-        <option value="all">すべて</option>
-        <option value="active">育成中</option>
-        <option value="cleared">完了</option>
-        <option value="retired">リタイア</option>
-        <option value="finished">終了</option>
-      </select>
-
-      <select class="anaSel" id="anaAllSort">
-        <option value="recent">新しい順</option>
-        <option value="rate">成功率 高い順</option>
-        <option value="streak">継続日数（success）多い順</option>
-        <option value="rest">休み 多い順</option>
-      </select>
-
-      <input class="anaIn" id="anaAllQ" placeholder="タイトルで検索（例：呼吸 / 片付け）" />
-    </div>
-
-    <div class="anaAllBody" id="anaAllBody"></div>
-  </div>
-</div>
-
-<script type="module">
-/* =========================
-  PART3 / 3 追加JS
-  ※Part1の<script type="module">内に「追記」でも、末尾に別<script>でもOK
-========================= */
-
-  // ====== DOM ======
-  const anaAllBg = document.getElementById("anaAllBg");
-  const anaAllBody = document.getElementById("anaAllBody");
-  const anaAllClose = document.getElementById("anaAllClose");
-  const anaAllStatus = document.getElementById("anaAllStatus");
-  const anaAllSort = document.getElementById("anaAllSort");
-  const anaAllQ = document.getElementById("anaAllQ");
-  const anaAllSub = document.getElementById("anaAllSub");
-
-  // Part2で取っている anaShowAll / miniAnaMore があれば、それも活用
-  // （無かったら無視されます）
-  //   const anaShowAll = document.getElementById("anaShowAll");
-  //   const miniAnaMore = document.getElementById("miniAnaMore");
-
-  // ====== 進捗% / 残り日 表示を「3日/7日」両対応で厳密化 ======
-
-  function clamp(n,a,b){ return Math.max(a, Math.min(b, n)); }
-
-  function getTotalDays(ch){
-    // totalDays が無い古いデータ対策：3日
-    return Math.max(1, Number(ch.totalDays || 3));
-  }
-
-  function getDisplayDay(ch){
-    const t = getTotalDays(ch);
-    const d = Number(ch.day || 1);
-    // day は「次の予定日」を指して進むことがあるので、表示は 1..t に丸める
-    return clamp(d, 1, t);
-  }
-
-  function getRemainDays(ch){
-    const t = getTotalDays(ch);
-    const d = getDisplayDay(ch);
-    return Math.max(0, t - d + 1);
-  }
-
-  function calcSuccessRate(ch){
-    const done = Number(ch.successDays||0);
-    const rest = Number(ch.restDays||0);
-    const den = Math.max(1, done + rest);
-    return done / den; // 0..1
-  }
-
-  function growthPctDynamic(ch){
-    // 進捗は「日数（表示day）/totalDays」を主軸にしつつ
-    // done率が高いほど少し上振れ（見た目の気持ちよさ）
-    const t = getTotalDays(ch);
-    const d = getDisplayDay(ch);
-    const base = d / t; // 0..1
-    const rate = calcSuccessRate(ch); // 0..1
-    const boost = (rate - 0.5) * 0.10; // -0.05..+0.05 程度
-    return clamp((base + boost) * 100, 1, 100);
-  }
-
-  // ====== refreshSideActive を「残り日/進捗%」を必ず正しい表示へ上書き ======
-  // Part2で refreshSideActive を上書きしてる前提だけど、
-  // さらに表示部分だけここで確実に補正する（関数が存在しない場合は無視）
-  const _refreshSideActive_part3 = (typeof refreshSideActive === "function") ? refreshSideActive : null;
-
-  async function refreshSideActive(){
-    // Part2の refreshSideActive が既に存在するなら、そのまま使うのが一番安全
-    if(typeof _refreshSideActive_part3 === "function"){
-      await _refreshSideActive_part3();
-
-      // その後、描画済みDOMの meta 表示だけ補正（最終保険）
-      // sideActiveList 内の各 .sideItem を見て、data-habitid が無ければ補正できないのでスキップ
-      // → Part2の sideItem は data を持ってないので、ここでは補正しない（＝Part2表示に任せる）
-      return;
-    }
-  }
-
-  // ====== Training（育成中）ビューも「3/7対応」にする ======
-  // Part1の refreshTrain に寄せるより「表示ヘッダだけ」確実に整える
-  const _refreshTrain = (typeof refreshTrain === "function") ? refreshTrain : null;
-
-  async function refreshTrain(){
-    if(typeof _refreshTrain === "function"){
-      await _refreshTrain();
-    }
-
-    // もし trainActiveList があるなら、そこに進捗を追記/補正したいが
-    // Part1のDOM構造が不明なので、ここでは“サブ文言だけ”更新する。
-    // （壊さない方針）
-    try{
-      if(!currentUser) return;
-      const actives = await loadActiveChallenges();
-      if(trainBadge){
-        const a = actives.length;
-        trainBadge.textContent = a ? `育成中 ${a}/3` : "育成中 0/3";
-      }
-    }catch(e){}
-  }
-
-  // ====== 分析：全件モーダル ======
-  let anaAllCache = []; // loadChallengesの結果を保持
-
-  function statusLabel(st, totalDays){
-    if(st==="active") return "育成中";
-    if(st==="retired") return "リタイア";
-    if(st==="finished") return "終了";
-    if(st==="cleared"){
-      return (Number(totalDays)>=7) ? "育成完了(7)" : "育成完了(3)";
-    }
-    return String(st||"—");
-  }
-
-  function openAnaAll(){
-    anaAllBg.classList.add("show");
-    renderAnaAll();
-  }
-  function closeAnaAll(){
-    anaAllBg.classList.remove("show");
-  }
-
-  function sortAna(list, mode){
-    const arr = list.slice();
-    if(mode==="rate"){
-      arr.sort((a,b)=> calcSuccessRate(b) - calcSuccessRate(a));
-    }else if(mode==="streak"){
-      arr.sort((a,b)=> Number(b.successDays||0) - Number(a.successDays||0));
-    }else if(mode==="rest"){
-      arr.sort((a,b)=> Number(b.restDays||0) - Number(a.restDays||0));
-    }else{
-      // recent：loadChallenges が新しい順の想定（Part2と同じ）
-    }
-    return arr;
-  }
-
-  function filterAna(list){
-    const st = anaAllStatus.value;
-    const q = (anaAllQ.value||"").trim().toLowerCase();
-
-    return list.filter(ch=>{
-      if(st!=="all" && String(ch.status||"")!==st) return false;
-      if(q){
-        const t = String(ch.habitTitle||"").toLowerCase();
-        if(!t.includes(q)) return false;
-      }
-      return true;
-    });
-  }
-
-  function renderAnaAll(){
-    if(!anaAllBody) return;
-
-    const base = anaAllCache || [];
-    const filtered = filterAna(base);
-    const sorted = sortAna(filtered, anaAllSort.value);
-
-    anaAllSub.textContent = `件数 ${sorted.length} / 全体 ${base.length}`;
-
-    anaAllBody.innerHTML = "";
-    if(sorted.length===0){
-      const empty = document.createElement("div");
-      empty.className = "review";
-      empty.innerHTML = `<div class="reviewText">データがまだありません。</div>`;
-      anaAllBody.appendChild(empty);
-      return;
-    }
-
-    for(const ch of sorted){
-      const total = getTotalDays(ch);
-      const day = getDisplayDay(ch);
-      const remain = getRemainDays(ch);
-      const rate = calcSuccessRate(ch);
-      const prog = growthPctDynamic(ch);
-
-      const row = document.createElement("div");
-      row.className = "anaRowItem";
-
-      const stLabel = statusLabel(ch.status, total);
-
-      row.innerHTML = `
-        <div class="anaRowL">
-          <p class="anaRowT">${escapeHtml(ch.habitTitle||"")}</p>
-          <div class="anaRowM">
-            <span class="anaChip">${escapeHtml(stLabel)}</span>
-            <span class="anaChip">day ${day}/${total}</span>
-            <span class="anaChip">残り ${remain}</span>
-            <span class="anaChip">成功 ${Number(ch.successDays||0)}</span>
-            <span class="anaChip">休み ${Number(ch.restDays||0)}</span>
-            <span class="anaChip">成功率 ${(rate*100).toFixed(0)}%</span>
-            <span class="anaChip">進捗 ${prog.toFixed(0)}%</span>
-          </div>
-        </div>
-        <div class="anaRowR">
-          <span class="anaTag">${escapeHtml((ch.category||"")) || "—"}</span>
-          <button class="anaBtn" data-act="jump">この習慣を見る</button>
-        </div>
-      `;
-
-      row.querySelector('[data-act="jump"]').addEventListener("click", async ()=>{
-        // 既存UIの検索欄へタイトルを入れてホームに戻す（最小で迷子防止）
-        try{
-          closeAnaAll();
-          navHome?.click?.();
-          if(searchIn){
-            searchIn.value = ch.habitTitle || "";
-            await refreshHome();
-            window.scrollTo({ top: 0, behavior: "smooth" });
-          }
-        }catch(e){}
-      });
-
-      anaAllBody.appendChild(row);
-    }
-  }
-
-  anaAllClose?.addEventListener("click", closeAnaAll);
-  anaAllBg?.addEventListener("click", (e)=>{
-    // 背景クリックで閉じる
-    if(e.target === anaAllBg) closeAnaAll();
-  });
-  anaAllStatus?.addEventListener("change", renderAnaAll);
-  anaAllSort?.addEventListener("change", renderAnaAll);
-  anaAllQ?.addEventListener("input", ()=>{
-    // 入力中は軽く間引き
-    clearTimeout(window.__anaQTimer);
-    window.__anaQTimer = setTimeout(renderAnaAll, 120);
-  });
-
-  // Part2の「もっと見る」ボタンから全件モーダルを開く
-  try{
-    const anaShowAll = document.getElementById("anaShowAll");
-    const miniAnaMore = document.getElementById("miniAnaMore");
-
-    anaShowAll?.addEventListener("click", openAnaAll);
-    miniAnaMore?.addEventListener("click", openAnaAll);
-  }catch(e){}
-
-  // ====== refreshAnalytics で「もっと見る」が押せるように：cache更新 ======
-  const _refreshAnalytics_part3 = (typeof refreshAnalytics === "function") ? refreshAnalytics : null;
-
-  async function refreshAnalytics(){
-    if(typeof _refreshAnalytics_part3 === "function"){
-      await _refreshAnalytics_part3();
-    }
-    try{
-      if(!currentUser) return;
-      // 全件モーダル用キャッシュ（最新120件）
-      anaAllCache = await loadChallenges(120);
-    }catch(e){}
-  }
-
-  // ====== 起動時：ログイン済みなら cache 更新 ======
-  if(currentUser){
-    // 既存の描画を壊さない範囲で、分析cacheだけ確保
-    try{
-      anaAllCache = await loadChallenges(120);
-    }catch(e){}
-  }
-
-  /* =========================
-    ここまでで完了！
-
-    ✅ Part3で入ったもの
-    - 3日/7日どちらでも「進捗%」「残り日」「day/total」を正しく扱う関数群
-    - 分析の「全件」モーダル（検索・並び替え・ステータス絞り込み）
-    - 「この習慣を見る」ボタン（ホーム検索へジャンプ）
-
-    次やるなら（必要なら言って）
-    - 習慣カードの「平均日数/成功率」を Firestore で自動集計（rating送信時・クリア時に更新）
-    - 分析の“苦手カテゴリ”を本当にカテゴリ別推移で出す（色分け/凡例付き）
-    - 育成キャラの成長段階（卵→…）を day と successRate に合わせて固定ルールで変える
-  ========================= */
-</script>
