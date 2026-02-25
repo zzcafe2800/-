@@ -15,7 +15,6 @@
       --muted2:#9a9a9a;
 
       --red:#e00000;
-      --xpGreen:#00a86b;
 
       --r:14px;
       --gap:10px;
@@ -52,16 +51,15 @@
       .nav .brandName{display:none}
       .nav .navBtn{justify-content:center}
       .content{padding:12px}
-
-      /* 依頼（挑戦中）: 狭い時は折り返さず縮小 */
-      .sideList{max-height: calc(100vh - 350px)}
+      .tagWrap{grid-template-columns:1fr 1fr;}
+      .sideList{max-height: calc(100vh - 340px)}
       .sideItem{padding: 10px;border-radius: 12px;}
-      .sideHabit{
-        font-size: clamp(10px, 2.9vw, 13px);
-        -webkit-line-clamp:1;
-      }
-      .sideMeta{font-size: clamp(10px, 2.6vw, 11px)}
-      .btnMini{font-size: clamp(10px, 2.6vw, 11px); padding: 9px 10px}
+      .btnMini{font-size: 11px; padding: 9px 10px}
+      .feedGrid{grid-template-columns: 1fr;} /* 常に縦1列 */
+    }
+
+    @media (max-width: 520px){
+      .feedGrid{grid-template-columns: 1fr;}
     }
 
     /* ===== Left ===== */
@@ -112,6 +110,7 @@
 
     .sep{height:1px; background:var(--line); margin:6px 0}
 
+    /* ===== User header + Lv ring ===== */
     .userBox{
       border:1px solid var(--line);
       border-radius: 12px;
@@ -122,32 +121,68 @@
       box-shadow: var(--shadow);
     }
 
-    /* ===== Lv ring (avatar area) ===== */
     .lvRingWrap{
-      width:44px; height:44px;
+      width:46px;height:46px;
       position:relative;
       flex:0 0 auto;
       display:grid;
       place-items:center;
-      user-select:none;
     }
-    .lvRingSvg{position:absolute; inset:0}
-    .lvInner{
-      width:32px; height:32px;
-      border-radius:999px;
+    .lvRingSvg{
+      position:absolute;
+      inset:0;
+      transform: rotate(-90deg);
+    }
+    .lvRingSvg circle{
+      fill:none;
+      stroke-width:6;
+      stroke-linecap:round;
+    }
+    .lvRingBg{
+      stroke: #e9e9e9;
+    }
+    .lvRingFg{
+      stroke: #10a85a; /* 経験値リング（緑） */
+      stroke-dasharray: 999;
+      stroke-dashoffset: 999;
+      transition: stroke-dashoffset .35s ease;
+    }
+
+    .avatar{
+      width:34px; height:34px;
       border:1px solid var(--line);
+      border-radius:50%;
       background:#fff;
+      overflow:hidden;
       display:grid; place-items:center;
-      font-family:var(--mono);
-      font-weight:1100;
-      font-size:12px;
-      color:#111;
-      position:relative;
+      font-weight:1000;
+      user-select:none;
       z-index:2;
     }
+
+    .lvNum{
+      position:absolute;
+      inset:auto;
+      bottom:-6px;
+      right:-6px;
+      width:22px;
+      height:22px;
+      border-radius:999px;
+      border:2px solid #fff;
+      background:#111;
+      color:#fff;
+      font-family:var(--mono);
+      font-size:11px;
+      font-weight:1100;
+      display:grid;
+      place-items:center;
+      z-index:3;
+      user-select:none;
+    }
+
     .xpPop{
       position:absolute;
-      top:-10px;
+      top:-18px;
       left:50%;
       transform: translateX(-50%);
       background:#111;
@@ -159,13 +194,13 @@
       border-radius:999px;
       opacity:0;
       pointer-events:none;
-      z-index:4;
-      transition: opacity .2s ease, transform .2s ease;
+      transition: opacity .15s ease, transform .15s ease;
+      z-index:5;
       white-space:nowrap;
     }
     .xpPop.show{
       opacity:1;
-      transform: translateX(-50%) translateY(-4px);
+      transform: translateX(-50%) translateY(-2px);
     }
 
     .userMeta{min-width:0}
@@ -184,8 +219,8 @@
       border-radius:999px;
       padding:4px 8px;
       font-family:var(--mono);
-      font-size:11px;
-      font-weight:1000;
+      font-size:12px; /* “名前くらい”に寄せて少し上げる */
+      font-weight:1100;
       color:#111;
       background:#fff;
       white-space:nowrap;
@@ -193,23 +228,49 @@
     }
     .userSmall{font-size:11px; color:var(--muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 
-    /* Small char list button near user card (目立たない) */
-    .charMiniRow{
+    /* XP block (小さめ/控えめ) */
+    .xpBlock{
+      border:1px solid var(--line);
+      border-radius: 12px;
+      background:#fff;
+      box-shadow: var(--shadow);
+      padding:10px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .xpTop{
       display:flex;
       align-items:center;
-      justify-content:flex-end;
-      gap:8px;
-      margin-top:8px;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .hBadge{
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:6px 10px;
+      font-weight:1000;
+      font-size:12px;
+      font-family:var(--mono);
+      background:#fff;
+      white-space:nowrap;
+    }
+    .xpText{
+      font-family:var(--mono);
+      font-size:12px;
+      font-weight:1100;
+      color:#111;
+      white-space:nowrap;
     }
     .miniLinkBtn{
       border:1px solid var(--line);
       border-radius: 10px;
       background:#fff;
       font-weight:1000;
-      padding:7px 9px;
+      padding:8px 10px;
       cursor:pointer;
-      font-size:11px;
-      opacity:.85;
+      opacity:.85; /* 目立たないように */
     }
     .miniLinkBtn:hover{background:#fafafa; opacity:1}
 
@@ -226,7 +287,7 @@
       gap:8px;
       overflow:auto;
       padding-right:2px;
-      max-height: calc(100vh - 365px);
+      max-height: calc(100vh - 430px);
     }
     .sideItem{
       border:1px solid var(--line);
@@ -243,18 +304,21 @@
       display:flex; justify-content:space-between; gap:10px; align-items:flex-start;
       min-width:0;
     }
+    /* 細い時に勝手に潰れないよう、枠に応じて縮む */
     .sideHabit{
-      font-weight:1000;
-      font-size:13px;
+      font-weight:1100;
+      font-size: clamp(11px, 1.6vw, 13px);
       line-height:1.2;
       display:-webkit-box;
       -webkit-line-clamp:2;
       -webkit-box-orient:vertical;
       overflow:hidden;
       min-width:0;
+      flex:1 1 auto;
     }
     .sideMeta{
-      font-size:11px; color:var(--muted);
+      font-size: clamp(10px, 1.4vw, 11px);
+      color:var(--muted);
       font-family:var(--mono);
       white-space:nowrap;
       flex:0 0 auto;
@@ -264,16 +328,14 @@
       border-radius:999px;
       padding:5px 8px;
       font-family:var(--mono);
-      font-weight:1000;
-      font-size:11px;
+      font-weight:1100;
+      font-size: clamp(10px, 1.4vw, 11px);
       color:#111;
       background:#fff;
       white-space:nowrap;
-      flex:0 0 auto;
     }
     .sideBtns{
-      display:flex; gap:6px; flex-wrap:nowrap; justify-content:flex-end;
-      overflow:hidden;
+      display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end;
     }
     .btnMini{
       border:1px solid var(--line);
@@ -282,9 +344,8 @@
       border-radius: 10px;
       padding:9px 10px;
       cursor:pointer;
-      font-weight:1000;
+      font-weight:1100;
       user-select:none;
-      white-space:nowrap;
     }
     .btnMini:hover{background:#fafafa}
     .btnMini:disabled{opacity:.6; cursor:not-allowed}
@@ -310,25 +371,27 @@
       border-bottom:1px solid var(--line);
     }
     .hTitle{
-      font-weight:1000;
+      font-weight:1100;
       letter-spacing:.06em;
-      font-size:18px; /* タイトル少し大きく */
+      font-size:16px; /* タイトル少し大きく */
       display:flex; align-items:center; gap:10px;
       white-space:nowrap;
       flex-wrap:wrap;
     }
-    .hBadge{
+
+    /* 右側：本日達成（タイトルの右） */
+    .todayBadge{
       border:1px solid var(--line);
       border-radius:999px;
-      padding:8px 10px;
-      font-weight:1000;
-      font-size:12px;
-      font-family:var(--mono);
+      padding:6px 10px;
       background:#fff;
+      font-family:var(--mono);
+      font-weight:1100;
+      font-size:12px;
       white-space:nowrap;
     }
 
-    /* ===== Tag ranking: 必ず横一列（2分割固定） ===== */
+    /* ===== Tag ranking: 横一列（2分割） ===== */
     .tagWrap{
       padding:12px;
       border-bottom:1px solid var(--line);
@@ -350,7 +413,7 @@
     }
     .rankTitle{
       font-size:13px;
-      font-weight:1000;
+      font-weight:1100;
       letter-spacing:.06em;
       color: #111;
       display:flex;
@@ -386,7 +449,7 @@
       flex:0 0 auto;
     }
     .tagName{
-      font-weight:1000;
+      font-weight:1100;
       font-size:12px;
       white-space:nowrap;
       overflow:hidden;
@@ -394,7 +457,7 @@
       min-width:0;
     }
 
-    /* ===== Search row: 検索は一覧の1つ上 ===== */
+    /* ===== Search row: 検索+カテゴリ+タグ解除 ===== */
     .searchRow{
       padding:12px;
       border-bottom:1px solid var(--line);
@@ -433,7 +496,7 @@
       border-radius: 10px;
       padding:0 10px;
       cursor:pointer;
-      font-weight:1000;
+      font-weight:1100;
       white-space:nowrap;
       height:32px;
     }
@@ -445,7 +508,7 @@
       border-radius: 12px;
       height:44px;
       padding:0 10px;
-      font-weight:1000;
+      font-weight:1100;
       cursor:pointer;
       display:flex;
       align-items:center;
@@ -470,7 +533,7 @@
       flex-wrap:wrap;
     }
     .feedLabel{
-      font-weight:1000;
+      font-weight:1100;
       letter-spacing:.06em;
       color: var(--muted);
       font-size:12px;
@@ -482,12 +545,12 @@
       padding:6px 10px;
       background:#fff;
       font-family:var(--mono);
-      font-weight:1000;
+      font-weight:1100;
       font-size:12px;
       color:#111;
     }
 
-    /* 並び方：縦一列固定 */
+    /* 縦一列固定 */
     .feedGrid{
       display:grid;
       grid-template-columns: 1fr;
@@ -520,7 +583,7 @@
       user-select:none;
     }
     .thumbTitle{
-      font-size:22px; /* 少し大きく */
+      font-size:22px; /* タイトル大きめ */
       font-weight:1100;
       letter-spacing:.02em;
       line-height:1.12;
@@ -547,7 +610,6 @@
       overflow:hidden;
     }
 
-    /* faint mascot behind */
     .mascotBg{
       position:absolute;
       inset:0;
@@ -571,7 +633,6 @@
       z-index:3;
     }
 
-    /* tooltip */
     .tipBtn{position:relative}
     .tipBtn[data-tip]::after{
       content: attr(data-tip);
@@ -584,7 +645,7 @@
       padding:6px 8px;
       border-radius:10px;
       font-size:11px;
-      font-weight:1000;
+      font-weight:1100;
       white-space:nowrap;
       opacity:0;
       pointer-events:none;
@@ -609,7 +670,9 @@
     .iconBtn.on{background:#111; color:#fff; border-color:#111}
     .iconBtn svg{display:block}
 
-    .reviewBtn{position:relative;}
+    .reviewBtn{
+      position:relative;
+    }
     .badgeCount{
       position:absolute;
       top:-6px;
@@ -628,16 +691,16 @@
       pointer-events:none;
     }
 
-    /* JOIN button: 少し大きめ + 参加=赤 / 育成中=白 */
+    /* JOIN button（参加→白、参加中→白+赤文字、ボタン少し大きめ） */
     .joinBtn{
       border:1px solid var(--red);
       background: var(--red);
       color:#fff;
       border-radius: 12px;
-      padding:12px 16px;
+      padding:12px 16px; /* 少し大きく */
       cursor:pointer;
-      font-weight:1000;
-      min-width: 92px;
+      font-weight:1100;
+      min-width: 84px;
       user-select:none;
       font-size:14px;
     }
@@ -648,14 +711,13 @@
     }
     .joinBtn:disabled{opacity:.6; cursor:not-allowed}
 
-    /* Meta bar */
     .metaBar{
       padding:10px;
       display:flex;
       align-items:flex-start;
       justify-content:space-between;
       gap:10px;
-      min-height: 74px;
+      min-height: 72px;
       background:#fff;
       position:relative;
     }
@@ -663,7 +725,6 @@
       display:flex;
       gap:10px;
       min-width:0;
-      align-items:flex-start;
     }
     .miniAva{
       width:28px; height:28px;
@@ -674,25 +735,16 @@
       flex:0 0 auto;
       display:grid;
       place-items:center;
-      font-weight:1000;
+      font-weight:1100;
       color:#111;
       cursor:pointer;
     }
     .miniAva img{width:100%; height:100%; object-fit:cover}
-
     .creatorText{
       min-width:0;
       display:flex;
       flex-direction:column;
       gap:6px;
-    }
-
-    /* 名前のすぐ横にフォローボタン（小さめ、名前くらい） */
-    .creatorNameRow{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      min-width:0;
     }
     .creatorName{
       font-size:12px;
@@ -700,24 +752,22 @@
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
-      max-width: 240px;
+      max-width: 190px;
       cursor:pointer;
-      min-width:0;
     }
-    .followMini{
+    .followSmall{
       border:1px solid var(--line);
       background:#fff;
-      border-radius: 999px;
-      padding:5px 8px;
+      border-radius: 10px;
+      padding:6px 10px;
       font-weight:1100;
       font-size:12px;
       cursor:pointer;
       user-select:none;
       white-space:nowrap;
-      flex:0 0 auto;
-      font-family: var(--mono);
+      width: fit-content;
     }
-    .followMini.on{
+    .followSmall.on{
       background:#111;
       color:#fff;
       border-color:#111;
@@ -743,21 +793,22 @@
       padding:6px 10px;
       background:#fff;
       font-family:var(--mono);
-      font-weight:1000;
+      font-weight:1100;
       font-size:12px;
       color:#111;
       white-space:nowrap;
     }
 
-    /* createdAt right-bottom subtle */
+    /* createdAt bottom-right subtle（右下・薄く） */
     .createdAt{
       position:absolute;
       right:10px;
-      bottom:8px;
+      bottom:10px;
       font-size:11px;
-      color: rgba(0,0,0,.35);
+      color: var(--muted2);
       font-family: var(--mono);
       pointer-events:none;
+      opacity:.8;
     }
 
     /* Overlay */
@@ -808,7 +859,7 @@
       font-size:12px;
     }
 
-    /* ===== Fixed Post Button (右下固定・Homeのみ表示) ===== */
+    /* ===== Fixed Post Button ===== */
     .fab{
       position:fixed;
       right:16px;
@@ -822,7 +873,7 @@
       font-weight:1100;
       cursor:pointer;
       box-shadow: var(--shadow);
-      min-width: 104px;
+      min-width: 110px;
       font-size:15px;
       display:none;
     }
@@ -867,7 +918,7 @@
       border-radius: 10px;
       padding:9px 10px;
       cursor:pointer;
-      font-weight:1000;
+      font-weight:1100;
     }
     .btn:hover{background:#fafafa}
     .btn.primary{border-color:#111; background:#111; color:#fff}
@@ -911,11 +962,12 @@
       padding:10px 10px;
       outline:none;
       background:#fff;
-      font-weight:1000;
+      font-weight:1100;
       min-height: 40px;
       cursor:pointer;
     }
 
+    /* 星評価（★/☆） */
     .starsRow{display:flex; gap:6px; margin-top:10px; flex-wrap:wrap;}
     .starBtn{
       border:1px solid var(--line);
@@ -927,7 +979,7 @@
       text-align:center;
       user-select:none;
       min-width:44px;
-      font-size:16px;
+      font-size:18px;
     }
     .starBtn.active{background:#111; color:#fff; border-color:#111}
 
@@ -948,7 +1000,7 @@
       background:#fff;
     }
     .reviewTop{display:flex; justify-content:space-between; gap:10px}
-    .reviewName{font-weight:1000; font-size:12px}
+    .reviewName{font-weight:1100; font-size:12px}
     .reviewMeta{font-size:12px; color:var(--muted); font-family:var(--mono)}
     .reviewText{margin-top:8px; font-size:13px; color:#111; white-space:pre-wrap; line-height:1.5}
     .counter{font-family:var(--mono); font-size:11px; color:var(--muted);}
@@ -1038,9 +1090,9 @@
       position:relative;
       overflow:hidden;
     }
-    .creatureEmoji{font-size: 78px; line-height:1;}
+    .creatureEmoji{font-size: 74px; line-height:1;}
     .pct{font-family:var(--mono); font-weight:1100; font-size:18px;}
-    .thin{color:var(--muted); font-size:12px; font-weight:1000;}
+    .thin{color:var(--muted); font-size:12px; font-weight:1100;}
     .trainBar{
       width: min(520px, 90%);
       height: 14px;
@@ -1083,7 +1135,7 @@
     }
     .bigAva{
       width:42px;height:42px;border:1px solid var(--line);border-radius:50%;
-      display:grid;place-items:center;font-weight:1000;
+      display:grid;place-items:center;font-weight:1100;
       overflow:hidden;background:#fff;
     }
     .bigAva img{width:100%;height:100%;object-fit:cover}
@@ -1159,15 +1211,15 @@
       <div class="sep"></div>
 
       <div class="userBox">
-        <!-- Lv ring + xp pop -->
-        <div class="lvRingWrap" id="lvRingWrap" title="参加レベル">
-          <svg class="lvRingSvg" width="44" height="44" viewBox="0 0 44 44" aria-hidden="true">
-            <circle cx="22" cy="22" r="18" fill="none" stroke="#e6e6e6" stroke-width="4"></circle>
-            <circle id="xpRing" cx="22" cy="22" r="18" fill="none" stroke="var(--xpGreen)" stroke-width="4"
-              stroke-linecap="round" transform="rotate(-90 22 22)"></circle>
+        <!-- Lvリング + アイコン -->
+        <div class="lvRingWrap" title="レベル / 経験値">
+          <svg class="lvRingSvg" width="46" height="46" viewBox="0 0 46 46" aria-hidden="true">
+            <circle class="lvRingBg" cx="23" cy="23" r="18"></circle>
+            <circle class="lvRingFg" id="lvRingFg" cx="23" cy="23" r="18"></circle>
           </svg>
-          <div class="lvInner" id="lvInner">1</div>
           <div class="xpPop" id="xpPop">+0</div>
+          <div class="avatar" id="userAvatar">□</div>
+          <div class="lvNum" id="lvNum">1</div>
         </div>
 
         <div class="userMeta">
@@ -1176,10 +1228,18 @@
             <div class="followerMini" id="followerMini">フォロー 0</div>
           </div>
           <div class="userSmall" id="userSmall">—</div>
+        </div>
+      </div>
 
-          <div class="charMiniRow">
-            <button class="miniLinkBtn" id="openCharList">キャラ一覧</button>
-          </div>
+      <!-- XP / Lv detail -->
+      <div class="xpBlock">
+        <div class="xpTop">
+          <span class="hBadge" id="levelBadge">Lv 1</span>
+          <button class="miniLinkBtn" id="openCharList">キャラ一覧</button>
+        </div>
+        <div style="display:flex; justify-content:space-between; gap:10px; align-items:center">
+          <span class="xpText" id="xpText">0 / 100</span>
+          <span class="xpText" id="xpRemain">次まで 100</span>
         </div>
       </div>
 
@@ -1196,8 +1256,8 @@
       <section class="panel" id="viewHome">
         <div class="headerBar">
           <div class="hTitle">習慣探し</div>
-          <!-- 本日達成 + 自分のレベル + 残りXP（タイトル右） -->
-          <div class="hBadge" id="headerStatus">本日 0 人が達成 / Lv 1 / 残り 100XP</div>
+          <!-- 本日 0 人が達成：タイトル右 -->
+          <div class="todayBadge" id="todayDoneBadge">本日 0 人が達成</div>
         </div>
 
         <!-- TOP tags -->
@@ -1234,7 +1294,7 @@
             <div class="feedHeadLeft">
               <p class="feedLabel">一覧</p>
 
-              <!-- 並び替え：一覧の横 -->
+              <!-- 並び替えを「一覧」横 -->
               <select class="ctrlSel" id="sortBy" title="並び替え">
                 <option value="new">新着</option>
                 <option value="rating">評価</option>
@@ -1244,7 +1304,6 @@
               <div class="countSmall">表示 <span id="countShown">0</span></div>
             </div>
           </div>
-
           <div class="feedGrid" id="feed"></div>
         </div>
       </section>
@@ -1273,10 +1332,8 @@
               <button class="arrowBtn" id="trainPrev">&lt;</button>
 
               <div class="creatureBox">
-                <!-- 中央の上から少し下に%（=ここ） -->
                 <div class="pct" id="trainPct">0%</div>
                 <div class="trainBar"><div class="trainFill" id="trainFill"></div></div>
-                <!-- %の下にキャラ -->
                 <div class="creatureEmoji" id="trainEmoji">🥚</div>
                 <div class="thin" id="trainStage">—</div>
                 <div class="careUnder" id="trainCare">次のお世話まで 00:00:00</div>
@@ -1316,7 +1373,6 @@
         </div>
         <div style="padding:12px" id="profileList"></div>
 
-        <!-- Googleログイン/ログアウトはここだけ -->
         <div style="padding:12px; border-top:1px solid var(--line); display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap">
           <button class="btn primary" id="btnLogin">Googleログイン</button>
           <button class="btn" id="btnLogout" disabled>ログアウト</button>
@@ -1328,7 +1384,7 @@
   <!-- 投稿ボタン（右下固定 / Homeのみ表示） -->
   <button class="fab" id="openPost">投稿</button>
 
-  <!-- ===== 名前登録 + 色選択（右に現在アイコン） ===== -->
+  <!-- ===== 名前登録 + 色選択 ===== -->
   <div class="modalBg" id="nameBg">
     <div class="modal">
       <h2>名前</h2>
@@ -1349,7 +1405,7 @@
         </div>
 
         <div style="display:flex; flex-direction:column; gap:8px; align-items:center; justify-content:flex-start">
-          <div id="nameAvatar" style="width:46px;height:46px;border-radius:999px;border:1px solid var(--line);display:grid;place-items:center;font-weight:1000;background:#fff;color:#111">□</div>
+          <div class="avatar" id="nameAvatar" style="width:46px;height:46px">□</div>
           <div class="counter">現在</div>
         </div>
       </div>
@@ -1485,7 +1541,7 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    try{ getAnalytics(app); }catch{}
+    try{ getAnalytics(app); }catch(e){}
     const auth = getAuth(app);
     const db = getFirestore(app);
 
@@ -1499,11 +1555,11 @@
       const y = d.getFullYear();
       const m = String(d.getMonth()+1).padStart(2,"0");
       const day = String(d.getDate()).padStart(2,"0");
-      return \`\${y}-\${m}-\${day}\`;
+      return `${y}-${m}-${day}`;
     };
     const parseYMD = (s) => {
       const raw = String(s||"").slice(0,10);
-      if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(raw)) return null;
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(raw)) return null;
       const [y,m,d] = raw.split("-").map(Number);
       return new Date(y, m-1, d);
     };
@@ -1522,7 +1578,7 @@
       const hh = String(Math.floor(s/3600)).padStart(2,"0");
       const mm = String(Math.floor((s%3600)/60)).padStart(2,"0");
       const ss = String(s%60).padStart(2,"0");
-      return \`\${hh}:\${mm}:\${ss}\`;
+      return `${hh}:${mm}:${ss}`;
     };
 
     // ===== Category color (薄め) =====
@@ -1546,7 +1602,7 @@
     // ===== Hourly mascot (投稿後も1時間おきに変わる) =====
     function hourKey(){
       const d = nowLocal();
-      return \`\${d.getFullYear()}-\${d.getMonth()+1}-\${d.getDate()}-\${d.getHours()}\`;
+      return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}-${d.getHours()}`;
     }
     function hash32(str){
       let h = 2166136261;
@@ -1575,21 +1631,24 @@
     const viewBookmarks = $("viewBookmarks");
     const viewProfile = $("viewProfile");
 
-    const headerStatus = $("headerStatus");
-
     const loginGate = $("loginGate");
     const gateLoginBtn = $("gateLoginBtn");
 
     const userName = $("userName");
     const userSmall = $("userSmall");
+    const userAvatar = $("userAvatar");
     const followerMini = $("followerMini");
 
-    // Lv ring
-    const lvInner = $("lvInner");
-    const xpRing = $("xpRing");
+    const levelBadge = $("levelBadge");
+    const xpText = $("xpText");
+    const xpRemain = $("xpRemain");
+    const todayDoneBadge = $("todayDoneBadge");
+    const openCharList = $("openCharList");
+
+    const lvRingFg = $("lvRingFg");
+    const lvNum = $("lvNum");
     const xpPop = $("xpPop");
 
-    const openCharList = $("openCharList");
     const sideActiveList = $("sideActiveList");
 
     // Home
@@ -1701,24 +1760,29 @@
     let trainIndex = 0;
 
     // ===== Character system (一覧で卵/種だけ) =====
+    // ※種類を増やすなら：ここにemojiとminLvを追加していくだけでOK
     const CHAR_TIERS = [
       { minLv: 1, name: "卵", emoji: "🥚", type:"egg" },
+      { minLv: 2, name: "水玉卵", emoji: "🥚🫧", type:"egg" },
       { minLv: 3, name: "光る卵", emoji: "🥚✨", type:"egg" },
+      { minLv: 4, name: "金の卵", emoji: "🥚🟡", type:"egg" },
       { minLv: 5, name: "不思議な卵", emoji: "🥚❖", type:"egg" },
       { minLv: 1, name: "種", emoji: "🌰", type:"seed" },
+      { minLv: 2, name: "芽の種", emoji: "🌰🌱", type:"seed" },
       { minLv: 3, name: "光る種", emoji: "🌰✨", type:"seed" },
+      { minLv: 4, name: "花の種", emoji: "🌰🌸", type:"seed" },
       { minLv: 5, name: "不思議な種", emoji: "🌰❖", type:"seed" },
     ];
 
-    // 育成の仮7段階（画像なしなので絵文字で）
-    const TRAIN_VISUAL_STAGES = [
-      { max: 0,   label:"眠り",   emoji:"🥚" },
-      { max: 15,  label:"目覚め", emoji:"🥚💤" },
+    // 7段階（育成画面の仮：絵文字/記号で代用）
+    const GROW_STAGES = [
+      { max: 0,   label:"眠り" , emoji:"🥚" },
+      { max: 15,  label:"目覚め", emoji:"🥚🌤️" },
       { max: 30,  label:"よちよち", emoji:"🐣" },
-      { max: 45,  label:"育ち",   emoji:"🐥" },
-      { max: 60,  label:"準備",   emoji:"🐤✨" },
-      { max: 75,  label:"進化前", emoji:"🦜✨" },
-      { max: 100, label:"完成",   emoji:"👑" },
+      { max: 45,  label:"育ち", emoji:"🐤" },
+      { max: 60,  label:"準備", emoji:"✨" },
+      { max: 75,  label:"進化前", emoji:"❖" },
+      { max: 100, label:"完成", emoji:"👑" },
     ];
 
     // ===== XP / Level =====
@@ -1733,12 +1797,17 @@
       }
     }
 
-    // ring geometry
-    const RING_R = 18;
-    const RING_CIRC = 2 * Math.PI * RING_R;
+    function setRingProgress(pct){
+      const r = 18;
+      const C = 2 * Math.PI * r;
+      const p = Math.max(0, Math.min(1, pct));
+      lvRingFg.style.strokeDasharray = String(C);
+      lvRingFg.style.strokeDashoffset = String(C * (1 - p));
+    }
 
-    function showXpPop(add){
-      xpPop.textContent = \`+\${add}\`;
+    function popXp(add){
+      if(!xpPop) return;
+      xpPop.textContent = `+${add}`;
       xpPop.classList.add("show");
       setTimeout(()=> xpPop.classList.remove("show"), 2000);
     }
@@ -1746,33 +1815,26 @@
     function setXpUI(){
       const total = Number(myProfile?.xpTotal||0);
       const { lv, cur, need } = computeLevelFromXp(total);
+
       myProfile.level = lv;
       myProfile.xpCur = cur;
       myProfile.xpNeed = need;
 
-      // ring
-      lvInner.textContent = String(lv);
-      xpRing.style.strokeDasharray = String(RING_CIRC);
-      const pct = need ? Math.max(0, Math.min(1, cur/need)) : 0;
-      const offset = RING_CIRC * (1 - pct);
-      xpRing.style.strokeDashoffset = String(offset);
+      levelBadge.textContent = `Lv ${lv}`;
+      profileLv.textContent = `Lv ${lv}`;
+      lvNum.textContent = String(lv);
 
-      // header + profile
-      profileLv.textContent = \`Lv \${lv}\`;
-      applyHeaderStatus();
-    }
+      xpText.textContent = `${cur} / ${need}`;
+      xpRemain.textContent = `次まで ${Math.max(0, need - cur)}`;
 
-    function applyHeaderStatus(){
-      const done = Number(window.__todayDoneCount||0);
-      const lv = Number(myProfile?.level||1);
-      const remain = Math.max(0, Number(myProfile?.xpNeed||100) - Number(myProfile?.xpCur||0));
-      headerStatus.textContent = \`本日 \${done} 人が達成 / Lv \${lv} / 残り \${remain}XP\`;
+      setRingProgress(need ? (cur/need) : 0);
     }
 
     async function addXp(amount){
       const add = Math.max(0, Math.floor(amount||0));
       if(!add) return;
-      showXpPop(add);
+
+      popXp(add);
 
       await runTransaction(db, async (tx)=>{
         const uref = doc(db, "users", currentUser.uid);
@@ -1781,6 +1843,7 @@
         const u = us.data();
         tx.update(uref, { xpTotal: Number(u.xpTotal||0) + add, updatedAt: serverTimestamp() });
       });
+
       const snap = await getDoc(doc(db,"users",currentUser.uid));
       myProfile = snap.data();
       setXpUI();
@@ -1823,9 +1886,9 @@
     async function logout(){
       await signOut(auth);
     }
-    gateLoginBtn.addEventListener("click", async ()=>{ try{ await login(); }catch{ alert("ログイン失敗"); } });
-    btnLogin.addEventListener("click", async ()=>{ try{ await login(); }catch{ alert("ログイン失敗"); } });
-    btnLogout.addEventListener("click", async ()=>{ try{ await logout(); }catch{ alert("ログアウト失敗"); } });
+    gateLoginBtn.addEventListener("click", async ()=>{ try{ await login(); }catch(e){ alert("ログイン失敗"); } });
+    btnLogin.addEventListener("click", async ()=>{ try{ await login(); }catch(e){ alert("ログイン失敗"); } });
+    btnLogout.addEventListener("click", async ()=>{ try{ await logout(); }catch(e){ alert("ログアウト失敗"); } });
 
     // ===== Name modal =====
     function openNameModal(){
@@ -1912,7 +1975,7 @@
     postClose.addEventListener("click", closePostModal);
     postBg.addEventListener("click", (e)=>{ if(e.target===postBg) closePostModal(); });
 
-    function updatePostCounter(){ postCounter.textContent = \`\${newAction.value.length} / 40\`; }
+    function updatePostCounter(){ postCounter.textContent = `${newAction.value.length} / 40`; }
     newAction.addEventListener("input", updatePostCounter);
 
     btnPost.addEventListener("click", async ()=>{
@@ -1948,13 +2011,12 @@
           version: 1
         });
 
-        // 投稿XP
         await addXp(8);
 
         closePostModal();
         await refreshHome();
         await refreshProfile();
-      }catch{
+      }catch(e){
         alert("投稿失敗");
       }
     });
@@ -1990,7 +2052,8 @@
       const nm = (myProfile?.name || "").trim();
       userName.textContent = nm || "—";
       userSmall.textContent = currentUser.email || "—";
-      followerMini.textContent = \`フォロー \${Number(myProfile?.followerCount||0)}\`;
+      setAvatarColor(userAvatar, myProfile?.avatarColor || "#111111");
+      followerMini.textContent = `フォロー ${Number(myProfile?.followerCount||0)}`;
     }
 
     async function warmCaches(){
@@ -2029,11 +2092,9 @@
         const ref = doc(db, "dailyStats", dailyDocId());
         const snap = await getDoc(ref);
         const done = snap.exists() ? Number(snap.data().doneCount||0) : 0;
-        window.__todayDoneCount = done;
-        applyHeaderStatus();
-      }catch{
-        window.__todayDoneCount = 0;
-        applyHeaderStatus();
+        todayDoneBadge.textContent = `本日 ${done} 人が達成`;
+      }catch(e){
+        todayDoneBadge.textContent = `本日 0 人が達成`;
       }
     }
     async function incDailyDoneCount(){
@@ -2082,9 +2143,9 @@
         userName.textContent = "—";
         userSmall.textContent = "—";
         followerMini.textContent = "フォロー 0";
-        lvInner.textContent = "1";
-        xpRing.style.strokeDasharray = String(RING_CIRC);
-        xpRing.style.strokeDashoffset = String(RING_CIRC);
+        userAvatar.textContent = "□";
+        userAvatar.style.background = "#fff";
+        userAvatar.style.color = "#111";
 
         sideActiveList.innerHTML = "";
         feed.innerHTML = "";
@@ -2096,9 +2157,6 @@
         cachedFavCreators = new Set();
         cachedBookmarks = new Set();
         activeHabitIds = new Set();
-
-        window.__todayDoneCount = 0;
-        headerStatus.textContent = "本日 0 人が達成 / Lv 1 / 残り 100XP";
 
         showOnly("home");
         return;
@@ -2226,7 +2284,7 @@
         const chip = document.createElement("div");
         chip.className = "rankChip";
         chip.dataset.tag = t;
-        chip.innerHTML = \`<span class="rk">\${i+1}位</span><span class="tagName">#\${escapeHtml(t)}</span>\`;
+        chip.innerHTML = `<span class="rk">${i+1}位</span><span class="tagName">#${escapeHtml(t)}</span>`;
         chip.addEventListener("click", async ()=>{
           selectedTag = t;
           highlightRankChips();
@@ -2239,7 +2297,7 @@
         dummy.className = "rankChip";
         dummy.style.opacity = "0.25";
         dummy.style.pointerEvents = "none";
-        dummy.innerHTML = \`<span class="rk">\${i+1}位</span><span class="tagName">—</span>\`;
+        dummy.innerHTML = `<span class="rk">${i+1}位</span><span class="tagName">—</span>`;
         container.appendChild(dummy);
       }
     }
@@ -2251,22 +2309,22 @@
 
     function bookmarkSvg(filled){
       if(filled){
-        return \`
+        return `
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M6 3h12a1 1 0 0 1 1 1v18l-7-4-7 4V4a1 1 0 0 1 1-1z"/>
-          </svg>\`;
+          </svg>`;
       }
-      return \`
+      return `
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path d="M6 3h12a1 1 0 0 1 1 1v18l-7-4-7 4V4a1 1 0 0 1 1-1z"/>
-        </svg>\`;
+        </svg>`;
     }
 
     function bubbleSvg(){
-      return \`
+      return `
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/>
-        </svg>\`;
+        </svg>`;
     }
 
     function renderHabitCard(h){
@@ -2290,101 +2348,93 @@
 
       applyCatVars(card, h.category);
 
-      card.innerHTML = \`
+      card.innerHTML = `
         <div class="thumb">
-          <div class="mascotBg">\${escapeHtml(mascotEmojiFromHabitId(h.id))}</div>
+          <div class="mascotBg">${escapeHtml(mascotEmojiFromHabitId(h.id))}</div>
 
-          <p class="thumbTitle">\${escapeHtml(h.title||"")}</p>
-          <div class="thumbAction">\${escapeHtml(h.action||"")}</div>
+          <p class="thumbTitle">${escapeHtml(h.title||"")}</p>
+          <div class="thumbAction">${escapeHtml(h.action||"")}</div>
 
           <div class="thumbActions">
             <button class="iconBtn tipBtn reviewBtn" data-act="reviews" data-tip="口コミ">
-              \${bubbleSvg()}
-              <span class="badgeCount">\${Math.min(99, ratingCount)}</span>
+              ${bubbleSvg()}
+              <span class="badgeCount">${Math.min(99, ratingCount)}</span>
             </button>
 
-            <button class="iconBtn tipBtn \${bookmarked ? "on":""}" data-act="bookmark" data-tip="保存">
-              \${bookmarkSvg(bookmarked)}
+            <button class="iconBtn tipBtn ${bookmarked ? "on":""}" data-act="bookmark" data-tip="保存">
+              ${bookmarkSvg(bookmarked)}
             </button>
 
-            \${isMine
-              ? \`<button class="joinBtn tipBtn activeMode" data-act="edit" data-tip="編集">編集</button>\`
-              : \`<button class="joinBtn tipBtn \${isActive ? "activeMode":""}" data-act="join" data-tip="\${isActive ? "育成中" : "参加"}">\${isActive ? "育成中" : "参加"}</button>\`
+            ${isMine
+              ? `<button class="joinBtn tipBtn activeMode" data-act="edit" data-tip="編集">編集</button>`
+              : `<button class="joinBtn tipBtn ${isActive ? "activeMode":""}" data-act="join" data-tip="${isActive ? "育成中" : "参加"}">${isActive ? "育成中" : "参加"}</button>`
             }
           </div>
 
           <div class="overlay">
             <div class="overlayInner">
               <div class="ovTitle">継続</div>
-              <div class="ovRow"><span>平均日数</span><span>\${avgDays ? avgDays.toFixed(1) : "—"}日</span></div>
-              <div class="bar"><div class="barFill" style="width:\${daysPct}%"></div></div>
+              <div class="ovRow"><span>平均日数</span><span>${avgDays ? avgDays.toFixed(1) : "—"}日</span></div>
+              <div class="bar"><div class="barFill" style="width:${daysPct}%"></div></div>
 
               <div class="ovTitle" style="margin-top:6px">成功</div>
-              <div class="ovRow"><span>成功率</span><span>\${Number.isFinite(successRate) ? successRate.toFixed(0) : "—"}%</span></div>
-              <div class="bar"><div class="barFill" style="width:\${successRate}%"></div></div>
+              <div class="ovRow"><span>成功率</span><span>${Number.isFinite(successRate) ? successRate.toFixed(0) : "—"}%</span></div>
+              <div class="bar"><div class="barFill" style="width:${successRate}%"></div></div>
             </div>
           </div>
         </div>
 
         <div class="metaBar">
           <div class="creatorCol">
-            <div class="miniAva" data-act="creator">\${h.creatorPhoto ? \`<img src="\${escapeHtml(h.creatorPhoto)}" alt="">\` : "□"}</div>
-
+            <div class="miniAva" data-act="creator">${h.creatorPhoto ? `<img src="${escapeHtml(h.creatorPhoto)}" alt="">` : "□"}</div>
             <div class="creatorText">
-              <div class="creatorNameRow">
-                <div class="creatorName" data-act="creator">\${escapeHtml(h.creatorName||"作成者")}</div>
-                <button class="followMini \${creatorFav ? "on":""}" data-act="follow">フォロー</button>
-              </div>
+              <div class="creatorName" data-act="creator">${escapeHtml(h.creatorName||"作成者")}</div>
+              <button class="followSmall ${creatorFav ? "on":""}" data-act="follow">フォロー</button>
             </div>
           </div>
 
           <div class="statsRow">
             <div class="statLine">
-              <span class="statPill">参加者 \${participants}</span>
-              <span class="statPill">評価 \${avgRating ? avgRating.toFixed(1) : "—"}</span>
+              <span class="statPill">参加者 ${participants}</span>
+              <span class="statPill">評価 ${avgRating ? avgRating.toFixed(1) : "—"}</span>
             </div>
           </div>
 
-          <div class="createdAt">\${escapeHtml(createdAtStr)}</div>
+          <div class="createdAt">${escapeHtml(createdAtStr)}</div>
         </div>
-      \`;
+      `;
 
-      // press to show overlay on touch
       card.addEventListener("pointerdown", ()=> card.classList.add("pressing"));
       card.addEventListener("pointerup", ()=> card.classList.remove("pressing"));
       card.addEventListener("pointercancel", ()=> card.classList.remove("pressing"));
       card.addEventListener("pointerleave", ()=> card.classList.remove("pressing"));
 
-      // creator modal (icon click => profile + posts only)
       card.querySelectorAll('[data-act="creator"]').forEach(el=>{
         el.addEventListener("click", ()=> openCreatorModal(h.creatorUid, h.creatorName, h.creatorPhoto, h.creatorColor));
       });
 
-      // follow
       card.querySelector('[data-act="follow"]').addEventListener("click", async (e)=>{
         e.stopPropagation();
         await toggleCreatorFav(h.creatorUid);
       });
 
-      // bookmark
       card.querySelector('[data-act="bookmark"]').addEventListener("click", async (e)=>{
         e.stopPropagation();
         await toggleBookmark(h.id);
       });
 
-      // reviews viewer
       card.querySelector('[data-act="reviews"]').addEventListener("click", async (e)=>{
         e.stopPropagation();
         await openRatingsViewer(h.id);
       });
 
-      // join/edit
       const joinBtn = card.querySelector('[data-act="join"]');
       if(joinBtn) joinBtn.addEventListener("click", async (e)=>{
         e.stopPropagation();
         if(isActive) return;
         await startChallenge(h);
       });
+
       const editBtn = card.querySelector('[data-act="edit"]');
       if(editBtn) editBtn.addEventListener("click", (e)=>{
         e.stopPropagation();
@@ -2394,7 +2444,7 @@
       return card;
     }
 
-    // ===== toggles =====
+    // ===== Fav/Bookmark =====
     async function toggleCreatorFav(creatorUid){
       if(!creatorUid) return;
       const ref = doc(db, "userCreatorFavs", currentUser.uid, "items", creatorUid);
@@ -2440,14 +2490,12 @@
       return all.filter(x => x.status === "active").slice(0, 50);
     }
 
-    // 1日1回（お世話）
     function canCareToday(ch){
       const today = fmtYMD(nowLocal());
       const last = String(ch.lastActionYMD||"").slice(0,10);
       return last !== today;
     }
 
-    // ===== Growth % =====
     function growthPctDynamic(ch){
       const day = Number(ch.day||1);
       const base = Math.max(0, Math.min(7, day-1)) / 7 * 100;
@@ -2506,9 +2554,6 @@
         tx.update(uref, { totalChallenges: Number(u.totalChallenges||0)+1, updatedAt: serverTimestamp() });
       });
 
-      // 参加でも少しレベルが上がる
-      await addXp(4);
-
       await refreshActiveHabitIds();
       await refreshSideActive();
       await refreshRecords();
@@ -2530,9 +2575,9 @@
       if(countdownTimer) clearInterval(countdownTimer);
       countdownTimer = setInterval(()=>{
         document.querySelectorAll("[data-care]").forEach(el=>{
-          el.textContent = \`次のお世話まで \${fmtCountdown(msToMidnight())}\`;
+          el.textContent = `次のお世話まで ${fmtCountdown(msToMidnight())}`;
         });
-        if(trainCare) trainCare.textContent = \`次のお世話まで \${fmtCountdown(msToMidnight())}\`;
+        if(trainCare) trainCare.textContent = `次のお世話まで ${fmtCountdown(msToMidnight())}`;
 
         if(msToMidnight() < 900){
           refreshDailyDoneCount();
@@ -2549,29 +2594,29 @@
         box.className = "sideItem";
 
         const can = canCareToday(ch);
-        const care = \`次のお世話まで \${fmtCountdown(msToMidnight())}\`;
+        const care = `次のお世話まで ${fmtCountdown(msToMidnight())}`;
 
         const day = Math.max(1, Math.min(7, Number(ch.day||1)));
         const prog = growthPctDynamic(ch);
 
-        box.innerHTML = \`
+        box.innerHTML = `
           <div class="sideTop">
-            <div class="sideHabit">\${escapeHtml(ch.habitTitle||"")}</div>
-            <div class="sideMeta">\${day}/7</div>
+            <div class="sideHabit">${escapeHtml(ch.habitTitle||"")}</div>
+            <div class="sideMeta">${day}/7</div>
           </div>
 
           <div class="sideTop" style="align-items:center">
-            <div class="sideCare" data-care="1">\${care}</div>
-            <div class="sideMeta">\${prog.toFixed(0)}%</div>
+            <div class="sideCare" data-care="1">${care}</div>
+            <div class="sideMeta">${prog.toFixed(0)}%</div>
           </div>
 
           <div class="sideBtns">
-            <button class="btnMini" data-act="done" \${can ? "" : "disabled"}>やった</button>
-            <button class="btnMini" data-act="rest" \${can ? "" : "disabled"}>休む</button>
+            <button class="btnMini" data-act="done" ${can ? "" : "disabled"}>やった</button>
+            <button class="btnMini" data-act="rest" ${can ? "" : "disabled"}>休む</button>
             <button class="btnMini" data-act="retire">リタイア</button>
-            <button class="btnMini" data-act="rate" \${ch.ratingSubmitted ? "disabled" : ""}>評価</button>
+            <button class="btnMini" data-act="rate" ${ch.ratingSubmitted ? "disabled" : ""}>評価</button>
           </div>
-        \`;
+        `;
 
         box.querySelector('[data-act="done"]').addEventListener("click", ()=> openDiffModal(ch));
         box.querySelector('[data-act="rest"]').addEventListener("click", ()=> applyReport(ch, { type:"rest" }));
@@ -2631,10 +2676,7 @@
         update.difficulty = d;
 
         await incDailyDoneCount();
-
-        // やった：基本XP + 難易度で少し差
-        const diffXp = payload.diff==="hard" ? 18 : payload.diff==="mid" ? 14 : 12;
-        await addXp(diffXp);
+        await addXp(12);
 
       }else if(payload.type==="rest"){
         update.restDays = Number(cur.restDays||0)+1;
@@ -2662,17 +2704,12 @@
       update.updatedAt = serverTimestamp();
       await updateDoc(ref, update);
 
-      // 7日終了（dayが8になったら終了判定）
       if(payload.type==="done" || payload.type==="rest"){
         const afterDay = Math.min(8, Number(cur.day||1)+1);
         if(afterDay === 8){
           const afterSuccess = Number(cur.successDays||0) + (payload.type==="done" ? 1 : 0);
           if(afterSuccess >= 5){
             await updateDoc(ref, { status:"cleared", updatedAt: serverTimestamp() });
-
-            // 成功（クリア）は特にレベルUP（ボーナスXP）
-            await addXp(30);
-
             await runTransaction(db, async (tx)=>{
               const uref = doc(db, "users", currentUser.uid);
               const us = await tx.get(uref);
@@ -2753,13 +2790,13 @@
         const row = document.createElement("div");
         row.className = "review";
         const day = Math.max(1, Math.min(7, Number(ch.day||1)));
-        row.innerHTML = \`
+        row.innerHTML = `
           <div class="reviewTop">
-            <div class="reviewName">\${escapeHtml(ch.habitTitle||"")}</div>
-            <div class="reviewMeta">\${escapeHtml(String(ch.status||""))}</div>
+            <div class="reviewName">${escapeHtml(ch.habitTitle||"")}</div>
+            <div class="reviewMeta">${escapeHtml(String(ch.status||""))}</div>
           </div>
-          <div class="reviewText">\${day}/7 / 成功 \${Number(ch.successDays||0)} / 休 \${Number(ch.restDays||0)} / 未報告 \${Number(ch.streakMiss||0)} / 育成 \${growthPctDynamic(ch).toFixed(0)}%</div>
-        \`;
+          <div class="reviewText">${day}/7 / 成功 ${Number(ch.successDays||0)} / 休 ${Number(ch.restDays||0)} / 未報告 ${Number(ch.streakMiss||0)} / 育成 ${growthPctDynamic(ch).toFixed(0)}%</div>
+        `;
         recordList.appendChild(row);
       }
     }
@@ -2792,19 +2829,20 @@
 
       const total = Number(myProfile?.xpTotal||0);
       const { lv, cur, need } = computeLevelFromXp(total);
-      profileLv.textContent = \`Lv \${lv}\`;
+      profileLv.textContent = `Lv ${lv}`;
 
-      profileList.innerHTML = \`
+      profileList.innerHTML = `
         <div class="review">
           <div class="reviewTop">
-            <div class="reviewName">\${escapeHtml(myProfile?.name||"—")}</div>
-            <div class="reviewMeta" style="font-weight:1100">Lv \${lv} / 残り \${Math.max(0, need-cur)}XP</div>
+            <div class="reviewName">${escapeHtml(myProfile?.name||"—")}</div>
+            <div class="reviewMeta">Lv ${lv}</div>
           </div>
           <div class="reviewText">
-            XP \${cur} / \${need}\\n
-            クリア \${Number(myProfile?.clearCount||0)} / 挑戦中 \${actives.length} / 総挑戦 \${Number(myProfile?.totalChallenges||0)}\\n
-            フォロー \${cachedFavCreators.size} / 保存 \${cachedBookmarks.size} / 投稿 \${myPosts}\\n
-            フォロワー \${Number(myProfile?.followerCount||0)}
+            XP ${cur} / ${need}
+            \n次まで ${Math.max(0, need-cur)}
+            \nクリア ${Number(myProfile?.clearCount||0)} / 挑戦中 ${actives.length} / 総挑戦 ${Number(myProfile?.totalChallenges||0)}
+            \nフォロー ${cachedFavCreators.size} / 保存 ${cachedBookmarks.size} / 投稿 ${myPosts}
+            \nフォロワー ${Number(myProfile?.followerCount||0)}
           </div>
         </div>
 
@@ -2824,7 +2862,7 @@
             <button class="btn primary" id="saveProfileColor">保存</button>
           </div>
         </div>
-      \`;
+      `;
 
       const profileColor = document.getElementById("profileColor");
       const saveProfileColor = document.getElementById("saveProfileColor");
@@ -2910,9 +2948,9 @@
 
       ratingTargetHabit = ch.habitId;
 
-      ratingTitle.textContent = reason==="retire" ? \`評価（リタイア）\` :
-                                reason==="finish" ? \`評価（7日終了）\` :
-                                \`評価\`;
+      ratingTitle.textContent = reason==="retire" ? `評価（リタイア）` :
+                                reason==="finish" ? `評価（7日終了）` :
+                                `評価`;
 
       openRatingModal();
       await loadRatingsList(ch.habitId);
@@ -2954,14 +2992,15 @@
       for(const r of arr){
         const box = document.createElement("div");
         box.className = "review";
-        const stars = "★".repeat(Math.max(0, Math.min(5, Number(r.stars||0)))) + "☆".repeat(Math.max(0, 5-Number(r.stars||0)));
-        box.innerHTML = \`
+        const stars = "★".repeat(Math.max(0, Math.min(5, Number(r.stars||0))))
+                    + "☆".repeat(Math.max(0, 5-Number(r.stars||0)));
+        box.innerHTML = `
           <div class="reviewTop">
-            <div class="reviewName">\${escapeHtml(r.displayName||"ユーザー")}</div>
-            <div class="reviewMeta">\${stars}</div>
+            <div class="reviewName">${escapeHtml(r.displayName||"ユーザー")}</div>
+            <div class="reviewMeta">${stars}</div>
           </div>
-          <div class="reviewText">\${escapeHtml(r.comment||"")}</div>
-        \`;
+          <div class="reviewText">${escapeHtml(r.comment||"")}</div>
+        `;
         reviewList.appendChild(box);
       }
     }
@@ -2987,7 +3026,6 @@
       });
     }
 
-    // reviews viewer (閲覧のみ)
     async function openRatingsViewer(habitId){
       ratingTitle.textContent = "口コミ";
       ratingStars = 0;
@@ -3030,7 +3068,7 @@
       if(arr.length===0){
         const box = document.createElement("div");
         box.className = "review";
-        box.innerHTML = \`<div class="reviewText">投稿なし</div>\`;
+        box.innerHTML = `<div class="reviewText">投稿なし</div>`;
         creatorPosts.appendChild(box);
         return;
       }
@@ -3038,13 +3076,13 @@
       for(const h of arr){
         const box = document.createElement("div");
         box.className = "review";
-        box.innerHTML = \`
+        box.innerHTML = `
           <div class="reviewTop">
-            <div class="reviewName">\${escapeHtml(h.title||"")}</div>
-            <div class="reviewMeta">\${escapeHtml(String(h.createdAtYMD||""))}</div>
+            <div class="reviewName">${escapeHtml(h.title||"")}</div>
+            <div class="reviewMeta">${escapeHtml(String(h.createdAtYMD||""))}</div>
           </div>
-          <div class="reviewText">\${escapeHtml(h.action||"")}</div>
-        \`;
+          <div class="reviewText">${escapeHtml(h.action||"")}</div>
+        `;
         creatorPosts.appendChild(box);
       }
     }
@@ -3063,17 +3101,17 @@
 
         const row = document.createElement("div");
         row.className = "review";
-        row.innerHTML = \`
+        row.innerHTML = `
           <div class="reviewTop">
-            <div class="reviewName">Lv \${L}</div>
-            <div class="reviewMeta">\${L===lv ? "現在" : ""}</div>
+            <div class="reviewName">Lv ${L}</div>
+            <div class="reviewMeta">${L===lv ? "現在" : ""}</div>
           </div>
           <div class="reviewText">
-            卵：\${eggShow ? \`\${eggShow.emoji} \${eggShow.name}\` : "—"}\\n
-            種：\${seedShow ? \`\${seedShow.emoji} \${seedShow.name}\` : "—"}\\n
-            次のLv：\${L+1}
+            卵：${eggShow ? `${eggShow.emoji} ${eggShow.name}` : "—"}
+            \n種：${seedShow ? `${seedShow.emoji} ${seedShow.name}` : "—"}
+            \n次のLv：${L+1}
           </div>
-        \`;
+        `;
         charList.appendChild(row);
       }
 
@@ -3085,12 +3123,12 @@
     charBg.addEventListener("click", (e)=>{ if(e.target===charBg) closeCharModal(); });
 
     // ===== Training view =====
-    function stageFromPct(pct){
+    function growthStageInfo(pct){
       const p = Math.max(0, Math.min(100, Math.floor(pct||0)));
-      for(const s of TRAIN_VISUAL_STAGES){
+      for(const s of GROW_STAGES){
         if(p <= s.max) return s;
       }
-      return TRAIN_VISUAL_STAGES[TRAIN_VISUAL_STAGES.length-1];
+      return GROW_STAGES[GROW_STAGES.length-1];
     }
 
     async function refreshTrain(){
@@ -3105,32 +3143,35 @@
         trainFill.style.width = "0%";
         trainEmoji.textContent = "🥚";
         trainStage.textContent = "—";
-        trainCare.textContent = \`次のお世話まで \${fmtCountdown(msToMidnight())}\`;
+        trainCare.textContent = `次のお世話まで ${fmtCountdown(msToMidnight())}`;
         btnSetAvatar.disabled = true;
         return;
       }
 
-      trainHint.textContent = \`挑戦中 \${trainChallenges.length} / 3\`;
+      trainHint.textContent = `挑戦中 ${trainChallenges.length} / 3`;
       trainIndex = Math.max(0, Math.min(trainIndex, trainChallenges.length-1));
       renderTrainCurrent();
     }
 
     function renderTrainCurrent(){
       const ch = trainChallenges[trainIndex];
-      const slot = \`\${trainIndex+1} / \${trainChallenges.length}\`;
+      const slot = `${trainIndex+1} / ${trainChallenges.length}`;
 
       const pct = growthPctDynamic(ch);
-      const stage = stageFromPct(pct);
+      const info = growthStageInfo(pct);
 
       const day = Math.max(1, Math.min(7, Number(ch.day||1)));
       trainSlot.textContent = slot;
-      trainHabitTitle.textContent = \`\${ch.habitTitle || "—"}（\${day}/7）\`;
-      trainPctText.textContent = \`\${pct.toFixed(0)}%\`;
-      trainPct.textContent = \`\${pct.toFixed(0)}%\`;
-      trainFill.style.width = \`\${pct}%\`;
-      trainStage.textContent = stage.label;
-      trainEmoji.textContent = stage.emoji;
-      trainCare.textContent = \`次のお世話まで \${fmtCountdown(msToMidnight())}\`;
+      trainHabitTitle.textContent = `${ch.habitTitle || "—"}（${day}/7）`;
+      trainPctText.textContent = `${pct.toFixed(0)}%`;
+      trainPct.textContent = `${pct.toFixed(0)}%`;
+      trainFill.style.width = `${pct}%`;
+      trainStage.textContent = info.label;
+      trainCare.textContent = `次のお世話まで ${fmtCountdown(msToMidnight())}`;
+
+      // 仮イラスト：段階ごとに絵文字変化
+      const base = mascotEmojiFromHabitId(ch.habitId);
+      trainEmoji.textContent = pct>=100 ? "👑" : (pct<15 ? base : info.emoji);
 
       const canSet = (String(ch.status||"")==="cleared") || (pct>=100);
       btnSetAvatar.disabled = !canSet;
@@ -3161,8 +3202,7 @@
     setInterval(()=>{
       if(!currentUser) return;
       refreshDailyDoneCount();
-      // 1時間おきに卵が変わるので、軽く更新
-      refreshHome();
+      refreshHome(); // 1時間おき卵変化にも追従
     }, 60000);
 
     showOnly("home");
