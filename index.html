@@ -551,19 +551,18 @@
       font-size:12px;
       color:#111;
     }
-
-    /* 縦一列固定 */
-    /* ===== Feed columns: mobile=2 / PC=4 ===== */
+/* ===== Feed ===== */
 .feedGrid{
   display:grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap:10px;
+  grid-template-columns: repeat(4, 1fr); /* PCは4列 */
+  gap: 10px;
+  align-items:stretch;
 }
 @media (max-width: 980px){
-  .feedGrid{ grid-template-columns: repeat(2, 1fr); }
+  .feedGrid{ grid-template-columns: repeat(2, 1fr); } /* スマホ/タブは2列 */
 }
 @media (max-width: 520px){
-  .feedGrid{ grid-template-columns: repeat(2, 1fr); }
+  .feedGrid{ grid-template-columns: repeat(2, 1fr); } /* 小さくても2列維持 */
 }
 
     /* ===== Card ===== */
@@ -819,60 +818,10 @@
       opacity:.8;
     }
 
-    /* Overlay */
-    .overlay{
-      position:absolute;
-      inset:0;
-      background: rgba(0,0,0,.65);
-      color:#fff;
-      display:none;
-      padding:12px;
-      z-index: 20;
-    }
-    .habitCard:hover .overlay{display:block}
-    .habitCard.pressing .overlay{display:block}
-
-/* ===== HOTFIX: ホバー暗転Overlayを完全排除 ===== */
-.overlay{ display:none !important; }
-.habitCard:hover .overlay{ display:none !important; }
-.habitCard.pressing .overlay{ display:none !important; }
 
     
-    .overlayInner{
-      height:100%;
-      display:flex;
-      flex-direction:column;
-      justify-content:flex-start;
-      gap:10px;
-    }
-    .ovTitle{
-      font-weight:1100;
-      letter-spacing:.06em;
-      font-size:12px;
-      opacity:.92;
-    }
-    .bar{
-      border:1px solid rgba(255,255,255,.25);
-      border-radius:999px;
-      overflow:hidden;
-      height:14px;
-      background: rgba(255,255,255,.10);
-    }
-    .barFill{
-      height:100%;
-      width:0%;
-      background:#fff;
-      transition: width .15s ease;
-    }
-    .ovRow{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      font-family: var(--mono);
-      font-weight:1100;
-      font-size:12px;
-    }
+
+  
 
     /* ===== Fixed Post Button ===== */
     .fab{
