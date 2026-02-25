@@ -829,7 +829,11 @@
       padding:12px;
       z-index: 20;
     }
-    .habitCard:hover .overlay{display:block}
+    /* オーバーレイ完全OFF */
+.overlay{ display:none !important; }
+.habitCard:hover .overlay{ display:none !important; }
+
+    
     .habitCard.pressing .overlay{display:block}
     .overlayInner{
       height:100%;
@@ -2392,13 +2396,7 @@
           </div>
         </div>
 
-        <div class="metaBar">
-          <div class="creatorCol">
-            <div class="miniAva" data-act="creator">${h.creatorPhoto ? `<img src="${escapeHtml(h.creatorPhoto)}" alt="">` : "□"}</div>
-            <div class="creatorText">
-              <div class="creatorName" data-act="creator">${escapeHtml(h.creatorName||"作成者")}</div>
-              <button class="followSmall ${creatorFav ? "on":""}" data-act="follow">フォロー</button>
-            </div>
+   
           </div>
 
           <div class="statsRow">
