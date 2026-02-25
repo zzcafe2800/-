@@ -787,24 +787,18 @@
       align-items:flex-end;
       min-width:0;
     }
-    .statLine{
-      display:flex;
-      gap:6px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-      align-items:center;
-    }
-    .statPill{
-      border:1px solid var(--line);
-      border-radius:999px;
-      padding:6px 10px;
-      background:#fff;
-      font-family:var(--mono);
-      font-weight:1100;
-      font-size:12px;
-      color:#111;
-      white-space:nowrap;
-    }
+   .statPill{
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:7px 11px;   /* 少し大きく */
+  background:#fff;
+  font-family:var(--mono);
+  font-weight:1100;
+  font-size:13px;     /* 少し大きく */
+  color:#111;
+  white-space:nowrap;
+}
+.statLine{gap:8px;}
 
     /* createdAt bottom-right subtle（右下・薄く） */
     .createdAt{
@@ -1111,6 +1105,23 @@
       text-overflow:ellipsis;
       max-width: 380px;
     }
+
+
+
+
+
+/* LvやXPの数字表示は非表示（要求） */
+#levelBadge, #xpText, #xpRemain { display:none !important; }
+
+/* キャラ一覧ボタンだけ控えめに残す */
+.xpTop{justify-content:flex-end;}
+#openCharList{
+  font-size:11px !important;
+  padding:7px 9px !important;
+  opacity:.75;
+}
+
+    
   </style>
 </head>
 
@@ -1546,17 +1557,17 @@
     };
 
     // ===== Category color (薄め) =====
-    const CAT_COLORS = {
-      "メンタル": { tint:"#fbfbff", line:"#dfe3ff" },
-      "睡眠":     { tint:"#fbfffb", line:"#d9f0dc" },
-      "運動":     { tint:"#fffafb", line:"#ffd7e4" },
-      "健康":     { tint:"#fbffff", line:"#d6f2f2" },
-      "生活":     { tint:"#fffffb", line:"#f0f0d6" },
-      "勉強":     { tint:"#fbfcff", line:"#e1e6ff" },
-      "英語":     { tint:"#fbffff", line:"#d7f1ff" },
-      "仕事":     { tint:"#fcfcfc", line:"#e6e6e6" },
-      "その他":   { tint:"#ffffff", line:"#e6e6e6" }
-    };
+  const CAT_COLORS = {
+  "メンタル": { tint:"#f4f6ff", line:"#b9c3ff" },
+  "睡眠":     { tint:"#f2fff5", line:"#a8e7b6" },
+  "運動":     { tint:"#fff2f6", line:"#ffb3cb" },
+  "健康":     { tint:"#f2ffff", line:"#9fe5e5" },
+  "生活":     { tint:"#fffdf0", line:"#eadf9a" },
+  "勉強":     { tint:"#f3f6ff", line:"#b7c4ff" },
+  "英語":     { tint:"#f1fbff", line:"#9fdcff" },
+  "仕事":     { tint:"#f6f6f6", line:"#d9d9d9" },
+  "その他":   { tint:"#ffffff", line:"#e6e6e6" }
+};
     function applyCatVars(el, cat){
       const c = CAT_COLORS[String(cat||"")] || { tint:"#ffffff", line:"#e6e6e6" };
       el.style.setProperty("--catTint", c.tint);
