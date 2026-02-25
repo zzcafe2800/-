@@ -2782,7 +2782,10 @@ const remaining = Math.max(0, targetDays - (day-1)); //☆１ day=1なら残り3
           </div>
         `;
 
-        box.querySelector('[data-act="done"]').addEventListener("click", ()=> openDiffModal(ch));
+        box.querySelector('[data-act="done"]').addEventListener("click", (e)=> {
+  flyToBadge(e.currentTarget);
+  openDiffModal(ch);
+});
         box.querySelector('[data-act="rest"]').addEventListener("click", ()=> applyReport(ch, { type:"rest" }));
         box.querySelector('[data-act="retire"]').addEventListener("click", async ()=>{
           if(!confirm("リタイア？")) return;
