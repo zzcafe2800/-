@@ -1139,10 +1139,13 @@
   <div class="app">
     <!-- ===== Left ===== -->
     <aside class="nav">
-      <div class="brand">
-        <div class="logo">□</div>
-        <div class="brandName">習慣さがし</div>
-      </div>
+   <div class="brand">
+  <div class="logo">□</div>
+  <div style="display:flex; align-items:center; gap:8px; min-width:0">
+    <div class="brandName">習慣さがし</div>
+    <div class="todayBadge" id="todayDoneBadge" style="padding:5px 9px; font-size:11px;">本日 0 人が達成</div>
+  </div>
+</div>
 
       <button class="navBtn active" id="navHome">
         <div class="ico">
@@ -1152,6 +1155,41 @@
       </button>
 
       <button class="navBtn" id="navTrain">
+
+
+
+
+
+
+
+
+<button class="navBtn" id="navCalendar">
+  <div class="ico">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M8 2v3M16 2v3"/><path d="M3 7h18"/><path d="M5 7v14a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7"/>
+      <path d="M7 11h4"/><path d="M7 15h6"/>
+    </svg>
+  </div>
+  <div class="label">カレンダー</div>
+</button>
+
+<button class="navBtn" id="navAnalytics">
+  <div class="ico">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 17v-6"/><path d="M12 17v-10"/><path d="M16 17v-4"/>
+    </svg>
+  </div>
+  <div class="label">分析</div>
+</button>
+
+
+
+
+
+
+
+
+        
         <div class="ico">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M12 2v4"/><path d="M12 18v4"/><path d="M4 12H2"/><path d="M22 12h-2"/>
