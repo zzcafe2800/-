@@ -552,19 +552,13 @@
       color:#111;
     }
 
- .feedGrid{
-  display:grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr)); /* PC 4列 */
-  gap: 10px;
-}
-
-@media (max-width: 980px){
-  .feedGrid{ grid-template-columns: repeat(2, minmax(0, 1fr)); } /* タブレット 2列 */
-}
-
-@media (max-width: 520px){
-  .feedGrid{ grid-template-columns: 1fr; } /* スマホ 1列 */
-}
+    /* 縦一列固定 */
+    .feedGrid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      align-items:stretch;
+    }
 
     /* ===== Card ===== */
     .habitCard{
@@ -829,12 +823,15 @@
       padding:12px;
       z-index: 20;
     }
-    /* オーバーレイ完全OFF */
+    .habitCard:hover .overlay{display:block}
+    .habitCard.pressing .overlay{display:block}
+
+/* ===== HOTFIX: ホバー暗転Overlayを完全排除 ===== */
 .overlay{ display:none !important; }
 .habitCard:hover .overlay{ display:none !important; }
+.habitCard.pressing .overlay{ display:none !important; }
 
     
-    .habitCard.pressing .overlay{display:block}
     .overlayInner{
       height:100%;
       display:flex;
@@ -2396,7 +2393,13 @@
           </div>
         </div>
 
-   
+        <div class="metaBar">
+          <div class="creatorCol">
+            <div class="miniAva" data-act="creator">${h.creatorPhoto ? `<img src="${escapeHtml(h.creatorPhoto)}" alt="">` : "□"}</div>
+            <div class="creatorText">
+              <div class="creatorName" data-act="creator">${escapeHtml(h.creatorName||"作成者")}</div>
+              <button class="followSmall ${creatorFav ? "on":""}" data-act="follow">フォロー</button>
+            </div>
           </div>
 
           <div class="statsRow">
@@ -3215,8 +3218,6 @@
     updatePostCounter();
     openPost.classList.add("show");
 
-  // ===== =====
-    
   </script>
 </body>
 </html>
