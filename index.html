@@ -1325,7 +1325,55 @@
 
       
 
+<!-- ===== Calendar ===== -->
+<section class="panel" id="viewCalendar" style="display:none">
+  <div class="headerBar">
+    <div class="hTitle">カレンダー</div>
+    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+      <select class="ctrlSel" id="calChallengeSel" title="育成を選択"></select>
+      <button class="ctrlBtn" id="calPrev">◀</button>
+      <button class="ctrlBtn" id="calNext">▶</button>
+    </div>
+  </div>
+  <div style="padding:12px">
+    <div class="hBadge" id="calTitle">—</div>
+    <div id="calGrid" style="margin-top:10px; display:grid; grid-template-columns: repeat(7,1fr); gap:6px;"></div>
+    <div style="margin-top:10px; color:var(--muted); font-size:12px;">
+      ※「やった」の時に選んだ絵文字（😊/🙂/😅）が、その日のマスに表示されます。
+    </div>
+  </div>
+</section>
 
+<!-- ===== Analytics ===== -->
+<section class="panel" id="viewAnalytics" style="display:none">
+  <div class="headerBar">
+    <div class="hTitle">分析</div>
+    <div class="hBadge" id="anaHint">—</div>
+  </div>
+
+  <div style="padding:12px; display:grid; gap:10px;">
+    <!-- 上：育成中/完了/リタイア 3カード（PC3列/スマホ2列相当） -->
+    <div id="anaStatusGrid" style="display:grid; grid-template-columns: repeat(3,1fr); gap:10px;"></div>
+
+    <!-- 中：グラフ -->
+    <div class="review" style="margin:0">
+      <div class="reviewTop">
+        <div class="reviewName">続きやすさ比較（カテゴリ / 作成者 / 悩みタグ）</div>
+        <div class="reviewMeta">自分の傾向</div>
+      </div>
+      <div style="margin-top:10px; display:grid; gap:10px;">
+        <canvas id="anaBar" height="160" style="width:100%;"></canvas>
+        <canvas id="anaLines" height="220" style="width:100%;"></canvas>
+      </div>
+      <div style="margin-top:10px; color:var(--muted); font-size:12px;">
+        棒：カテゴリ別の成功率 / 折れ線：カテゴリ・作成者・タグの成功率を同時比較（線色は自動）。
+      </div>
+    </div>
+
+    <!-- 下：発見カード3つ -->
+    <div id="anaInsights" style="display:grid; grid-template-columns: repeat(3,1fr); gap:10px;"></div>
+  </div>
+</section>
 
 
 
@@ -1368,74 +1416,6 @@
           </div>
         </div>
       </section>
-
-
-
-
-<!-- ===== Calendar ===== -->
-<section class="panel" id="viewCalendar" style="display:none">
-  <div class="headerBar">
-    <div class="hTitle">カレンダー</div>
-    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
-      <select class="ctrlSel" id="calChallengeSel" title="育成を選択"></select>
-      <button class="ctrlBtn" id="calPrev">◀</button>
-      <button class="ctrlBtn" id="calNext">▶</button>
-    </div>
-  </div>
-  <div style="padding:12px">
-    <div class="hBadge" id="calTitle">—</div>
-    <div id="calGrid" style="margin-top:10px; display:grid; grid-template-columns: repeat(7,1fr); gap:6px;"></div>
-    <div style="margin-top:10px; color:var(--muted); font-size:12px;">
-      ※「やった」の時に選んだ絵文字（😊/🙂/😅）が、その日のマスに表示されます。
-    </div>
-  </div>
-</section>
-
-
-      
-<!-- ===== Analytics ===== -->
-<section class="panel" id="viewAnalytics" style="display:none">
-  <div class="headerBar">
-    <div class="hTitle">分析</div>
-    <div class="hBadge" id="anaHint">—</div>
-  </div>
-
-  <div style="padding:12px; display:grid; gap:10px;">
-    <!-- 上：育成中/完了/リタイア 3カード（PC3列/スマホ2列相当） -->
-    <div id="anaStatusGrid" style="display:grid; grid-template-columns: repeat(3,1fr); gap:10px;"></div>
-
-    <!-- 中：グラフ -->
-    <div class="review" style="margin:0">
-      <div class="reviewTop">
-        <div class="reviewName">続きやすさ比較（カテゴリ / 作成者 / 悩みタグ）</div>
-        <div class="reviewMeta">自分の傾向</div>
-      </div>
-      <div style="margin-top:10px; display:grid; gap:10px;">
-        <canvas id="anaBar" height="160" style="width:100%;"></canvas>
-        <canvas id="anaLines" height="220" style="width:100%;"></canvas>
-      </div>
-      <div style="margin-top:10px; color:var(--muted); font-size:12px;">
-        棒：カテゴリ別の成功率 / 折れ線：カテゴリ・作成者・タグの成功率を同時比較（線色は自動）。
-      </div>
-    </div>
-
-    <!-- 下：発見カード3つ -->
-    <div id="anaInsights" style="display:grid; grid-template-columns: repeat(3,1fr); gap:10px;"></div>
-  </div>
-</section>
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
       
@@ -1713,6 +1693,35 @@
     }
 
     // ===== Elements =====
+
+
+const navCalendar = $("navCalendar");
+const navAnalytics = $("navAnalytics");
+
+const viewCalendar = $("viewCalendar");
+const viewAnalytics = $("viewAnalytics");
+
+const calChallengeSel = $("calChallengeSel");
+const calPrev = $("calPrev");
+const calNext = $("calNext");
+const calTitle = $("calTitle");
+const calGrid = $("calGrid");
+
+const anaHint = $("anaHint");
+const anaStatusGrid = $("anaStatusGrid");
+const anaInsights = $("anaInsights");
+const anaBar = $("anaBar");
+const anaLines = $("anaLines");
+
+
+
+
+
+
+
+
+
+    
     const navHome = $("navHome");
     const navTrain = $("navTrain");
     const navRecords = $("navRecords");
@@ -1951,26 +1960,33 @@
       el.textContent = "□";
     }
 
-    function showOnly(section){
-      viewHome.style.display = section==="home" ? "" : "none";
-      viewTrain.style.display = section==="train" ? "" : "none";
-      viewRecords.style.display = section==="records" ? "" : "none";
-      viewBookmarks.style.display = section==="bookmarks" ? "" : "none";
-      viewProfile.style.display = section==="profile" ? "" : "none";
+    
+function showOnly(section){
+  viewHome.style.display = section==="home" ? "" : "none";
+  viewTrain.style.display = section==="train" ? "" : "none";
+  viewCalendar.style.display = section==="calendar" ? "" : "none";
+  viewAnalytics.style.display = section==="analytics" ? "" : "none";
+  viewRecords.style.display = section==="records" ? "" : "none";
+  viewBookmarks.style.display = section==="bookmarks" ? "" : "none";
+  viewProfile.style.display = section==="profile" ? "" : "none";
 
-      navHome.classList.toggle("active", section==="home");
-      navTrain.classList.toggle("active", section==="train");
-      navRecords.classList.toggle("active", section==="records");
-      navBookmarks.classList.toggle("active", section==="bookmarks");
-      navProfile.classList.toggle("active", section==="profile");
+  navHome.classList.toggle("active", section==="home");
+  navTrain.classList.toggle("active", section==="train");
+  navCalendar.classList.toggle("active", section==="calendar");
+  navAnalytics.classList.toggle("active", section==="analytics");
+  navRecords.classList.toggle("active", section==="records");
+  navBookmarks.classList.toggle("active", section==="bookmarks");
+  navProfile.classList.toggle("active", section==="profile");
 
-      openPost.classList.toggle("show", section==="home");
+  openPost.classList.toggle("show", section==="home");
 
-      if(section==="records") refreshRecords();
-      if(section==="bookmarks") refreshBookmarksView();
-      if(section==="profile") refreshProfile();
-      if(section==="train") refreshTrain();
-    }
+  if(section==="records") refreshRecords();
+  if(section==="bookmarks") refreshBookmarksView();
+  if(section==="profile") refreshProfile();
+  if(section==="train") refreshTrain();
+  if(section==="calendar") refreshCalendar();
+  if(section==="analytics") refreshAnalytics();
+}
 
     // ===== Auth =====
     async function login(){
@@ -2275,13 +2291,20 @@
       await afterLoginWarm();
     });
 
-    // ===== Navigation =====
+    // ===== ナビクリック追加 =====
     navHome.addEventListener("click", ()=> showOnly("home"));
     navTrain.addEventListener("click", ()=> showOnly("train"));
     navRecords.addEventListener("click", ()=> showOnly("records"));
     navBookmarks.addEventListener("click", ()=> showOnly("bookmarks"));
     navProfile.addEventListener("click", ()=> showOnly("profile"));
 
+
+    
+navCalendar.addEventListener("click", ()=> showOnly("calendar"));
+navAnalytics.addEventListener("click", ()=> showOnly("analytics"));
+
+
+    
     // ===== Search/filters =====
     btnSearch.addEventListener("click", refreshHome);
     qInput.addEventListener("keydown", (e)=>{ if(e.key==="Enter") refreshHome(); });
@@ -2498,10 +2521,7 @@
         </div>
       `;
 
-      card.addEventListener("pointerdown", ()=> card.classList.add("pressing"));
-      card.addEventListener("pointerup", ()=> card.classList.remove("pressing"));
-      card.addEventListener("pointercancel", ()=> card.classList.remove("pressing"));
-      card.addEventListener("pointerleave", ()=> card.classList.remove("pressing"));
+ 
 
       card.querySelectorAll('[data-act="creator"]').forEach(el=>{
         el.addEventListener("click", ()=> openCreatorModal(h.creatorUid, h.creatorName, h.creatorPhoto, h.creatorColor));
