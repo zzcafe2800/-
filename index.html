@@ -1324,55 +1324,6 @@
 
 
       
-<!-- ===== Calendar ===== -->
-<section class="panel" id="viewCalendar" style="display:none">
-  <div class="headerBar">
-    <div class="hTitle">カレンダー</div>
-    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
-      <select class="ctrlSel" id="calChallengeSel" title="育成を選択"></select>
-      <button class="ctrlBtn" id="calPrev">◀</button>
-      <button class="ctrlBtn" id="calNext">▶</button>
-    </div>
-  </div>
-  <div style="padding:12px">
-    <div class="hBadge" id="calTitle">—</div>
-    <div id="calGrid" style="margin-top:10px; display:grid; grid-template-columns: repeat(7,1fr); gap:6px;"></div>
-    <div style="margin-top:10px; color:var(--muted); font-size:12px;">
-      ※「やった」の時に選んだ絵文字（😊/🙂/😅）が、その日のマスに表示されます。
-    </div>
-  </div>
-</section>
-
-<!-- ===== Analytics ===== -->
-<section class="panel" id="viewAnalytics" style="display:none">
-  <div class="headerBar">
-    <div class="hTitle">分析</div>
-    <div class="hBadge" id="anaHint">—</div>
-  </div>
-
-  <div style="padding:12px; display:grid; gap:10px;">
-    <!-- 上：育成中/完了/リタイア 3カード（PC3列/スマホ2列相当） -->
-    <div id="anaStatusGrid" style="display:grid; grid-template-columns: repeat(3,1fr); gap:10px;"></div>
-
-    <!-- 中：グラフ -->
-    <div class="review" style="margin:0">
-      <div class="reviewTop">
-        <div class="reviewName">続きやすさ比較（カテゴリ / 作成者 / 悩みタグ）</div>
-        <div class="reviewMeta">自分の傾向</div>
-      </div>
-      <div style="margin-top:10px; display:grid; gap:10px;">
-        <canvas id="anaBar" height="160" style="width:100%;"></canvas>
-        <canvas id="anaLines" height="220" style="width:100%;"></canvas>
-      </div>
-      <div style="margin-top:10px; color:var(--muted); font-size:12px;">
-        棒：カテゴリ別の成功率 / 折れ線：カテゴリ・作成者・タグの成功率を同時比較（線色は自動）。
-      </div>
-    </div>
-
-    <!-- 下：発見カード3つ -->
-    <div id="anaInsights" style="display:grid; grid-template-columns: repeat(3,1fr); gap:10px;"></div>
-  </div>
-</section>
 
 
 
@@ -1418,6 +1369,76 @@
         </div>
       </section>
 
+
+
+
+<!-- ===== Calendar ===== -->
+<section class="panel" id="viewCalendar" style="display:none">
+  <div class="headerBar">
+    <div class="hTitle">カレンダー</div>
+    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+      <select class="ctrlSel" id="calChallengeSel" title="育成を選択"></select>
+      <button class="ctrlBtn" id="calPrev">◀</button>
+      <button class="ctrlBtn" id="calNext">▶</button>
+    </div>
+  </div>
+  <div style="padding:12px">
+    <div class="hBadge" id="calTitle">—</div>
+    <div id="calGrid" style="margin-top:10px; display:grid; grid-template-columns: repeat(7,1fr); gap:6px;"></div>
+    <div style="margin-top:10px; color:var(--muted); font-size:12px;">
+      ※「やった」の時に選んだ絵文字（😊/🙂/😅）が、その日のマスに表示されます。
+    </div>
+  </div>
+</section>
+
+
+      
+<!-- ===== Analytics ===== -->
+<section class="panel" id="viewAnalytics" style="display:none">
+  <div class="headerBar">
+    <div class="hTitle">分析</div>
+    <div class="hBadge" id="anaHint">—</div>
+  </div>
+
+  <div style="padding:12px; display:grid; gap:10px;">
+    <!-- 上：育成中/完了/リタイア 3カード（PC3列/スマホ2列相当） -->
+    <div id="anaStatusGrid" style="display:grid; grid-template-columns: repeat(3,1fr); gap:10px;"></div>
+
+    <!-- 中：グラフ -->
+    <div class="review" style="margin:0">
+      <div class="reviewTop">
+        <div class="reviewName">続きやすさ比較（カテゴリ / 作成者 / 悩みタグ）</div>
+        <div class="reviewMeta">自分の傾向</div>
+      </div>
+      <div style="margin-top:10px; display:grid; gap:10px;">
+        <canvas id="anaBar" height="160" style="width:100%;"></canvas>
+        <canvas id="anaLines" height="220" style="width:100%;"></canvas>
+      </div>
+      <div style="margin-top:10px; color:var(--muted); font-size:12px;">
+        棒：カテゴリ別の成功率 / 折れ線：カテゴリ・作成者・タグの成功率を同時比較（線色は自動）。
+      </div>
+    </div>
+
+    <!-- 下：発見カード3つ -->
+    <div id="anaInsights" style="display:grid; grid-template-columns: repeat(3,1fr); gap:10px;"></div>
+  </div>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
       <!-- ===== Records ===== -->
       <section class="panel" id="viewRecords" style="display:none">
         <div class="headerBar">
@@ -1533,9 +1554,9 @@
     <div class="modal">
       <h2 id="diffTitle">難易度</h2>
       <div class="fieldRow" style="grid-template-columns:1fr 1fr 1fr; margin-top:12px">
-        <button class="btn" data-diff="easy">😊</button>
-        <button class="btn" data-diff="mid">🙂</button>
-        <button class="btn" data-diff="hard">😅</button>
+        <button class="btn" data-diff="easy">😊楽</button>
+        <button class="btn" data-diff="mid">🙂ちょうどいい</button>
+        <button class="btn" data-diff="hard">😅しんどい</button>
       </div>
       <div class="modalFooter">
         <button class="btn" id="diffClose">閉じる</button>
