@@ -15,11 +15,15 @@
       --muted2:#9a9a9a;
 
       --red:#e00000;
+
       --r:14px;
       --gap:10px;
       --shadow: 0 4px 14px rgba(0,0,0,.06);
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", "Meiryo", sans-serif;
       --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+
+      --catTint: #ffffff;
+      --catLine: #e6e6e6;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -35,7 +39,7 @@
     .app{
       height:100%;
       display:grid;
-      grid-template-columns: 290px 1fr;
+      grid-template-columns: 310px 1fr;
       background:#fff;
     }
 
@@ -47,17 +51,17 @@
       .nav .brandName{display:none}
       .nav .navBtn{justify-content:center}
       .content{padding:12px}
-      .feedGrid{grid-template-columns: 1fr;} /* スマホ1列 */
       .tagWrap{grid-template-columns:1fr 1fr;}
-      .tagWrap .rankBox{min-width:0}
-      .sideList{max-height: calc(100vh - 250px)}
-      .sideItem{
-        padding: clamp(8px, 1.2vw, 10px);
-        border-radius: 12px;
-      }
-      .sideHabit{font-size: clamp(11px, 2.2vw, 13px)}
-      .sideMeta{font-size: clamp(10px, 2vw, 11px)}
-      .btnMini{font-size: clamp(10px, 2vw, 11px); padding: clamp(7px, 1.6vw, 9px) clamp(8px, 1.8vw, 10px)}
+      .sideList{max-height: calc(100vh - 330px)}
+      .sideItem{padding: 10px;border-radius: 12px;}
+      .sideHabit{font-size: 12px}
+      .sideMeta{font-size: 11px}
+      .btnMini{font-size: 11px; padding: 9px 10px}
+      .feedGrid{grid-template-columns: 1fr 1fr;} /* スマホ2列 */
+    }
+
+    @media (max-width: 520px){
+      .feedGrid{grid-template-columns: 1fr;} /* さらに細い時は1列 */
     }
 
     /* ===== Left ===== */
@@ -115,6 +119,7 @@
       display:flex; gap:10px; align-items:center;
       background:#fff;
       min-width:0;
+      box-shadow: var(--shadow);
     }
     .avatar{
       width:32px; height:32px;
@@ -127,8 +132,89 @@
       font-weight:1000;
     }
     .userMeta{min-width:0}
-    .userName{font-weight:1000; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+    .userNameRow{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      min-width:0;
+    }
+    .userName{
+      font-weight:1000; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      max-width: 150px;
+    }
+    .followerMini{
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:4px 8px;
+      font-family:var(--mono);
+      font-size:11px;
+      font-weight:1000;
+      color:#111;
+      background:#fff;
+      white-space:nowrap;
+      flex:0 0 auto;
+    }
     .userSmall{font-size:11px; color:var(--muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+
+    /* XP block under user card */
+    .xpBlock{
+      border:1px solid var(--line);
+      border-radius: 12px;
+      background:#fff;
+      box-shadow: var(--shadow);
+      padding:10px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .xpTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .hBadge{
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:6px 10px;
+      font-weight:1000;
+      font-size:12px;
+      font-family:var(--mono);
+      background:#fff;
+      white-space:nowrap;
+    }
+    .xpBar{
+      width: 100%;
+      height: 12px;
+      border:1px solid var(--line);
+      border-radius: 999px;
+      overflow:hidden;
+      background:#fff;
+      position:relative;
+    }
+    .xpFill{
+      height:100%;
+      width:0%;
+      background:#111;
+      transition: width .35s ease;
+    }
+    .xpText{
+      font-family:var(--mono);
+      font-size:12px;
+      font-weight:1000;
+      color:#111;
+      white-space:nowrap;
+    }
+    .miniLinkBtn{
+      border:1px solid var(--line);
+      border-radius: 10px;
+      background:#fff;
+      font-weight:1000;
+      padding:8px 10px;
+      cursor:pointer;
+    }
+    .miniLinkBtn:hover{background:#fafafa}
 
     .sideTitle{
       font-weight:1000;
@@ -143,7 +229,7 @@
       gap:8px;
       overflow:auto;
       padding-right:2px;
-      max-height: calc(100vh - 290px);
+      max-height: calc(100vh - 410px);
     }
     .sideItem{
       border:1px solid var(--line);
@@ -173,6 +259,17 @@
     .sideMeta{
       font-size:11px; color:var(--muted);
       font-family:var(--mono);
+      white-space:nowrap;
+    }
+    .sideCare{
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:5px 8px;
+      font-family:var(--mono);
+      font-weight:1000;
+      font-size:11px;
+      color:#111;
+      background:#fff;
       white-space:nowrap;
     }
     .sideBtns{
@@ -219,58 +316,8 @@
       white-space:nowrap;
       flex-wrap:wrap;
     }
-    .hBadge{
-      border:1px solid var(--line);
-      border-radius:999px;
-      padding:6px 10px;
-      font-weight:1000;
-      font-size:12px;
-      font-family:var(--mono);
-      background:#fff;
-      white-space:nowrap;
-    }
 
-    /* XP Bar */
-    .xpWrap{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    .xpBar{
-      width: 180px;
-      max-width: 42vw;
-      height: 12px;
-      border:1px solid var(--line);
-      border-radius: 999px;
-      overflow:hidden;
-      background:#fff;
-      position:relative;
-    }
-    .xpFill{
-      height:100%;
-      width:0%;
-      background:#111;
-      transition: width .35s ease;
-    }
-    .xpText{
-      font-family:var(--mono);
-      font-size:12px;
-      font-weight:1000;
-      color:#111;
-      white-space:nowrap;
-    }
-    .miniLinkBtn{
-      border:1px solid var(--line);
-      border-radius: 10px;
-      background:#fff;
-      font-weight:1000;
-      padding:8px 10px;
-      cursor:pointer;
-    }
-    .miniLinkBtn:hover{background:#fafafa}
-
-    /* ===== Tag ranking: 반드시横一列（2分割） ===== */
+    /* ===== Tag ranking: 横一列（2分割） ===== */
     .tagWrap{
       padding:12px;
       border-bottom:1px solid var(--line);
@@ -336,24 +383,29 @@
       min-width:0;
     }
 
-    /* ===== Search row (一覧の一つ上 / controls 縦一列) ===== */
+    /* ===== Search row: 検索+カテゴリ+並び+タグ解除（必ず横一列/同じ高さ） ===== */
     .searchRow{
       padding:12px;
       border-bottom:1px solid var(--line);
-      display:grid;
-      grid-template-columns: 1fr auto;
-      gap:10px;
-      align-items:start;
+      display:flex;
+      gap:8px;
+      align-items:stretch;
+      flex-wrap:nowrap;
+    }
+    @media (max-width: 980px){
+      .searchRow{flex-wrap:wrap}
     }
     .searchBox{
       border:1px solid var(--line);
       border-radius: 12px;
-      padding:10px 10px;
+      padding:0 10px;
       background:#fff;
       display:flex;
       align-items:center;
       gap:10px;
       min-width:0;
+      flex: 1 1 auto;
+      height:44px; /* 高さ固定 */
     }
     .searchInput{
       border:none;
@@ -362,48 +414,34 @@
       background:transparent;
       width:100%;
       min-width:0;
+      height:100%;
     }
     .searchBtn{
       border:1px solid var(--line);
       background:#fff;
       border-radius: 10px;
-      padding:8px 10px;
+      padding:0 10px;
       cursor:pointer;
       font-weight:1000;
       white-space:nowrap;
+      height:32px;
     }
     .searchBtn:hover{background:#fafafa}
 
-    .ctrlCol{
-      display:flex;
-      flex-direction:column; /* 縦一列 */
-      gap:8px;
-      align-items:stretch;
-      min-width: 220px;
-    }
-    @media (max-width: 980px){
-      .searchRow{grid-template-columns:1fr}
-      .ctrlCol{min-width:0; flex-direction:column}
-    }
-    .ctrl{
+    .ctrlBtn, .ctrlSel{
       border:1px solid var(--line);
+      background:#fff;
       border-radius: 12px;
-      background:#fff;
-      padding:10px;
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-      box-shadow: var(--shadow);
-    }
-    .ctrl select, .ctrl button{
-      border:1px solid var(--line);
-      border-radius: 10px;
-      background:#fff;
-      padding:9px 10px;
+      height:44px; /* 検索と同じ */
+      padding:0 10px;
       font-weight:1000;
       cursor:pointer;
+      display:flex;
+      align-items:center;
+      white-space:nowrap;
     }
-    .ctrl select:hover, .ctrl button:hover{background:#fafafa}
+    .ctrlSel{padding:0 8px}
+    .ctrlBtn:hover, .ctrlSel:hover{background:#fafafa}
 
     /* ===== Feed ===== */
     .feedArea{padding:12px}
@@ -413,6 +451,12 @@
       justify-content:space-between;
       gap:10px;
       margin:0 0 10px 0;
+    }
+    .feedHeadLeft{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
     }
     .feedLabel{
       font-weight:1000;
@@ -432,103 +476,93 @@
       color:#111;
     }
 
+    /* PCは4列、スマホは2列（上で上書き） */
     .feedGrid{
       display:grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(4, 1fr);
       gap: 10px;
       align-items:stretch;
     }
 
+    /* ===== Card (YouTube風 / 16:12比) ===== */
     .habitCard{
-      border:1px solid var(--line);
+      border:1px solid var(--catLine);
       border-radius: 12px;
-      background: var(--card);
+      background: linear-gradient(0deg, #fff 0%, #fff 100%);
       box-shadow: var(--shadow);
-      padding:10px;
-      display:grid;
-      grid-template-rows: auto 1fr auto;
-      gap:8px;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
       position:relative;
+      min-width:0;
+    }
+
+    .thumb{
+      aspect-ratio: 16 / 9;
+      background: var(--catTint);
+      position:relative;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:10px;
+      border-bottom:1px solid var(--catLine);
+      user-select:none;
+    }
+    .thumbTitle{
+      font-size:20px;
+      font-weight:1100;
+      letter-spacing:.02em;
+      line-height:1.12;
+      margin:0;
+      text-align:center;
+      display:-webkit-box;
+      -webkit-line-clamp:3;
+      -webkit-box-orient:vertical;
+      overflow:hidden;
+      z-index:2;
+    }
+    .thumbAction{
+      position:absolute;
+      right:10px;
+      bottom:8px;
+      font-size:12px;
+      color: var(--muted2);
+      z-index:2;
+      max-width: 70%;
+      text-align:right;
+      display:-webkit-box;
+      -webkit-line-clamp:2;
+      -webkit-box-orient:vertical;
       overflow:hidden;
     }
 
-    /* faint mascot */
+    /* faint mascot behind */
     .mascotBg{
       position:absolute;
       inset:0;
       display:grid;
       place-items:center;
       font-size: 84px;
-      opacity: .06;
+      opacity: .09;
       pointer-events:none;
-      transform: translateY(6px);
+      transform: translateY(8px);
       user-select:none;
+      z-index:1;
     }
 
-    .cardTop{
+    /* Top-right actions stay in thumb */
+    .thumbActions{
+      position:absolute;
+      top:8px;
+      right:8px;
       display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:10px;
-      position:relative;
-      z-index:2;
-    }
-    .creatorRow{
-      display:flex; align-items:center; gap:8px;
-      min-width:0;
-      cursor:pointer;
-    }
-    .miniAva{
-      width:22px; height:22px;
-      border:1px solid var(--line);
-      border-radius:50%;
-      overflow:hidden;
-      background:#fff;
-      flex:0 0 auto;
-      display:grid;
-      place-items:center;
-      font-weight:1000;
-      color:#111;
-    }
-    .miniAva img{width:100%; height:100%; object-fit:cover}
-    .creatorName{
-      font-size:12px;
-      font-weight:1000;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      max-width: 160px;
-    }
-
-    /* small follow next to name */
-    .followSmall{
-      margin-left:6px;
-      border:1px solid var(--line);
-      background:#fff;
-      border-radius: 10px;
-      padding:5px 8px;
-      font-weight:1000;
-      font-size:12px; /* 名前くらい */
-      cursor:pointer;
-      user-select:none;
-      white-space:nowrap;
-    }
-    .followSmall.on{
-      background:#111;
-      color:#fff;
-      border-color:#111;
-    }
-
-    .topActions{
-      display:flex; gap:8px; align-items:center; flex-wrap:wrap; justify-content:flex-end;
-      position:relative;
-      z-index:2;
+      gap:8px;
+      align-items:center;
+      z-index:3;
     }
 
     /* tooltip */
-    .tipBtn{
-      position:relative;
-    }
+    .tipBtn{position:relative}
     .tipBtn[data-tip]::after{
       content: attr(data-tip);
       position:absolute;
@@ -549,7 +583,6 @@
     }
     .tipBtn:hover::after{opacity:1; transform: translateX(-50%) translateY(-2px)}
 
-    /* bookmark icon button */
     .iconBtn{
       border:1px solid var(--line);
       background:#fff;
@@ -566,7 +599,29 @@
     .iconBtn.on{background:#111; color:#fff; border-color:#111}
     .iconBtn svg{display:block}
 
-    /* JOIN button bigger + red/white */
+    /* review bubble with count badge */
+    .reviewBtn{
+      position:relative;
+    }
+    .badgeCount{
+      position:absolute;
+      top:-6px;
+      right:-6px;
+      width:18px;
+      height:18px;
+      border-radius:999px;
+      background: var(--red);
+      color:#fff;
+      font-family: var(--mono);
+      font-size:11px;
+      font-weight:1100;
+      display:grid;
+      place-items:center;
+      border:2px solid #fff;
+      pointer-events:none;
+    }
+
+    /* JOIN button */
     .joinBtn{
       border:1px solid var(--red);
       background: var(--red);
@@ -580,60 +635,89 @@
       font-size:13px;
     }
     .joinBtn:hover{filter:brightness(1.03)}
-    .joinBtn.secondary{
+    /* 参加中（育成中）＝白背景、赤文字 */
+    .joinBtn.activeMode{
       background:#fff;
       color:var(--red);
     }
     .joinBtn:disabled{opacity:.6; cursor:not-allowed}
 
-    .titleBlock{
+    /* Meta bar: 16:12比の下側（12相当） */
+    .metaBar{
+      padding:10px;
       display:flex;
-      flex-direction:column;
-      gap:8px;
-      min-height: 0;
-      position:relative;
-      z-index:2;
-    }
-    .habitTitle{
-      font-size:22px; /* もう少し大きく */
-      font-weight:1100;
-      letter-spacing:.02em;
-      line-height:1.12;
-      margin:0;
-      display:-webkit-box;
-      -webkit-line-clamp:3;
-      -webkit-box-orient:vertical;
-      overflow:hidden;
-    }
-    .habitAction{
-      font-size:12px;
-      color: var(--muted2);
-      line-height:1.35;
-      margin:0;
-      display:-webkit-box;
-      -webkit-line-clamp:2;
-      -webkit-box-orient:vertical;
-      overflow:hidden;
-    }
-
-    .cardBottom{
-      display:flex;
-      align-items:flex-end;
+      align-items:flex-start;
       justify-content:space-between;
       gap:10px;
-      flex-wrap:wrap;
+      min-height: 72px; /* 16:12の雰囲気に寄せる */
+      background:#fff;
       position:relative;
-      z-index:2;
+    }
+    .creatorCol{
+      display:flex;
+      gap:10px;
+      min-width:0;
+    }
+    .miniAva{
+      width:28px; height:28px;
+      border:1px solid var(--line);
+      border-radius:50%;
+      overflow:hidden;
+      background:#fff;
+      flex:0 0 auto;
+      display:grid;
+      place-items:center;
+      font-weight:1000;
+      color:#111;
+      cursor:pointer;
+    }
+    .miniAva img{width:100%; height:100%; object-fit:cover}
+    .creatorText{
+      min-width:0;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .creatorName{
+      font-size:12px;
+      font-weight:1100;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width: 190px;
+      cursor:pointer;
+    }
+    .followSmall{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius: 10px;
+      padding:6px 10px;
+      font-weight:1000;
+      font-size:12px;
+      cursor:pointer;
+      user-select:none;
+      white-space:nowrap;
+      width: fit-content;
+    }
+    .followSmall.on{
+      background:#111;
+      color:#fff;
+      border-color:#111;
     }
 
     .statsRow{
       display:flex;
+      flex-direction:column;
+      gap:6px;
+      align-items:flex-end;
+      min-width:0;
+    }
+    .statLine{
+      display:flex;
       gap:6px;
       flex-wrap:wrap;
+      justify-content:flex-end;
       align-items:center;
-      font-size:12px;
-      font-weight:1000;
-      color:#111;
     }
     .statPill{
       border:1px solid var(--line);
@@ -641,18 +725,88 @@
       padding:6px 10px;
       background:#fff;
       font-family:var(--mono);
+      font-weight:1000;
+      font-size:12px;
+      color:#111;
+      white-space:nowrap;
     }
-    .createdAt{
+
+    /* worry tag bottom-right (目立たない、参加ボタンくらいの大きさ) */
+    .worryTag{
       position:absolute;
       right:10px;
-      bottom:8px;
+      bottom:10px;
+      border:1px solid var(--line);
+      border-radius: 12px;
+      padding:10px 12px;
+      background:#fff;
+      color: var(--muted);
+      font-weight:1100;
+      font-size:12px;
+      opacity: .85;
+      pointer-events:none;
+    }
+
+    /* createdAt bottom-right subtle */
+    .createdAt{
+      position:absolute;
+      left:10px;
+      bottom:10px;
       font-size:11px;
       color: var(--muted2);
       font-family: var(--mono);
-      z-index:2;
+      pointer-events:none;
     }
 
-    /* ===== Fixed Post Button (右下固定・大きめ) ===== */
+    /* Overlay (hover/press) show avgDays + successRate only) */
+    .overlay{
+      position:absolute;
+      inset:0;
+      background: rgba(0,0,0,.65);
+      color:#fff;
+      display:none;
+      padding:12px;
+      z-index: 20;
+    }
+    .habitCard:hover .overlay{display:block}
+    .habitCard.pressing .overlay{display:block}
+    .overlayInner{
+      height:100%;
+      display:flex;
+      flex-direction:column;
+      justify-content:flex-start;
+      gap:10px;
+    }
+    .ovTitle{
+      font-weight:1100;
+      letter-spacing:.06em;
+      font-size:12px;
+      opacity:.92;
+    }
+    .bar{
+      border:1px solid rgba(255,255,255,.25);
+      border-radius:999px;
+      overflow:hidden;
+      height:14px;
+      background: rgba(255,255,255,.10);
+    }
+    .barFill{
+      height:100%;
+      width:0%;
+      background:#fff;
+      transition: width .15s ease;
+    }
+    .ovRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      font-family: var(--mono);
+      font-weight:1100;
+      font-size:12px;
+    }
+
+    /* ===== Fixed Post Button (右下固定・Homeのみ表示) ===== */
     .fab{
       position:fixed;
       right:16px;
@@ -668,8 +822,10 @@
       box-shadow: var(--shadow);
       min-width: 92px;
       font-size:14px;
+      display:none; /* homeでのみON */
     }
     .fab:hover{filter:brightness(1.03)}
+    .fab.show{display:block}
 
     /* ===== Modals ===== */
     .modalBg{
@@ -723,7 +879,6 @@
     }
     @media (max-width: 980px){ .fieldRow{grid-template-columns:1fr} }
 
-    /* underline inputs */
     .lineInput{
       border:none;
       border-bottom:1px solid var(--line);
@@ -759,13 +914,7 @@
       cursor:pointer;
     }
 
-    /* rating stars */
-    .starsRow{
-      display:flex;
-      gap:6px;
-      margin-top:10px;
-      flex-wrap:wrap;
-    }
+    .starsRow{display:flex; gap:6px; margin-top:10px; flex-wrap:wrap;}
     .starBtn{
       border:1px solid var(--line);
       border-radius: 10px;
@@ -800,11 +949,7 @@
     .reviewName{font-weight:1000; font-size:12px}
     .reviewMeta{font-size:12px; color:var(--muted); font-family:var(--mono)}
     .reviewText{margin-top:8px; font-size:13px; color:#111; white-space:pre-wrap; line-height:1.5}
-    .counter{
-      font-family:var(--mono);
-      font-size:11px;
-      color:var(--muted);
-    }
+    .counter{font-family:var(--mono); font-size:11px; color:var(--muted);}
 
     /* Gate */
     .gate{
@@ -839,27 +984,6 @@
       padding:10px 12px;
       font-weight:1100;
       cursor:pointer;
-    }
-
-    /* XP +1 animation */
-    .plusOne{
-      position:fixed;
-      right:18px;
-      top: 18px;
-      z-index:220;
-      border:1px solid var(--line);
-      background:#fff;
-      border-radius:999px;
-      padding:10px 12px;
-      box-shadow: var(--shadow);
-      display:none;
-      font-weight:1100;
-      font-family:var(--mono);
-    }
-    @keyframes floatUp{
-      0%{transform: translateY(8px); opacity:0}
-      15%{opacity:1}
-      100%{transform: translateY(-14px); opacity:0}
     }
 
     /* ===== Training view ===== */
@@ -912,20 +1036,9 @@
       position:relative;
       overflow:hidden;
     }
-    .creatureEmoji{
-      font-size: 74px;
-      line-height:1;
-    }
-    .pct{
-      font-family:var(--mono);
-      font-weight:1100;
-      font-size:18px;
-    }
-    .thin{
-      color:var(--muted);
-      font-size:12px;
-      font-weight:1000;
-    }
+    .creatureEmoji{font-size: 74px; line-height:1;}
+    .pct{font-family:var(--mono); font-weight:1100; font-size:18px;}
+    .thin{color:var(--muted); font-size:12px; font-weight:1000;}
     .trainBar{
       width: min(520px, 90%);
       height: 14px;
@@ -940,8 +1053,18 @@
       background:#111;
       transition: width .35s ease;
     }
+    .careUnder{
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:6px 10px;
+      font-family:var(--mono);
+      font-weight:1100;
+      font-size:12px;
+      background:#fff;
+      color:#111;
+    }
 
-    /* Creator modal feed */
+    /* Creator modal */
     .creatorHeader{
       display:flex;
       justify-content:space-between;
@@ -974,8 +1097,6 @@
 </head>
 
 <body>
-  <div class="plusOne" id="plusOne">+1</div>
-
   <!-- ログイン必須ゲート -->
   <div class="gate" id="loginGate">
     <div class="gateCard">
@@ -1038,8 +1159,24 @@
       <div class="userBox">
         <div class="avatar" id="userAvatar">□</div>
         <div class="userMeta">
-          <div class="userName" id="userName">—</div>
+          <div class="userNameRow">
+            <div class="userName" id="userName">—</div>
+            <div class="followerMini" id="followerMini">Follower 0</div>
+          </div>
           <div class="userSmall" id="userSmall">—</div>
+        </div>
+      </div>
+
+      <!-- XP / Lv under user card -->
+      <div class="xpBlock">
+        <div class="xpTop">
+          <span class="hBadge" id="levelBadge">Lv 1</span>
+          <button class="miniLinkBtn" id="openCharList">キャラ一覧</button>
+        </div>
+        <div class="xpBar"><div class="xpFill" id="xpFill"></div></div>
+        <div style="display:flex; justify-content:space-between; gap:10px; align-items:center">
+          <span class="hBadge" id="todayDoneBadge">本日 0 人が達成</span>
+          <span class="xpText" id="xpText">0 / 100</span>
         </div>
       </div>
 
@@ -1055,22 +1192,11 @@
       <!-- ===== Home ===== -->
       <section class="panel" id="viewHome">
         <div class="headerBar">
-          <div class="hTitle">
-            習慣探し
-            <span class="hBadge" id="todayDoneBadge">本日 0 人が達成</span>
-
-            <div class="xpWrap">
-              <span class="hBadge" id="levelBadge">Lv 1</span>
-              <div class="xpBar" title="経験値">
-                <div class="xpFill" id="xpFill"></div>
-              </div>
-              <span class="xpText" id="xpText">0 / 100</span>
-              <button class="miniLinkBtn" id="openCharList">キャラ一覧</button>
-            </div>
-          </div>
+          <div class="hTitle">習慣探し</div>
+          <div class="hBadge">—</div>
         </div>
 
-        <!-- TOP tags (横一列 2分割) -->
+        <!-- TOP tags -->
         <div class="tagWrap">
           <div class="rankBox">
             <div class="rankTitle"><span>おすすめTOP</span></div>
@@ -1082,39 +1208,37 @@
           </div>
         </div>
 
-        <!-- Search + controls (一覧の一つ上) -->
+        <!-- Search + category + tag reset (横一列) -->
         <div class="searchRow">
           <div class="searchBox">
             <input class="searchInput" id="q" placeholder="検索" />
             <button class="searchBtn" id="btnSearch">検索</button>
           </div>
 
-          <div class="ctrlCol">
-            <div class="ctrl">
-              <select id="categoryFilter" title="カテゴリ">
-                <option value="">カテゴリ（すべて）</option>
-                <option>メンタル</option><option>睡眠</option><option>運動</option><option>健康</option>
-                <option>生活</option><option>勉強</option><option>英語</option><option>仕事</option><option>その他</option>
-              </select>
+          <select class="ctrlSel" id="categoryFilter" title="カテゴリ">
+            <option value="">カテゴリ（すべて）</option>
+            <option>メンタル</option><option>睡眠</option><option>運動</option><option>健康</option>
+            <option>生活</option><option>勉強</option><option>英語</option><option>仕事</option><option>その他</option>
+          </select>
 
-              <select id="sortBy" title="並び替え">
-                <option value="new">新着</option>
-                <option value="rating">評価</option>
-                <option value="success">成功率</option>
-                <option value="days">継続</option>
-                <option value="favCreators">フォロー中の人</option>
-              </select>
-
-              <button id="btnClearTag" title="タグ解除">タグ解除</button>
-            </div>
-          </div>
+          <button class="ctrlBtn" id="btnClearTag" title="タグ解除">タグ解除</button>
         </div>
 
         <!-- list -->
         <div class="feedArea">
           <div class="feedHead">
-            <p class="feedLabel">一覧</p>
-            <div class="countSmall">表示 <span id="countShown">0</span></div>
+            <div class="feedHeadLeft">
+              <p class="feedLabel">一覧</p>
+
+              <!-- 並び替えを「一覧」横に移動 -->
+              <select class="ctrlSel" id="sortBy" title="並び替え">
+                <option value="new">新着</option>
+                <option value="rating">評価</option>
+                <option value="favCreators">フォロー中の人</option>
+              </select>
+
+              <div class="countSmall">表示 <span id="countShown">0</span></div>
+            </div>
           </div>
           <div class="feedGrid" id="feed"></div>
         </div>
@@ -1123,11 +1247,8 @@
       <!-- ===== Training ===== -->
       <section class="panel" id="viewTrain" style="display:none">
         <div class="headerBar">
-          <div class="hTitle">
-            育成
-            <span class="hBadge" id="trainHint">—</span>
-          </div>
-          <div class="hBadge">—</div>
+          <div class="hTitle">育成</div>
+          <div class="hBadge" id="trainHint">—</div>
         </div>
 
         <div class="trainWrap">
@@ -1151,6 +1272,8 @@
                 <div class="trainBar"><div class="trainFill" id="trainFill"></div></div>
                 <div class="creatureEmoji" id="trainEmoji">🥚</div>
                 <div class="thin" id="trainStage">—</div>
+                <!-- 次のお世話まで（追加） -->
+                <div class="careUnder" id="trainCare">次のお世話まで 00:00:00</div>
               </div>
 
               <button class="arrowBtn" id="trainNext">&gt;</button>
@@ -1182,11 +1305,8 @@
       <!-- ===== Profile ===== -->
       <section class="panel" id="viewProfile" style="display:none">
         <div class="headerBar">
-          <div class="hTitle">
-            プロフィール
-            <span class="hBadge" id="profileLv">Lv 1</span>
-          </div>
-          <div class="hBadge">—</div>
+          <div class="hTitle">プロフィール</div>
+          <div class="hBadge" id="profileLv">Lv 1</div>
         </div>
         <div style="padding:12px" id="profileList"></div>
 
@@ -1199,7 +1319,7 @@
     </main>
   </div>
 
-  <!-- 投稿ボタン（右下固定） -->
+  <!-- 投稿ボタン（右下固定 / Homeのみ表示） -->
   <button class="fab" id="openPost">投稿</button>
 
   <!-- ===== 名前登録 + 色選択 ===== -->
@@ -1258,23 +1378,11 @@
       </div>
 
       <div class="fieldRow">
-        <input class="lineInput" id="newTags" placeholder="タグ（例：不安,寝つき）" />
+        <input class="lineInput" id="newTags" placeholder="悩みタグ（例：不安,寝つき）" />
         <select class="selectKeep" id="newCategory">
           <option value="">カテゴリ（任意）</option>
           <option>メンタル</option><option>睡眠</option><option>運動</option><option>健康</option>
           <option>生活</option><option>勉強</option><option>英語</option><option>仕事</option><option>その他</option>
-        </select>
-      </div>
-
-      <div class="fieldRow">
-        <select class="selectKeep" id="newMascotType">
-          <option value="egg">卵</option>
-          <option value="seed">種</option>
-        </select>
-        <select class="selectKeep" id="newMascotStyle">
-          <option value="auto">種類（ランダム）</option>
-          <option value="basic">ベーシック</option>
-          <option value="rare">レア</option>
         </select>
       </div>
 
@@ -1317,7 +1425,7 @@
     </div>
   </div>
 
-  <!-- ===== 作成者プロフィール（新機能） ===== -->
+  <!-- ===== 作成者プロフィール ===== -->
   <div class="modalBg" id="creatorBg">
     <div class="modal">
       <h2>作成者</h2>
@@ -1385,17 +1493,11 @@
       const y = d.getFullYear();
       const m = String(d.getMonth()+1).padStart(2,"0");
       const day = String(d.getDate()).padStart(2,"0");
-      return `${y}-${m}-${day}`;
-    };
-    const fmtYMDHM = (d) => {
-      const ymd = fmtYMD(d);
-      const hh = String(d.getHours()).padStart(2,"0");
-      const mm = String(d.getMinutes()).padStart(2,"0");
-      return `${ymd} ${hh}:${mm}`;
+      return \`\${y}-\${m}-\${day}\`;
     };
     const parseYMD = (s) => {
       const raw = String(s||"").slice(0,10);
-      if(!/^\d{4}-\d{2}-\d{2}$/.test(raw)) return null;
+      if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(raw)) return null;
       const [y,m,d] = raw.split("-").map(Number);
       return new Date(y, m-1, d);
     };
@@ -1414,8 +1516,47 @@
       const hh = String(Math.floor(s/3600)).padStart(2,"0");
       const mm = String(Math.floor((s%3600)/60)).padStart(2,"0");
       const ss = String(s%60).padStart(2,"0");
-      return `${hh}:${mm}:${ss}`;
+      return \`\${hh}:\${mm}:\${ss}\`;
     };
+
+    // ===== Category color (薄め) =====
+    const CAT_COLORS = {
+      "メンタル": { tint:"#fbfbff", line:"#dfe3ff" },
+      "睡眠":     { tint:"#fbfffb", line:"#d9f0dc" },
+      "運動":     { tint:"#fffafb", line:"#ffd7e4" },
+      "健康":     { tint:"#fbffff", line:"#d6f2f2" },
+      "生活":     { tint:"#fffffb", line:"#f0f0d6" },
+      "勉強":     { tint:"#fbfcff", line:"#e1e6ff" },
+      "英語":     { tint:"#fbffff", line:"#d7f1ff" },
+      "仕事":     { tint:"#fcfcfc", line:"#e6e6e6" },
+      "その他":   { tint:"#ffffff", line:"#e6e6e6" }
+    };
+    function applyCatVars(el, cat){
+      const c = CAT_COLORS[String(cat||"")] || { tint:"#ffffff", line:"#e6e6e6" };
+      el.style.setProperty("--catTint", c.tint);
+      el.style.setProperty("--catLine", c.line);
+    }
+
+    // ===== Hourly mascot (投稿後も1時間おきに変わる) =====
+    function hourKey(){
+      const d = nowLocal();
+      return \`\${d.getFullYear()}-\${d.getMonth()+1}-\${d.getDate()}-\${d.getHours()}\`;
+    }
+    function hash32(str){
+      let h = 2166136261;
+      for(let i=0;i<str.length;i++){
+        h ^= str.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+      }
+      return (h>>>0);
+    }
+    function mascotEmojiFromHabitId(habitId){
+      // 卵の種類は完全ランダム（= habitId + 現在hourで擬似乱数）
+      const k = habitId + ":" + hourKey();
+      const v = hash32(k) % 6;
+      // 仮の6種（線なし・後で画像差し替え前提）
+      return ["🥚","🥚✨","🥚❖","🌰","🌰✨","🌰❖"][v];
+    }
 
     // ===== Elements =====
     const navHome = $("navHome");
@@ -1436,11 +1577,17 @@
     const userName = $("userName");
     const userSmall = $("userSmall");
     const userAvatar = $("userAvatar");
+    const followerMini = $("followerMini");
+
+    const levelBadge = $("levelBadge");
+    const xpFill = $("xpFill");
+    const xpText = $("xpText");
+    const todayDoneBadge = $("todayDoneBadge");
+    const openCharList = $("openCharList");
 
     const sideActiveList = $("sideActiveList");
 
     // Home
-    const todayDoneBadge = $("todayDoneBadge");
     const feed = $("feed");
     const qInput = $("q");
     const btnSearch = $("btnSearch");
@@ -1451,13 +1598,7 @@
     const rankTop = $("rankTop");
     const countShown = $("countShown");
 
-    // XP UI
-    const levelBadge = $("levelBadge");
-    const xpFill = $("xpFill");
-    const xpText = $("xpText");
-    const openCharList = $("openCharList");
-
-    // Fixed post btn
+    // FAB
     const openPost = $("openPost");
 
     // Post modal
@@ -1468,8 +1609,6 @@
     const newAction = $("newAction");
     const newTags = $("newTags");
     const newCategory = $("newCategory");
-    const newMascotType = $("newMascotType");
-    const newMascotStyle = $("newMascotStyle");
     const postCounter = $("postCounter");
 
     // Name modal
@@ -1534,9 +1673,7 @@
     const trainPrev = $("trainPrev");
     const trainNext = $("trainNext");
     const btnSetAvatar = $("btnSetAvatar");
-
-    // FX
-    const plusOne = $("plusOne");
+    const trainCare = $("trainCare");
 
     // ===== State =====
     const CATS = ["メンタル","睡眠","運動","健康","生活","勉強","英語","仕事","その他"];
@@ -1548,6 +1685,9 @@
     let cachedFavCreators = new Set();
     let cachedBookmarks = new Set();
 
+    // Active habitIds to render "育成中"
+    let activeHabitIds = new Set();
+
     let diffTargetChallenge = null;
 
     let ratingTargetHabit = null;
@@ -1557,48 +1697,35 @@
     let trainChallenges = [];
     let trainIndex = 0;
 
-    // ===== Character system (仮) =====
-    // 「卵/種」段階だけ見せる。成長段階は育成画面で。
+    // ===== Character system (一覧で卵/種だけ) =====
     const CHAR_TIERS = [
-      { minLv: 1, name: "白い卵", emoji: "🥚", type:"egg" },
-      { minLv: 2, name: "黒い卵", emoji: "⚫🥚", type:"egg" },
-      { minLv: 3, name: "金の卵", emoji: "🥚✨", type:"egg" },
-      { minLv: 4, name: "不思議な卵", emoji: "🥚❖", type:"egg" },
-      { minLv: 5, name: "古代の卵", emoji: "🥚⟁", type:"egg" },
-
-      { minLv: 1, name: "小さな種", emoji: "🌰", type:"seed" },
-      { minLv: 2, name: "青い種", emoji: "🫐", type:"seed" },
+      { minLv: 1, name: "卵", emoji: "🥚", type:"egg" },
+      { minLv: 3, name: "光る卵", emoji: "🥚✨", type:"egg" },
+      { minLv: 5, name: "不思議な卵", emoji: "🥚❖", type:"egg" },
+      { minLv: 1, name: "種", emoji: "🌰", type:"seed" },
       { minLv: 3, name: "光る種", emoji: "🌰✨", type:"seed" },
-      { minLv: 4, name: "不思議な種", emoji: "🌰❖", type:"seed" },
-      { minLv: 5, name: "古代の種", emoji: "🌰⟁", type:"seed" },
+      { minLv: 5, name: "不思議な種", emoji: "🌰❖", type:"seed" },
     ];
 
-    // 7段階（絵文字仮）
+    // 7段階（育成画面の仮）
     const GROW_STAGES = [
-      { max: 0,   label:"眠り", emoji:"🥚" },
-      { max: 15,  label:"目覚め", emoji:"🐣" },
-      { max: 30,  label:"よちよち", emoji:"🐤" },
-      { max: 45,  label:"育ち", emoji:"🐥" },
-      { max: 60,  label:"準備", emoji:"🧩" },
-      { max: 75,  label:"進化前", emoji:"✨" },
-      { max: 100, label:"完成", emoji:"👑" },
+      { max: 0,   label:"眠り" },
+      { max: 15,  label:"目覚め" },
+      { max: 30,  label:"よちよち" },
+      { max: 45,  label:"育ち" },
+      { max: 60,  label:"準備" },
+      { max: 75,  label:"進化前" },
+      { max: 100, label:"完成" },
     ];
 
     // ===== XP / Level =====
-    // ざっくり：Lvアップ必要XP = 100 + (Lv-1)*40
-    function needXpForLevel(lv){
-      return 100 + Math.max(0, lv-1)*40;
-    }
+    function needXpForLevel(lv){ return 100 + Math.max(0, lv-1)*40; }
     function computeLevelFromXp(totalXp){
       let lv = 1;
       let xp = Math.max(0, Number(totalXp||0));
       while(true){
         const need = needXpForLevel(lv);
-        if(xp >= need){
-          xp -= need;
-          lv++;
-          continue;
-        }
+        if(xp >= need){ xp -= need; lv++; continue; }
         return { lv, cur: xp, need };
       }
     }
@@ -1609,13 +1736,11 @@
       myProfile.xpCur = cur;
       myProfile.xpNeed = need;
 
-      levelBadge.textContent = `Lv ${lv}`;
-      profileLv.textContent = `Lv ${lv}`;
-      $("levelBadge").title = "参加レベル";
-      xpText.textContent = `${cur} / ${need}`;
-      xpFill.style.width = `${Math.max(0, Math.min(100, (cur/need)*100))}%`;
+      levelBadge.textContent = \`Lv \${lv}\`;
+      profileLv.textContent = \`Lv \${lv}\`;
+      xpText.textContent = \`\${cur} / \${need}\`;
+      xpFill.style.width = \`\${Math.max(0, Math.min(100, (cur/need)*100))}%\`;
     }
-
     async function addXp(amount){
       const add = Math.max(0, Math.floor(amount||0));
       if(!add) return;
@@ -1626,25 +1751,15 @@
         const u = us.data();
         tx.update(uref, { xpTotal: Number(u.xpTotal||0) + add, updatedAt: serverTimestamp() });
       });
-      // local refresh
       const snap = await getDoc(doc(db,"users",currentUser.uid));
       myProfile = snap.data();
       setXpUI();
-      showPlusOne();
+      applyUserHeader();
     }
 
     // ===== Helpers =====
-    function showPlusOne(){
-      plusOne.textContent = "+XP";
-      plusOne.style.display = "block";
-      plusOne.style.animation = "none";
-      void plusOne.offsetWidth;
-      plusOne.style.animation = "floatUp .9s ease-out forwards";
-      setTimeout(()=> plusOne.style.display = "none", 950);
-    }
-
     function setAvatarColor(el, color){
-      el.style.background = String(color||"#fff");
+      el.style.background = String(color||"#111111");
       el.style.color = "#fff";
       el.textContent = "□";
     }
@@ -1661,6 +1776,9 @@
       navRecords.classList.toggle("active", section==="records");
       navBookmarks.classList.toggle("active", section==="bookmarks");
       navProfile.classList.toggle("active", section==="profile");
+
+      // FAB is home only
+      openPost.classList.toggle("show", section==="home");
 
       if(section==="records") refreshRecords();
       if(section==="bookmarks") refreshBookmarksView();
@@ -1684,18 +1802,14 @@
     function openNameModal(){
       nameInput.value = "";
       nameSave.disabled = true;
-
       const c = myProfile?.avatarColor || "#111111";
       colorPick.value = c;
       setAvatarColor(nameAvatar, c);
-
       nameBg.classList.add("show");
     }
     function closeNameModal(){ nameBg.classList.remove("show"); }
     nameInput.addEventListener("input", ()=>{ nameSave.disabled = nameInput.value.trim().length<1; });
-    colorPick.addEventListener("change", ()=>{
-      setAvatarColor(nameAvatar, colorPick.value);
-    });
+    colorPick.addEventListener("change", ()=> setAvatarColor(nameAvatar, colorPick.value));
 
     nameSave.addEventListener("click", async ()=>{
       const nm = nameInput.value.trim().slice(0,16);
@@ -1705,9 +1819,6 @@
       await updateDoc(doc(db,"users",currentUser.uid), { name: nm, avatarColor: color, updatedAt: serverTimestamp() });
       myProfile.name = nm;
       myProfile.avatarColor = color;
-
-      userName.textContent = nm;
-      setAvatarColor(userAvatar, color);
 
       closeNameModal();
 
@@ -1725,15 +1836,26 @@
         const b = document.createElement("button");
         b.className = "btn";
         b.textContent = c;
+        applyCatButton(b, c, false);
         b.addEventListener("click", ()=>{
           catSelected = c;
-          [...catList.querySelectorAll(".btn")].forEach(x=>x.classList.remove("primary"));
+          [...catList.querySelectorAll(".btn")].forEach(x=>{
+            x.classList.remove("primary");
+            x.style.borderColor = "var(--line)";
+            x.style.background = "#fff";
+          });
           b.classList.add("primary");
+          applyCatButton(b, c, true);
           catSave.disabled = false;
         });
         catList.appendChild(b);
       }
       catBg.classList.add("show");
+    }
+    function applyCatButton(btn, cat, selected){
+      const c = CAT_COLORS[String(cat)] || { tint:"#fff", line:"#e6e6e6" };
+      btn.style.borderColor = c.line;
+      btn.style.background = selected ? c.line : "#fff";
     }
     function closeCategoryModal(){ catBg.classList.remove("show"); }
     catClose.addEventListener("click", closeCategoryModal);
@@ -1743,7 +1865,7 @@
       myProfile.preferredCategory = catSelected;
       closeCategoryModal();
 
-      categoryFilter.value = catSelected; // 変更したらそのカテゴリだけ表示
+      categoryFilter.value = catSelected;
       await refreshHome();
     });
 
@@ -1753,8 +1875,6 @@
       newTags.value = "";
       newCategory.value = "";
       newAction.value = "";
-      newMascotType.value = "egg";
-      newMascotStyle.value = "auto";
       updatePostCounter();
       postBg.classList.add("show");
     }
@@ -1763,20 +1883,14 @@
     postClose.addEventListener("click", closePostModal);
     postBg.addEventListener("click", (e)=>{ if(e.target===postBg) closePostModal(); });
 
-    function updatePostCounter(){ postCounter.textContent = `${newAction.value.length} / 40`; }
+    function updatePostCounter(){ postCounter.textContent = \`\${newAction.value.length} / 40\`; }
     newAction.addEventListener("input", updatePostCounter);
-
-    function randomVariant(){
-      return Math.floor(Math.random()*6); // 0..5
-    }
 
     btnPost.addEventListener("click", async ()=>{
       const title = newTitle.value.trim();
       const action = newAction.value.trim();
       const tags = newTags.value.split(",").map(s=>s.trim()).filter(Boolean).slice(0,8);
       const category = String(newCategory.value||"").trim();
-      const mascotType = String(newMascotType.value||"egg");
-      const mascotStyle = String(newMascotStyle.value||"auto");
 
       if(title.length<2){ alert("タイトル短い"); return; }
       if(action.length<2){ alert("やること短い"); return; }
@@ -1793,7 +1907,6 @@
 
           createdAt: serverTimestamp(),
           createdAtYMD: fmtYMD(created),
-
           updatedAt: serverTimestamp(),
 
           avgRating: 0,
@@ -1803,14 +1916,10 @@
           successRate: 0,
 
           baseHabitId: "",
-          version: 1,
-
-          mascotType,
-          mascotStyle,
-          mascotVariant: randomVariant(),
+          version: 1
         });
 
-        // 投稿でもXP
+        // 投稿XP
         await addXp(8);
 
         closePostModal();
@@ -1836,10 +1945,8 @@
           clearCount: 0,
           totalChallenges: 0,
           ratingRank: 1,
-
           xpTotal: 0,
-          avatarSetFrom: "color", // "color" or "creature"
-          avatarCreature: ""
+          followerCount: 0
         };
         await setDoc(ref, initial);
         myProfile = initial;
@@ -1847,6 +1954,15 @@
         myProfile = snap.data();
       }
       setXpUI();
+      applyUserHeader();
+    }
+
+    function applyUserHeader(){
+      const nm = (myProfile?.name || "").trim();
+      userName.textContent = nm || "—";
+      userSmall.textContent = currentUser.email || "—";
+      setAvatarColor(userAvatar, myProfile?.avatarColor || "#111111");
+      followerMini.textContent = \`Follower \${Number(myProfile?.followerCount||0)}\`;
     }
 
     async function warmCaches(){
@@ -1873,11 +1989,45 @@
       }
     }
 
+    // ===== Daily done count =====
+    function dailyDocId(){ return fmtYMD(nowLocal()); }
+    async function ensureDailyStatsDoc(){
+      const ref = doc(db, "dailyStats", dailyDocId());
+      const snap = await getDoc(ref);
+      if(!snap.exists()){
+        await setDoc(ref, { doneCount: 0, date: dailyDocId(), updatedAt: serverTimestamp() });
+      }
+    }
+    async function refreshDailyDoneCount(){
+      try{
+        const ref = doc(db, "dailyStats", dailyDocId());
+        const snap = await getDoc(ref);
+        const done = snap.exists() ? Number(snap.data().doneCount||0) : 0;
+        todayDoneBadge.textContent = \`本日 \${done} 人が達成\`;
+      }catch{
+        todayDoneBadge.textContent = \`本日 0 人が達成\`;
+      }
+    }
+    async function incDailyDoneCount(){
+      await runTransaction(db, async (tx)=>{
+        const ref = doc(db, "dailyStats", dailyDocId());
+        const snap = await tx.get(ref);
+        if(!snap.exists()){
+          tx.set(ref, { doneCount: 1, date: dailyDocId(), updatedAt: serverTimestamp() });
+        }else{
+          tx.update(ref, { doneCount: increment(1), updatedAt: serverTimestamp() });
+        }
+      });
+      await refreshDailyDoneCount();
+    }
+
     async function afterLoginWarm(){
       await warmCaches();
       await autoRetireIfMissed();
       await ensureDailyStatsDoc();
       await refreshDailyDoneCount();
+
+      await refreshActiveHabitIds();
       await refreshSideActive();
       await refreshHome();
       await refreshRecords();
@@ -1886,18 +2036,14 @@
       await refreshTrain();
     }
 
-    function applyUserAvatarUI(){
-      const nm = (myProfile?.name || "").trim();
-      userName.textContent = nm || "—";
-      userSmall.textContent = currentUser.email || "—";
-
-      userAvatar.innerHTML = "";
-      // 今は色アイコン中心
-      const c = myProfile?.avatarColor || "#111111";
-      setAvatarColor(userAvatar, c);
-      userAvatar.title = "アイコン（色）";
+    // ===== Active set for cards =====
+    async function refreshActiveHabitIds(){
+      activeHabitIds = new Set();
+      const actives = await loadActiveChallenges();
+      for(const ch of actives) activeHabitIds.add(ch.habitId);
     }
 
+    // ===== Auth state =====
     onAuthStateChanged(auth, async (user)=>{
       currentUser = user || null;
 
@@ -1907,6 +2053,7 @@
 
         userName.textContent = "—";
         userSmall.textContent = "—";
+        followerMini.textContent = "Follower 0";
         userAvatar.textContent = "□";
         userAvatar.style.background = "#fff";
         userAvatar.style.color = "#111";
@@ -1920,6 +2067,7 @@
 
         cachedFavCreators = new Set();
         cachedBookmarks = new Set();
+        activeHabitIds = new Set();
 
         showOnly("home");
         return;
@@ -1929,7 +2077,6 @@
       btnLogout.disabled = false;
 
       await ensureProfile();
-      applyUserAvatarUI();
 
       const nm = (myProfile?.name || "").trim();
       if(!nm){
@@ -1955,7 +2102,9 @@
     // ===== Search/filters =====
     btnSearch.addEventListener("click", refreshHome);
     qInput.addEventListener("keydown", (e)=>{ if(e.key==="Enter") refreshHome(); });
+    // カテゴリ変更だけで自動更新
     categoryFilter.addEventListener("change", refreshHome);
+    // 並び替えだけで自動更新（検索押さなくてOK）
     sortBy.addEventListener("change", refreshHome);
     btnClearTag.addEventListener("click", async ()=>{
       selectedTag = "";
@@ -1963,49 +2112,19 @@
       await refreshHome();
     });
 
-    // ===== Daily stats (本日達成人数) =====
-    function dailyDocId(){ return fmtYMD(nowLocal()); }
-
-    async function ensureDailyStatsDoc(){
-      const ref = doc(db, "dailyStats", dailyDocId());
-      const snap = await getDoc(ref);
-      if(!snap.exists()){
-        await setDoc(ref, { doneCount: 0, date: dailyDocId(), updatedAt: serverTimestamp() });
-      }
-    }
-    async function refreshDailyDoneCount(){
-      try{
-        const ref = doc(db, "dailyStats", dailyDocId());
-        const snap = await getDoc(ref);
-        const done = snap.exists() ? Number(snap.data().doneCount||0) : 0;
-        todayDoneBadge.textContent = `本日 ${done} 人が達成`;
-      }catch{
-        todayDoneBadge.textContent = `本日 0 人が達成`;
-      }
-    }
-    async function incDailyDoneCount(){
-      await runTransaction(db, async (tx)=>{
-        const ref = doc(db, "dailyStats", dailyDocId());
-        const snap = await tx.get(ref);
-        if(!snap.exists()){
-          tx.set(ref, { doneCount: 1, date: dailyDocId(), updatedAt: serverTimestamp() });
-        }else{
-          tx.update(ref, { doneCount: increment(1), updatedAt: serverTimestamp() });
-        }
-      });
-      await refreshDailyDoneCount();
-    }
-
     // ===== Home =====
     async function refreshHome(){
       if(!currentUser) return;
+
+      // 毎回 active set も更新（カードの「育成中」表示のため）
+      await refreshActiveHabitIds();
 
       const keyword = qInput.value.trim().toLowerCase();
       const cat = categoryFilter.value.trim();
       const sort = sortBy.value;
 
       let habits = [];
-      const qs = await getDocs(query(collection(db,"habits"), orderBy("createdAt","desc"), limit(260)));
+      const qs = await getDocs(query(collection(db,"habits"), orderBy("createdAt","desc"), limit(300)));
       qs.forEach(s=> habits.push({ id:s.id, ...s.data() }));
 
       // tag ranking
@@ -2058,14 +2177,8 @@
 
         const ra = Number(a.avgRating||0);
         const rb = Number(b.avgRating||0);
-        const sa = Number(a.successRate||0);
-        const sb = Number(b.successRate||0);
-        const da = Number(a.avgDays||0);
-        const dbb = Number(b.avgDays||0);
 
         if(sort==="rating") return (rb-ra) || (cb-ca);
-        if(sort==="success") return (sb-sa) || (cb-ca);
-        if(sort==="days") return (dbb-da) || (cb-ca);
         return (cb-ca);
       });
 
@@ -2085,7 +2198,7 @@
         const chip = document.createElement("div");
         chip.className = "rankChip";
         chip.dataset.tag = t;
-        chip.innerHTML = `<span class="rk">${i+1}位</span><span class="tagName">#${escapeHtml(t)}</span>`;
+        chip.innerHTML = \`<span class="rk">\${i+1}位</span><span class="tagName">#\${escapeHtml(t)}</span>\`;
         chip.addEventListener("click", async ()=>{
           selectedTag = t;
           highlightRankChips();
@@ -2098,7 +2211,7 @@
         dummy.className = "rankChip";
         dummy.style.opacity = "0.25";
         dummy.style.pointerEvents = "none";
-        dummy.innerHTML = `<span class="rk">${i+1}位</span><span class="tagName">—</span>`;
+        dummy.innerHTML = \`<span class="rk">\${i+1}位</span><span class="tagName">—</span>\`;
         container.appendChild(dummy);
       }
     }
@@ -2110,31 +2223,27 @@
 
     function bookmarkSvg(filled){
       if(filled){
-        return `
+        return \`
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M6 3h12a1 1 0 0 1 1 1v18l-7-4-7 4V4a1 1 0 0 1 1-1z"/>
-          </svg>`;
+          </svg>\`;
       }
-      return `
+      return \`
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path d="M6 3h12a1 1 0 0 1 1 1v18l-7-4-7 4V4a1 1 0 0 1 1-1z"/>
-        </svg>`;
+        </svg>\`;
     }
 
-    function mascotEmoji(h){
-      const type = String(h.mascotType||"egg");
-      const v = Number(h.mascotVariant||0);
-      // レベルで出現幅が変わる：Lvが高いほどレアっぽい表示へ寄せる（仮）
-      const lv = Number(myProfile?.level||1);
-      const rareBoost = Math.min(4, Math.floor((lv-1)/2)); // 0..4
-      const pick = Math.min(4, Math.max(0, v % 5) + rareBoost);
+    function bubbleSvg(){
+      return \`
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/>
+        </svg>\`;
+    }
 
-      const list = CHAR_TIERS.filter(x=>x.type===type).sort((a,b)=>a.minLv-b.minLv);
-      // minLv <= lv の中から一番高いのを基準に、pickで変化
-      const avail = list.filter(x=>x.minLv <= lv);
-      const base = avail.length ? avail[avail.length-1] : list[0];
-      // 文字だけの仮表示（薄い背景用）
-      return base.emoji;
+    function pickWorryTag(h){
+      const t = (h.tags||[]).map(x=>String(x||"").trim()).filter(Boolean);
+      return t.length ? ("#" + t[0]) : "";
     }
 
     function renderHabitCard(h){
@@ -2144,56 +2253,95 @@
       const isMine = h.creatorUid === currentUser.uid;
       const bookmarked = cachedBookmarks.has(h.id);
       const creatorFav = cachedFavCreators.has(h.creatorUid);
+      const isActive = activeHabitIds.has(h.id);
 
       const avgRating = Number(h.avgRating||0);
-      const avgDays = Number(h.avgDays||0);
-      const successRate = Number(h.successRate||0);
+      const ratingCount = Number(h.ratingCount||0);
       const participants = Number(h.participantsCount||0);
 
-      const createdAtStr = String(h.createdAtYMD||"") || ""; // 仮：YMDだけ薄表示
+      const createdAtStr = String(h.createdAtYMD||"") || "";
 
-      card.innerHTML = `
-        <div class="mascotBg">${escapeHtml(mascotEmoji(h))}</div>
+      // overlay metrics (hidden normally)
+      const avgDays = Math.max(0, Math.min(14, Number(h.avgDays||0))); // 表示用
+      const successRate = Math.max(0, Math.min(100, Number(h.successRate||0)));
+      const daysPct = Math.max(0, Math.min(100, (avgDays/14)*100));
 
-        <div class="cardTop">
-          <div class="creatorRow" data-act="creator">
-            <div class="miniAva" id="miniAva">${h.creatorPhoto ? `<img src="${escapeHtml(h.creatorPhoto)}" alt="">` : ""}</div>
-            <div class="creatorName">${escapeHtml(h.creatorName||"作成者")}</div>
-            <button class="followSmall ${creatorFav ? "on":""}" data-act="follow">フォロー</button>
-          </div>
+      const worry = pickWorryTag(h);
 
-          <div class="topActions">
-            <button class="iconBtn tipBtn ${bookmarked ? "on":""}" data-act="bookmark" data-tip="保存">
-              ${bookmarkSvg(bookmarked)}
+      // card category tint
+      applyCatVars(card, h.category);
+
+      card.innerHTML = \`
+        <div class="thumb">
+          <div class="mascotBg">\${escapeHtml(mascotEmojiFromHabitId(h.id))}</div>
+
+          <p class="thumbTitle">\${escapeHtml(h.title||"")}</p>
+          <div class="thumbAction">\${escapeHtml(h.action||"")}</div>
+
+          <div class="thumbActions">
+            <button class="iconBtn tipBtn reviewBtn" data-act="reviews" data-tip="口コミ">
+              \${bubbleSvg()}
+              <span class="badgeCount">\${Math.min(99, ratingCount)}</span>
             </button>
 
-            ${
-              isMine
-                ? `<button class="joinBtn tipBtn secondary" data-act="edit" data-tip="編集">編集</button>`
-                : `<button class="joinBtn tipBtn" data-act="join" data-tip="参加">参加</button>`
+            <button class="iconBtn tipBtn \${bookmarked ? "on":""}" data-act="bookmark" data-tip="保存">
+              \${bookmarkSvg(bookmarked)}
+            </button>
+
+            \${isMine
+              ? \`<button class="joinBtn tipBtn activeMode" data-act="edit" data-tip="編集">編集</button>\`
+              : \`<button class="joinBtn tipBtn \${isActive ? "activeMode":""}" data-act="join" data-tip="\${isActive ? "育成中" : "参加"}">\${isActive ? "育成中" : "参加"}</button>\`
             }
           </div>
-        </div>
 
-        <div class="titleBlock">
-          <p class="habitTitle">${escapeHtml(h.title||"")}</p>
-          <p class="habitAction">${escapeHtml(h.action||"")}</p>
-        </div>
+          \${worry ? \`<div class="worryTag">\${escapeHtml(worry)}</div>\` : ""}
 
-        <div class="cardBottom">
-          <div class="statsRow">
-            <span class="statPill">参加者 ${participants}</span>
-            <span class="statPill">評価 ${avgRating ? avgRating.toFixed(1) : "—"}</span>
-            <span class="statPill">継続 ${avgDays ? avgDays.toFixed(1) : "—"}日</span>
-            <span class="statPill">成功 ${successRate ? successRate.toFixed(0) : "—"}%</span>
+          <div class="overlay">
+            <div class="overlayInner">
+              <div class="ovTitle">継続</div>
+              <div class="ovRow"><span>平均日数</span><span>\${avgDays ? avgDays.toFixed(1) : "—"}日</span></div>
+              <div class="bar"><div class="barFill" style="width:\${daysPct}%"></div></div>
+
+              <div class="ovTitle" style="margin-top:6px">成功</div>
+              <div class="ovRow"><span>成功率</span><span>\${Number.isFinite(successRate) ? successRate.toFixed(0) : "—"}%</span></div>
+              <div class="bar"><div class="barFill" style="width:\${successRate}%"></div></div>
+            </div>
           </div>
         </div>
 
-        <div class="createdAt">${escapeHtml(createdAtStr)}</div>
-      `;
+        <div class="metaBar">
+          <div class="creatorCol">
+            <div class="miniAva" data-act="creator">\${h.creatorPhoto ? \`<img src="\${escapeHtml(h.creatorPhoto)}" alt="">\` : "□"}</div>
+            <div class="creatorText">
+              <div class="creatorName" data-act="creator">\${escapeHtml(h.creatorName||"作成者")}</div>
+              <button class="followSmall \${creatorFav ? "on":""}" data-act="follow">フォロー</button>
+            </div>
+          </div>
 
-      // creator profile modal
-      card.querySelector('[data-act="creator"]').addEventListener("click", ()=> openCreatorModal(h.creatorUid, h.creatorName, h.creatorPhoto, h.creatorColor));
+          <div class="statsRow">
+            <div class="statLine">
+              <span class="statPill">参加者 \${participants}</span>
+              <span class="statPill">評価 \${avgRating ? avgRating.toFixed(1) : "—"}</span>
+            </div>
+          </div>
+
+          <div class="createdAt">\${escapeHtml(createdAtStr)}</div>
+        </div>
+      \`;
+
+      // press to show overlay on touch
+      card.addEventListener("pointerdown", (e)=>{
+        // long-press風：押している間だけ
+        card.classList.add("pressing");
+      });
+      card.addEventListener("pointerup", ()=> card.classList.remove("pressing"));
+      card.addEventListener("pointercancel", ()=> card.classList.remove("pressing"));
+      card.addEventListener("pointerleave", ()=> card.classList.remove("pressing"));
+
+      // creator modal
+      card.querySelectorAll('[data-act="creator"]').forEach(el=>{
+        el.addEventListener("click", ()=> openCreatorModal(h.creatorUid, h.creatorName, h.creatorPhoto, h.creatorColor));
+      });
 
       // follow
       card.querySelector('[data-act="follow"]').addEventListener("click", async (e)=>{
@@ -2207,10 +2355,18 @@
         await toggleBookmark(h.id);
       });
 
+      // reviews list
+      card.querySelector('[data-act="reviews"]').addEventListener("click", async (e)=>{
+        e.stopPropagation();
+        // 閲覧はいつでもOK（評価は条件あり）
+        await openRatingsViewer(h.id);
+      });
+
       // join/edit
       const joinBtn = card.querySelector('[data-act="join"]');
       if(joinBtn) joinBtn.addEventListener("click", async (e)=>{
         e.stopPropagation();
+        if(isActive) return; // 育成中は押しても何もしない
         await startChallenge(h);
       });
       const editBtn = card.querySelector('[data-act="edit"]');
@@ -2252,7 +2408,7 @@
       await refreshProfile();
     }
 
-    // ===== Challenges (インデックス不要) =====
+    // ===== Challenges =====
     async function loadChallenges(limitN=200){
       const qs = await getDocs(query(
         collection(db, "userChallenges", currentUser.uid, "items"),
@@ -2268,11 +2424,34 @@
       return all.filter(x => x.status === "active").slice(0, 50);
     }
 
-    // 1日1回制限（同日二度押し防止）
-    function canActToday(ch){
+    // 1日1回（お世話）
+    function canCareToday(ch){
       const today = fmtYMD(nowLocal());
       const last = String(ch.lastActionYMD||"").slice(0,10);
       return last !== today;
+    }
+
+    // ===== Growth new rule =====
+    // 7日目に近づくほど%が上がる（ただし「次のお世話まで」の区切りで止まる）
+    // ルール：
+    // - day: 1..8（内部）
+    // - 基本進捗 = min(day-1,7)/7 * 100
+    // - その日の「お世話」が済んでいる(= lastActionYMD==今日)なら、当日分の経過(0..1)を足す
+    function growthPctDynamic(ch){
+      const day = Number(ch.day||1);
+      const base = Math.max(0, Math.min(7, day-1)) / 7 * 100;
+
+      const today = fmtYMD(nowLocal());
+      const cared = String(ch.lastActionYMD||"").slice(0,10) === today;
+
+      // 当日分は「お世話が済んだら」次の区切り（翌0時）まで少しずつ進む
+      const totalMs = 86400000;
+      const remain = msToMidnight();
+      const elapsed = Math.max(0, Math.min(totalMs, totalMs - remain));
+      const frac = elapsed / totalMs;
+
+      const add = cared ? (frac * (100/7)) : 0;
+      return Math.max(0, Math.min(100, base + add));
     }
 
     async function startChallenge(h){
@@ -2291,22 +2470,16 @@
         creatorUid: h.creatorUid || "",
         status: "active",
         startDate: today,
-        day: 1,
+        day: 1,              // 1/7
         successDays: 0,
         restDays: 0,
         lastActionYMD: "",
         streakMiss: 0,
         difficulty: { easy:0, mid:0, hard:0 },
         ratingSubmitted: false,
-        updatedAt: serverTimestamp(),
-
-        // growth
-        growthPct: 0,
-        mascotType: String(h.mascotType||"egg"),
-        mascotVariant: Number(h.mascotVariant||0)
+        updatedAt: serverTimestamp()
       });
 
-      // participants +1
       await runTransaction(db, async (tx)=>{
         const href = doc(db, "habits", h.id);
         const hs = await tx.get(href);
@@ -2315,7 +2488,6 @@
         tx.update(href, { participantsCount: Number(cur.participantsCount||0)+1, updatedAt: serverTimestamp() });
       });
 
-      // user totalChallenges +1
       await runTransaction(db, async (tx)=>{
         const uref = doc(db,"users",currentUser.uid);
         const us = await tx.get(uref);
@@ -2324,6 +2496,7 @@
         tx.update(uref, { totalChallenges: Number(u.totalChallenges||0)+1, updatedAt: serverTimestamp() });
       });
 
+      await refreshActiveHabitIds();
       await refreshSideActive();
       await refreshRecords();
       await refreshHome();
@@ -2337,16 +2510,26 @@
       if(!currentUser) return;
 
       const actives = await loadActiveChallenges();
+      activeHabitIds = new Set(actives.map(x=>x.habitId));
+
       sideActiveList.innerHTML = "";
 
       if(countdownTimer) clearInterval(countdownTimer);
       countdownTimer = setInterval(()=>{
-        document.querySelectorAll("[data-next]").forEach(el=>{
-          el.textContent = `次まで ${fmtCountdown(msToMidnight())}`;
+        document.querySelectorAll("[data-care]").forEach(el=>{
+          el.textContent = \`次のお世話まで \${fmtCountdown(msToMidnight())}\`;
         });
+        // train care text
+        if(trainCare) trainCare.textContent = \`次のお世話まで \${fmtCountdown(msToMidnight())}\`;
+        // daily refresh
         if(msToMidnight() < 900){
-          refreshSideActive();
           refreshDailyDoneCount();
+          refreshSideActive();
+          refreshHome();
+          refreshTrain();
+        }else{
+          // 育成%は時間で変わるので軽く更新
+          refreshTrain();
         }
       }, 1000);
 
@@ -2354,27 +2537,30 @@
         const box = document.createElement("div");
         box.className = "sideItem";
 
-        const can = canActToday(ch);
-        const next = `次まで ${fmtCountdown(msToMidnight())}`;
+        const can = canCareToday(ch);
+        const care = \`次のお世話まで \${fmtCountdown(msToMidnight())}\`;
 
-        box.innerHTML = `
+        const day = Math.max(1, Math.min(7, Number(ch.day||1)));
+        const prog = growthPctDynamic(ch);
+
+        box.innerHTML = \`
           <div class="sideTop">
-            <div class="sideHabit">${escapeHtml(ch.habitTitle||"")}</div>
-            <div class="sideMeta">D${Number(ch.day||1)}</div>
+            <div class="sideHabit">\${escapeHtml(ch.habitTitle||"")}</div>
+            <div class="sideMeta">\${day}/7</div>
           </div>
 
           <div class="sideTop" style="align-items:center">
-            <div class="sideMeta" data-next="1">${next}</div>
-            <div class="sideMeta">${Math.max(0, Math.min(100, Number(ch.growthPct||0)))}%</div>
+            <div class="sideCare" data-care="1">\${care}</div>
+            <div class="sideMeta">\${prog.toFixed(0)}%</div>
           </div>
 
           <div class="sideBtns">
-            <button class="btnMini" data-act="done" ${can ? "" : "disabled"}>やった</button>
-            <button class="btnMini" data-act="rest" ${can ? "" : "disabled"}>休む</button>
+            <button class="btnMini" data-act="done" \${can ? "" : "disabled"}>やった</button>
+            <button class="btnMini" data-act="rest" \${can ? "" : "disabled"}>休む</button>
             <button class="btnMini" data-act="retire">リタイア</button>
-            <button class="btnMini" data-act="rate" ${ch.ratingSubmitted ? "disabled" : ""}>評価</button>
+            <button class="btnMini" data-act="rate" \${ch.ratingSubmitted ? "disabled" : ""}>評価</button>
           </div>
-        `;
+        \`;
 
         box.querySelector('[data-act="done"]').addEventListener("click", ()=> openDiffModal(ch));
         box.querySelector('[data-act="rest"]').addEventListener("click", ()=> applyReport(ch, { type:"rest" }));
@@ -2425,7 +2611,7 @@
 
       if(payload.type==="done"){
         update.successDays = Number(cur.successDays||0)+1;
-        update.day = Number(cur.day||1)+1;
+        update.day = Math.min(8, Number(cur.day||1)+1);
         update.lastActionYMD = today;
         update.streakMiss = 0;
 
@@ -2433,25 +2619,15 @@
         d[payload.diff] = Number(d[payload.diff]||0)+1;
         update.difficulty = d;
 
-        // growth +15
-        update.growthPct = Math.min(100, Number(cur.growthPct||0) + 15);
-
-        // daily count
         await incDailyDoneCount();
-
-        // XP (成功は多め)
         await addXp(12);
 
       }else if(payload.type==="rest"){
         update.restDays = Number(cur.restDays||0)+1;
-        update.day = Number(cur.day||1)+1;
+        update.day = Math.min(8, Number(cur.day||1)+1);
         update.lastActionYMD = today;
         update.streakMiss = 0;
 
-        // growth -5
-        update.growthPct = Math.max(0, Number(cur.growthPct||0) - 5);
-
-        // XP (少し)
         await addXp(3);
 
       }else if(payload.type==="retire"){
@@ -2460,6 +2636,7 @@
         await updateDoc(ref, update);
 
         await maybePromptRating(ch.habitId, { ...cur, habitId: ch.habitId }, "retire");
+        await refreshActiveHabitIds();
         await refreshSideActive();
         await refreshRecords();
         await refreshHome();
@@ -2471,15 +2648,13 @@
       update.updatedAt = serverTimestamp();
       await updateDoc(ref, update);
 
-      // 7日後チェック
-      if(payload.type==="done"){
-        const beforeDay = Number(cur.day||1);
-        const afterDay = beforeDay + 1;
-        const afterSuccess = Number(cur.successDays||0)+1;
-
-        if(beforeDay < 7 && afterDay === 8){
+      // 7日終了（dayが8になったら終了判定）
+      if(payload.type==="done" || payload.type==="rest"){
+        const afterDay = Math.min(8, Number(cur.day||1)+1);
+        if(afterDay === 8){
+          const afterSuccess = Number(cur.successDays||0) + (payload.type==="done" ? 1 : 0);
           if(afterSuccess >= 5){
-            await updateDoc(ref, { status:"cleared", updatedAt: serverTimestamp(), growthPct: 100 });
+            await updateDoc(ref, { status:"cleared", updatedAt: serverTimestamp() });
             await runTransaction(db, async (tx)=>{
               const uref = doc(db, "users", currentUser.uid);
               const us = await tx.get(uref);
@@ -2497,6 +2672,7 @@
         }
       }
 
+      await refreshActiveHabitIds();
       await refreshSideActive();
       await refreshRecords();
       await refreshHome();
@@ -2558,13 +2734,14 @@
       for(const ch of items){
         const row = document.createElement("div");
         row.className = "review";
-        row.innerHTML = `
+        const day = Math.max(1, Math.min(7, Number(ch.day||1)));
+        row.innerHTML = \`
           <div class="reviewTop">
-            <div class="reviewName">${escapeHtml(ch.habitTitle||"")}</div>
-            <div class="reviewMeta">${escapeHtml(String(ch.status||""))}</div>
+            <div class="reviewName">\${escapeHtml(ch.habitTitle||"")}</div>
+            <div class="reviewMeta">\${escapeHtml(String(ch.status||""))}</div>
           </div>
-          <div class="reviewText">D${Number(ch.day||1)} / 成功 ${Number(ch.successDays||0)} / 休 ${Number(ch.restDays||0)} / 未報告 ${Number(ch.streakMiss||0)} / 育成 ${Math.max(0, Math.min(100, Number(ch.growthPct||0)))}%</div>
-        `;
+          <div class="reviewText">\${day}/7 / 成功 \${Number(ch.successDays||0)} / 休 \${Number(ch.restDays||0)} / 未報告 \${Number(ch.streakMiss||0)} / 育成 \${growthPctDynamic(ch).toFixed(0)}%</div>
+        \`;
         recordList.appendChild(row);
       }
     }
@@ -2576,7 +2753,9 @@
       bmFeed.innerHTML = "";
       if(cachedBookmarks.size === 0) return;
 
-      const qs = await getDocs(query(collection(db,"habits"), orderBy("createdAt","desc"), limit(260)));
+      await refreshActiveHabitIds();
+
+      const qs = await getDocs(query(collection(db,"habits"), orderBy("createdAt","desc"), limit(300)));
       const habits = [];
       qs.forEach(s=> habits.push({ id:s.id, ...s.data() }));
       const filtered = habits.filter(h => cachedBookmarks.has(h.id));
@@ -2590,24 +2769,24 @@
     async function refreshProfile(){
       if(!currentUser) return;
 
-      // プロフィールから色変更可能（簡易：同じ色Pick UIを置く）
       const actives = await loadActiveChallenges();
       const myPosts = await countMyPosts();
 
       const total = Number(myProfile?.xpTotal||0);
       const { lv, cur, need } = computeLevelFromXp(total);
-      profileLv.textContent = `Lv ${lv}`;
+      profileLv.textContent = \`Lv \${lv}\`;
 
-      profileList.innerHTML = `
+      profileList.innerHTML = \`
         <div class="review">
           <div class="reviewTop">
-            <div class="reviewName">${escapeHtml(myProfile?.name||"—")}</div>
-            <div class="reviewMeta">Lv ${lv}</div>
+            <div class="reviewName">\${escapeHtml(myProfile?.name||"—")}</div>
+            <div class="reviewMeta">Lv \${lv}</div>
           </div>
           <div class="reviewText">
-            XP ${cur} / ${need}\n
-            クリア ${Number(myProfile?.clearCount||0)} / 挑戦中 ${actives.length} / 総挑戦 ${Number(myProfile?.totalChallenges||0)}\n
-            フォロー ${cachedFavCreators.size} / 保存 ${cachedBookmarks.size} / 投稿 ${myPosts}
+            XP \${cur} / \${need}\\n
+            クリア \${Number(myProfile?.clearCount||0)} / 挑戦中 \${actives.length} / 総挑戦 \${Number(myProfile?.totalChallenges||0)}\\n
+            フォロー \${cachedFavCreators.size} / 保存 \${cachedBookmarks.size} / 投稿 \${myPosts}\\n
+            Follower \${Number(myProfile?.followerCount||0)}
           </div>
         </div>
 
@@ -2627,9 +2806,8 @@
             <button class="btn primary" id="saveProfileColor">保存</button>
           </div>
         </div>
-      `;
+      \`;
 
-      // bind
       const profileColor = document.getElementById("profileColor");
       const saveProfileColor = document.getElementById("saveProfileColor");
       if(profileColor && saveProfileColor){
@@ -2639,12 +2817,11 @@
           await updateDoc(doc(db,"users",currentUser.uid), { avatarColor: c, updatedAt: serverTimestamp() });
           const snap = await getDoc(doc(db,"users",currentUser.uid));
           myProfile = snap.data();
-          applyUserAvatarUI();
+          setXpUI();
+          applyUserHeader();
           await refreshHome();
         });
       }
-
-      setXpUI();
     }
 
     async function countMyPosts(){
@@ -2698,25 +2875,54 @@
       starsRow.innerHTML = "";
       for(let i=1;i<=5;i++){
         const b = document.createElement("div");
-        b.className = "starBtn" + (i===ratingStars ? " active" : "");
-        b.textContent = (i<=ratingStars) ? "★" : "☆";
+        b.className = "starBtn";
+        b.textContent = i<=ratingStars ? "★" : "☆";
+        b.classList.toggle("active", i<=ratingStars);
         b.addEventListener("click", ()=>{
           ratingStars = i;
-          // update all
           renderStars();
         });
         starsRow.appendChild(b);
       }
-      // re-render to reflect filled count
-      if(ratingStars){
-        [...starsRow.children].forEach((el, idx)=>{
-          el.textContent = idx < ratingStars ? "★" : "☆";
-          el.classList.toggle("active", idx < ratingStars);
-        });
-      }
     }
 
-  
+    async function openRatingModalByChallenge(ch, reason){
+      const ok = await canRate(ch.habitId, ch);
+      if(!ok){ alert("参加者のみ"); return; }
+
+      ratingTargetHabit = ch.habitId;
+
+      ratingTitle.textContent = reason==="retire" ? \`評価（リタイア）\` :
+                                reason==="finish" ? \`評価（7日終了）\` :
+                                \`評価\`;
+
+      openRatingModal();
+      await loadRatingsList(ch.habitId);
+
+      ratingSave.onclick = async ()=>{
+        if(ratingStars < 1){ alert("星を選ぶ"); return; }
+
+        await setDoc(doc(db, "habits", ch.habitId, "ratings", currentUser.uid), {
+          uid: currentUser.uid,
+          displayName: myProfile?.name || currentUser.displayName || "ユーザー",
+          photoURL: currentUser.photoURL || "",
+          stars: ratingStars,
+          comment: (commentBox.value || "").trim().slice(0, 300),
+          updatedAt: serverTimestamp()
+        }, { merge:true });
+
+        await updateDoc(doc(db, "userChallenges", currentUser.uid, "items", ch.habitId), {
+          ratingSubmitted: true,
+          updatedAt: serverTimestamp()
+        });
+
+        await recomputeRatingAgg(ch.habitId);
+
+        closeRatingModal();
+        await refreshHome();
+        await refreshProfile();
+      };
+    }
 
     async function loadRatingsList(habitId){
       reviewList.innerHTML = "";
@@ -2731,13 +2937,13 @@
         const box = document.createElement("div");
         box.className = "review";
         const stars = "★".repeat(Math.max(0, Math.min(5, Number(r.stars||0)))) + "☆".repeat(Math.max(0, 5-Number(r.stars||0)));
-        box.innerHTML = `
+        box.innerHTML = \`
           <div class="reviewTop">
-            <div class="reviewName">${escapeHtml(r.displayName||"ユーザー")}</div>
-            <div class="reviewMeta">${stars}</div>
+            <div class="reviewName">\${escapeHtml(r.displayName||"ユーザー")}</div>
+            <div class="reviewMeta">\${stars}</div>
           </div>
-          <div class="reviewText">${escapeHtml(r.comment||"")}</div>
-        `;
+          <div class="reviewText">\${escapeHtml(r.comment||"")}</div>
+        \`;
         reviewList.appendChild(box);
       }
     }
@@ -2763,7 +2969,19 @@
       });
     }
 
-    // ===== Creator modal (new feature) =====
+    // reviews viewer (閲覧のみ)
+    async function openRatingsViewer(habitId){
+      ratingTitle.textContent = "口コミ";
+      ratingStars = 0;
+      commentBox.value = "";
+      renderStars();
+      // 送信はしない（閲覧だけ）
+      ratingSave.onclick = null;
+      ratingBg.classList.add("show");
+      await loadRatingsList(habitId);
+    }
+
+    // ===== Creator modal =====
     function openCreatorModal(uid, name, photo, color){
       creatorName.textContent = name || "—";
       creatorAva.innerHTML = "";
@@ -2773,7 +2991,7 @@
         creatorAva.appendChild(img);
       }else{
         creatorAva.textContent = "□";
-        creatorAva.style.background = color || "#fff";
+        creatorAva.style.background = color || "#111111";
         creatorAva.style.color = "#fff";
       }
       creatorPosts.innerHTML = "";
@@ -2785,7 +3003,6 @@
     creatorBg.addEventListener("click", (e)=>{ if(e.target===creatorBg) closeCreatorModal(); });
 
     async function loadCreatorPosts(uid){
-      // composite index不要：新着を取ってクライアントで絞る
       const qs = await getDocs(query(collection(db,"habits"), orderBy("createdAt","desc"), limit(300)));
       const arr = [];
       qs.forEach(s=>{
@@ -2796,7 +3013,7 @@
       if(arr.length===0){
         const box = document.createElement("div");
         box.className = "review";
-        box.innerHTML = `<div class="reviewText">投稿なし</div>`;
+        box.innerHTML = \`<div class="reviewText">投稿なし</div>\`;
         creatorPosts.appendChild(box);
         return;
       }
@@ -2804,13 +3021,13 @@
       for(const h of arr){
         const box = document.createElement("div");
         box.className = "review";
-        box.innerHTML = `
+        box.innerHTML = \`
           <div class="reviewTop">
-            <div class="reviewName">${escapeHtml(h.title||"")}</div>
-            <div class="reviewMeta">${escapeHtml(String(h.createdAtYMD||""))}</div>
+            <div class="reviewName">\${escapeHtml(h.title||"")}</div>
+            <div class="reviewMeta">\${escapeHtml(String(h.createdAtYMD||""))}</div>
           </div>
-          <div class="reviewText">${escapeHtml(h.action||"")}</div>
-        `;
+          <div class="reviewText">\${escapeHtml(h.action||"")}</div>
+        \`;
         creatorPosts.appendChild(box);
       }
     }
@@ -2820,28 +3037,26 @@
       const lv = Number(myProfile?.level||1);
       charList.innerHTML = "";
 
-      // build blocks by level
       const maxLv = Math.max(10, lv+2);
       for(let L=1; L<=maxLv; L++){
         const eggs = CHAR_TIERS.filter(x=>x.type==="egg" && x.minLv<=L);
         const seeds = CHAR_TIERS.filter(x=>x.type==="seed" && x.minLv<=L);
-
         const eggShow = eggs.length ? eggs[eggs.length-1] : null;
         const seedShow = seeds.length ? seeds[seeds.length-1] : null;
 
         const row = document.createElement("div");
         row.className = "review";
-        row.innerHTML = `
+        row.innerHTML = \`
           <div class="reviewTop">
-            <div class="reviewName">Lv ${L}</div>
-            <div class="reviewMeta">${L===lv ? "現在" : ""}</div>
+            <div class="reviewName">Lv \${L}</div>
+            <div class="reviewMeta">\${L===lv ? "現在" : ""}</div>
           </div>
           <div class="reviewText">
-            卵：${eggShow ? `${eggShow.emoji} ${eggShow.name}` : "—"}\n
-            種：${seedShow ? `${seedShow.emoji} ${seedShow.name}` : "—"}\n
-            次のLv：${L+1}
+            卵：\${eggShow ? \`\${eggShow.emoji} \${eggShow.name}\` : "—"}\\n
+            種：\${seedShow ? \`\${seedShow.emoji} \${seedShow.name}\` : "—"}\\n
+            次のLv：\${L+1}
           </div>
-        `;
+        \`;
         charList.appendChild(row);
       }
 
@@ -2853,12 +3068,12 @@
     charBg.addEventListener("click", (e)=>{ if(e.target===charBg) closeCharModal(); });
 
     // ===== Training view =====
-    function growthStage(pct){
+    function growthStageLabel(pct){
       const p = Math.max(0, Math.min(100, Math.floor(pct||0)));
       for(const s of GROW_STAGES){
-        if(p <= s.max) return { pct:p, ...s };
+        if(p <= s.max) return s.label;
       }
-      return { pct:p, label:"完成", emoji:"👑" };
+      return "完成";
     }
 
     async function refreshTrain(){
@@ -2873,45 +3088,44 @@
         trainFill.style.width = "0%";
         trainEmoji.textContent = "🥚";
         trainStage.textContent = "—";
+        trainCare.textContent = \`次のお世話まで \${fmtCountdown(msToMidnight())}\`;
         btnSetAvatar.disabled = true;
         return;
       }
 
-      trainHint.textContent = `挑戦中 ${trainChallenges.length} / 3`;
+      trainHint.textContent = \`挑戦中 \${trainChallenges.length} / 3\`;
       trainIndex = Math.max(0, Math.min(trainIndex, trainChallenges.length-1));
       renderTrainCurrent();
     }
 
     function renderTrainCurrent(){
       const ch = trainChallenges[trainIndex];
-      const slot = `${trainIndex+1} / ${trainChallenges.length}`;
-      const pct = Number(ch.growthPct||0);
-      const st = growthStage(pct);
+      const slot = \`\${trainIndex+1} / \${trainChallenges.length}\`;
 
+      const pct = growthPctDynamic(ch);
+      const label = growthStageLabel(pct);
+
+      const day = Math.max(1, Math.min(7, Number(ch.day||1)));
       trainSlot.textContent = slot;
-      trainHabitTitle.textContent = ch.habitTitle || "—";
-      trainPctText.textContent = `${st.pct}%`;
-      trainPct.textContent = `${st.pct}%`;
-      trainFill.style.width = `${st.pct}%`;
+      trainHabitTitle.textContent = \`\${ch.habitTitle || "—"}（\${day}/7）\`;
+      trainPctText.textContent = \`\${pct.toFixed(0)}%\`;
+      trainPct.textContent = \`\${pct.toFixed(0)}%\`;
+      trainFill.style.width = \`\${pct}%\`;
+      trainStage.textContent = label;
+      trainCare.textContent = \`次のお世話まで \${fmtCountdown(msToMidnight())}\`;
 
-      // 成長段階の仮絵
-      // 基本：卵/種のどちらかで見た目を少し変える
-      const type = String(ch.mascotType||"egg");
-      const base = type==="seed" ? "🌱" : "🥚";
-      // stage emojiは上にあるので、ここは「ベース + ステージ」
-      trainEmoji.textContent = (st.pct>=100) ? "👑" : (type==="seed" ? (st.pct<15 ? "🌰" : st.pct<45 ? "🌱" : st.pct<75 ? "🌿" : "🌳") : (st.pct<15 ? "🥚" : st.pct<45 ? "🐣" : st.pct<75 ? "🐥" : "🦅"));
-      trainStage.textContent = st.label;
+      // 仮イラスト：卵/種 + 成長
+      const base = mascotEmojiFromHabitId(ch.habitId);
+      // 進捗で少し変化
+      trainEmoji.textContent = pct>=100 ? "👑" : (pct<30 ? base : pct<70 ? "✨" : "❖");
 
-      // 完成（クリア or 100%）ならアイコンにできる
-      const canSet = (String(ch.status||"")==="cleared") || (st.pct>=100);
+      // 完成（クリア）ならアイコン化（将来差し替え前提）
+      const canSet = (String(ch.status||"")==="cleared") || (pct>=100);
       btnSetAvatar.disabled = !canSet;
 
       btnSetAvatar.onclick = async ()=>{
         if(!canSet) return;
-        // 今は画像がないので、アイコンを「色」ではなく「文字」に置き換えるのはやめて、
-        // 代わりに avatarCreature に保存（将来画像を当てる）
-        const creatureKey = `${type}:${trainEmoji.textContent}`;
-        await updateDoc(doc(db,"users",currentUser.uid), { avatarSetFrom:"creature", avatarCreature: creatureKey, updatedAt: serverTimestamp() });
+        await updateDoc(doc(db,"users",currentUser.uid), { avatarSetFrom:"creature", avatarCreature: String(trainEmoji.textContent||""), updatedAt: serverTimestamp() });
         alert("保存しました（将来この子の画像をアイコンにできます）");
       };
     }
@@ -2927,59 +3141,23 @@
       renderTrainCurrent();
     });
 
-    // ===== Sorting: tag chips reflect =====
-    // (already highlightRankChips)
-
-    // ===== Background refreshers =====
+    // ===== Init + timers =====
     setInterval(()=>{
       if(!currentUser) return;
       refreshDailyDoneCount();
-    }, 30000);
+      // 1時間おきに卵が変わるので、ちょいちょい更新
+      refreshHome();
+    }, 60000); // 軽く毎分
 
-    // ===== Rating open from side =====
-    async function openRatingModalByChallenge(ch, reason){
-      // ensure only participants
-      const ok = await canRate(ch.habitId, ch);
-      if(!ok){ alert("参加者のみ"); return; }
-
-      ratingTargetHabit = ch.habitId;
-
-      ratingTitle.textContent = reason==="retire" ? `評価（リタイア）` :
-                                reason==="finish" ? `評価（7日終了）` :
-                                `評価`;
-
-      openRatingModal();
-      await loadRatingsList(ch.habitId);
-
-      ratingSave.onclick = async ()=>{
-        if(ratingStars < 1){ alert("星を選ぶ"); return; }
-
-        await setDoc(doc(db, "habits", ch.habitId, "ratings", currentUser.uid), {
-          uid: currentUser.uid,
-          displayName: myProfile?.name || currentUser.displayName || "ユーザー",
-          photoURL: currentUser.photoURL || "",
-          stars: ratingStars,
-          comment: (commentBox.value || "").trim().slice(0, 300),
-          updatedAt: serverTimestamp()
-        }, { merge:true });
-
-        await updateDoc(doc(db, "userChallenges", currentUser.uid, "items", ch.habitId), {
-          ratingSubmitted: true,
-          updatedAt: serverTimestamp()
-        });
-
-        await recomputeRatingAgg(ch.habitId);
-
-        closeRatingModal();
-        await refreshSideActive();
-        await refreshHome();
-        await refreshProfile();
-      };
-    }
-
-    // ===== Init =====
     showOnly("home");
     updatePostCounter();
+    openPost.classList.add("show");
+
+    // ===== Rating modal events =====
+    ratingBg.addEventListener("click", (e)=>{ if(e.target===ratingBg) closeRatingModal(); });
+
+    // ===== Creator modal events =====
+    // already wired
 
   </script>
 </body>
