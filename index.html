@@ -3231,6 +3231,32 @@ const remaining = Math.max(0, targetDays - (day-1)); // day=1なら残り3
     }
 
     // ===== Rating rules =====
+
+
+// ★ 口コミUIを「投稿モード / 閲覧モード」で切替
+function setRatingUIMode(mode){
+  const isViewer = (mode === "viewer");
+
+  // 入力UI（★・コメント・送信）
+  starsRow.style.display   = isViewer ? "none" : "flex";
+  commentBox.style.display = isViewer ? "none" : "block";
+  ratingSave.style.display = isViewer ? "none" : "inline-flex";
+
+  // 一覧（他人口コミ表示）
+  reviewList.style.display = isViewer ? "flex" : "none";
+}
+
+
+
+
+
+
+
+
+
+
+
+    
     async function canRate(habitId, ch){
       const didAny = (Number(ch.successDays||0) + Number(ch.restDays||0)) > 0;
       const finishedLike = ["cleared","finished","retired"].includes(String(ch.status||""));
@@ -3258,6 +3284,7 @@ const remaining = Math.max(0, targetDays - (day-1)); // day=1なら残り3
       ratingStars = 0;
       commentBox.value = "";
       renderStars();
+       setRatingUIMode("writer"); // ★追加
       ratingBg.classList.add("show");
     }
     function closeRatingModal(){
@@ -3292,8 +3319,16 @@ const remaining = Math.max(0, targetDays - (day-1)); // day=1なら残り3
                                 reason==="finish" ? `評価（7日終了）` :
                                 `評価`;
 
-      openRatingModal();
-      await loadRatingsList(ch.habitId);
+openRatingModal();
+setRatingUIMode("writer");   // ★ここ追加：投稿モード（他人口コミは隠す）
+// await loadRatingsList(ch.habitId);  // ★削除：他人口コミを出さない
+
+
+
+
+
+
+      
 
       ratingSave.onclick = async ()=>{
         if(ratingStars < 1){ alert("星を選ぶ"); return; }
@@ -3320,30 +3355,47 @@ const remaining = Math.max(0, targetDays - (day-1)); // day=1なら残り3
       };
     }
 
-    async function loadRatingsList(habitId){
-      reviewList.innerHTML = "";
-      const qs = await getDocs(query(
-        collection(db, "habits", habitId, "ratings"),
-        orderBy("updatedAt","desc"),
-        limit(40)
-      ));
-      const arr = [];
-      qs.forEach(s=> arr.push(s.data()));
-      for(const r of arr){
-        const box = document.createElement("div");
-        box.className = "review";
-        const stars = "★".repeat(Math.max(0, Math.min(5, Number(r.stars||0))))
-                    + "☆".repeat(Math.max(0, 5-Number(r.stars||0)));
-        box.innerHTML = `
-          <div class="reviewTop">
-            <div class="reviewName">${escapeHtml(r.displayName||"ユーザー")}</div>
-            <div class="reviewMeta">${stars}</div>
-          </div>
-          <div class="reviewText">${escapeHtml(r.comment||"")}</div>
-        `;
-        reviewList.appendChild(box);
-      }
-    }
+async function loadRatingsList(habitId, opts={}){
+  const onlyOthers = !!opts.onlyOthers;
+
+  reviewList.innerHTML = "";
+  const qs = await getDocs(query(
+    collection(db, "habits", habitId, "ratings"),
+    orderBy("updatedAt","desc"),
+    limit(60)
+  ));
+
+  const arr = [];
+  qs.forEach(s=> arr.push(s.data()));
+
+  // 「他人だけ」なら自分のuidを除外
+  const filtered = onlyOthers
+    ? arr.filter(r => String(r.uid||"") !== String(currentUser?.uid||""))
+    : arr;
+
+  if(filtered.length === 0){
+    const empty = document.createElement("div");
+    empty.className = "review";
+    empty.innerHTML = `<div class="reviewText">まだ口コミがありません</div>`;
+    reviewList.appendChild(empty);
+    return;
+  }
+
+  for(const r of filtered){
+    const box = document.createElement("div");
+    box.className = "review";
+    const stars = "★".repeat(Math.max(0, Math.min(5, Number(r.stars||0))))
+                + "☆".repeat(Math.max(0, 5-Number(r.stars||0)));
+    box.innerHTML = `
+      <div class="reviewTop">
+        <div class="reviewName">${escapeHtml(r.displayName||"ユーザー")}</div>
+        <div class="reviewMeta">${stars}</div>
+      </div>
+      <div class="reviewText">${escapeHtml(r.comment||"")}</div>
+    `;
+    reviewList.appendChild(box);
+  }
+}
 
     async function recomputeRatingAgg(habitId){
       const rs = await getDocs(query(collection(db, "habits", habitId, "ratings"), limit(500)));
@@ -3366,15 +3418,16 @@ const remaining = Math.max(0, targetDays - (day-1)); // day=1なら残り3
       });
     }
 
-    async function openRatingsViewer(habitId){
-      ratingTitle.textContent = "口コミ";
-      ratingStars = 0;
-      commentBox.value = "";
-      renderStars();
-      ratingSave.onclick = null;
-      ratingBg.classList.add("show");
-      await loadRatingsList(habitId);
-    }
+async function openRatingsViewer(habitId){
+  ratingTitle.textContent = "口コミ（他の人）";
+  ratingSave.onclick = null;
+
+  // 閲覧モード：入力UIは全部消して、他人の口コミだけ出す
+  setRatingUIMode("viewer");
+
+  ratingBg.classList.add("show");
+  await loadRatingsList(habitId, { onlyOthers:true });
+}
 
     // ===== Creator modal =====
     function openCreatorModal(uid, name, photo, color){
