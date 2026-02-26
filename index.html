@@ -2903,24 +2903,26 @@ navAnalytics.addEventListener("click", ()=> showOnly("analytics"));
       const snap = await getDoc(ref);
       if(snap.exists() && snap.data()?.status === "active") return;
 
-      await setDoc(ref, {
-        habitId: h.id,
-        habitTitle: h.title || "",
-        creatorUid: h.creatorUid || "",
-        status: "active",
-        startDate: today,
-        day: 1,
-        successDays: 0,
-        restDays: 0,
-        lastActionYMD: "",
-        streakMiss: 0,
-        difficulty: { easy:0, mid:0, hard:0 },
-        ratingSubmitted: false,
-        updatedAt: serverTimestamp()
-        targetDays: 3,
-phase: "short",
-dailyEmojis: {}, // カレンダー用（YYYY-MM-DD -> 絵文字）
-      });
+    await setDoc(ref, {
+  habitId: h.id,
+  habitTitle: h.title || "",
+  creatorUid: h.creatorUid || "",
+  status: "active",
+  startDate: today,
+  day: 1,
+  successDays: 0,
+  restDays: 0,
+  lastActionYMD: "",
+  streakMiss: 0,
+  difficulty: { easy:0, mid:0, hard:0 },
+  ratingSubmitted: false,
+
+  targetDays: 3,
+  phase: "short",
+  dailyEmojis: {}, // YYYY-MM-DD -> 絵文字
+
+  updatedAt: serverTimestamp(),
+});
 
       await runTransaction(db, async (tx)=>{
         const href = doc(db, "habits", h.id);
@@ -3048,82 +3050,24 @@ const remaining = Math.max(0, targetDays - (day-1)); // day=1なら残り3
     });
 
     // ===== Apply report =====
-    async function applyReport(ch, payload){
-      const today = fmtYMD(nowLocal());
-      const ref = doc(db, "userChallenges", currentUser.uid, "items", ch.habitId);
-      const snap = await getDoc(ref);
-      if(!snap.exists()) return;
-      const cur = snap.data();
+  // ===== Apply report =====
+async function applyReport(ch, payload){
+  const today = fmtYMD(nowLocal());
+  const ref = doc(db, "userChallenges", currentUser.uid, "items", ch.habitId);
+  const snap = await getDoc(ref);
+  if(!snap.exists()) return;
+  const cur = snap.data();
 
-      if((payload.type==="done" || payload.type==="rest") && String(cur.lastActionYMD||"") === today){
-        return;
-      }
+  // 同日2回防止（done/rest）
+  if((payload.type==="done" || payload.type==="rest") && String(cur.lastActionYMD||"") === today){
+    return;
+  }
 
-      const update = {};
+  // まず retire は即処理して終わる（既存仕様を維持）
+  if(payload.type==="retire"){
+    await updateDoc(ref, { status:"retired", updatedAt: serverTimestamp() });
 
-      if(payload.type==="done"){
-
-
-        const diffEmoji = payload.diff==="easy" ? "😊" : payload.diff==="mid" ? "🙂" : "😅";
-const daily = Object.assign({}, cur.dailyEmojis || {});
-daily[today] = diffEmoji;
-update.dailyEmojis = daily;
-        
-        update.successDays = Number(cur.successDays||0)+1;
-        update.day = Math.min(8, Number(cur.day||1)+1);
-        update.lastActionYMD = today;
-        update.streakMiss = 0;
-
-        const d = cur.difficulty || {easy:0,mid:0,hard:0};
-        d[payload.diff] = Number(d[payload.diff]||0)+1;
-        update.difficulty = d;
-
-        await incDailyDoneCount();
-        await addXp(12);
-
-      }else if(payload.type==="rest"){
-        update.restDays = Number(cur.restDays||0)+1;
-        update.day = Math.min(8, Number(cur.day||1)+1);
-        update.lastActionYMD = today;
-        update.streakMiss = 0;
-
-        await addXp(3);
-
-      }else if(payload.type==="retire"){
-        update.status = "retired";
-        update.updatedAt = serverTimestamp();
-        await updateDoc(ref, update);
-
-        await maybePromptRating(ch.habitId, { ...cur, habitId: ch.habitId }, "retire");
-        await refreshActiveHabitIds();
-        await refreshSideActive();
-        await refreshRecords();
-        await refreshHome();
-        await refreshProfile();
-        await refreshTrain();
-        return;
-      }
-
-      update.updatedAt = serverTimestamp();
-      await updateDoc(ref, update);
-
-      if(payload.type==="done" || payload.type==="rest"){
-        const afterDay = Math.min(8, Number(cur.day||1)+1);
-        if(afterDay === 8){
-        const afterDay = Math.max(1, Number(cur.day||1)+1);
-const targetDays = Number(cur.targetDays || 3);
-
-// dayは targetDays まで進める（最大8では固定しない）
-update.day = Math.min(targetDays+1, afterDay);
-
-if(afterDay === targetDays+1){
-  // 3日クリア到達時：強制2択（新しい習慣 or 7日延長）
-  if(targetDays === 3){
-    // “クリア扱い”にして2択を出す（戻れない）
-    await updateDoc(ref, { phase:"short_cleared_wait", updatedAt: serverTimestamp() });
-    const finalSnap = await getDoc(ref);
-    const finalCh = finalSnap.exists() ? finalSnap.data() : cur;
-    openClearGate({ ...finalCh, habitId: ch.habitId });
+    await maybePromptRating(ch.habitId, { ...cur, habitId: ch.habitId }, "retire");
     await refreshActiveHabitIds();
     await refreshSideActive();
     await refreshRecords();
@@ -3133,21 +3077,57 @@ if(afterDay === targetDays+1){
     return;
   }
 
-  // 7日終了：強制口コミ（今の仕様に合わせて開く）
-  await updateDoc(ref, { status:"cleared", updatedAt: serverTimestamp() });
-  await runTransaction(db, async (tx)=>{
-    const uref = doc(db, "users", currentUser.uid);
-    const us = await tx.get(uref);
-    if(!us.exists()) return;
-    const u = us.data();
-    tx.update(uref, { clearCount: Number(u.clearCount||0)+1, updatedAt: serverTimestamp() });
-  });
+  // done/rest の更新を組み立て
+  const update = {};
 
-  const finalSnap = await getDoc(ref);
-  const finalCh = finalSnap.exists() ? finalSnap.data() : cur;
-  await openRatingModalByChallenge({ ...finalCh, habitId: ch.habitId }, "finish");
-} }
-      }
+  const curDay = Math.max(1, Number(cur.day || 1));
+  const targetDays = Number(cur.targetDays || 3); // 3 or 7
+  const nextDay = Math.min(targetDays + 1, curDay + 1); // 例: target=3なら4まで
+
+  if(payload.type==="done"){
+    const diffEmoji = payload.diff==="easy" ? "😊" : payload.diff==="mid" ? "🙂" : "😅";
+
+    // カレンダー用：YYYY-MM-DD -> 絵文字
+    const daily = Object.assign({}, cur.dailyEmojis || {});
+    daily[today] = diffEmoji;
+    update.dailyEmojis = daily;
+
+    update.successDays = Number(cur.successDays||0) + 1;
+    update.lastActionYMD = today;
+    update.streakMiss = 0;
+
+    const d = cur.difficulty || {easy:0,mid:0,hard:0};
+    d[payload.diff] = Number(d[payload.diff]||0) + 1;
+    update.difficulty = d;
+
+    await incDailyDoneCount();
+    await addXp(12);
+  }
+
+  if(payload.type==="rest"){
+    update.restDays = Number(cur.restDays||0) + 1;
+    update.lastActionYMD = today;
+    update.streakMiss = 0;
+
+    await addXp(3);
+  }
+
+  // day進行（done/rest共通）
+  update.day = nextDay;
+  update.updatedAt = serverTimestamp();
+  await updateDoc(ref, update);
+
+  // ===== クリア判定 =====
+  // nextDay が targetDays+1 になった瞬間に「到達」
+  if(nextDay === targetDays + 1){
+
+    // 3日クリア：強制2択ゲート
+    if(targetDays === 3){
+      await updateDoc(ref, { phase:"short_cleared_wait", updatedAt: serverTimestamp() });
+
+      const finalSnap = await getDoc(ref);
+      const finalCh = finalSnap.exists() ? finalSnap.data() : cur;
+      openClearGate({ ...finalCh, habitId: ch.habitId });
 
       await refreshActiveHabitIds();
       await refreshSideActive();
@@ -3155,8 +3135,41 @@ if(afterDay === targetDays+1){
       await refreshHome();
       await refreshProfile();
       await refreshTrain();
+      return;
     }
 
+    // 7日終了：クリア + 強制口コミ
+    await updateDoc(ref, { status:"cleared", updatedAt: serverTimestamp() });
+
+    await runTransaction(db, async (tx)=>{
+      const uref = doc(db, "users", currentUser.uid);
+      const us = await tx.get(uref);
+      if(!us.exists()) return;
+      const u = us.data();
+      tx.update(uref, { clearCount: Number(u.clearCount||0)+1, updatedAt: serverTimestamp() });
+    });
+
+    const finalSnap = await getDoc(ref);
+    const finalCh = finalSnap.exists() ? finalSnap.data() : cur;
+    await openRatingModalByChallenge({ ...finalCh, habitId: ch.habitId }, "finish");
+
+    await refreshActiveHabitIds();
+    await refreshSideActive();
+    await refreshRecords();
+    await refreshHome();
+    await refreshProfile();
+    await refreshTrain();
+    return;
+  }
+
+  // 通常更新
+  await refreshActiveHabitIds();
+  await refreshSideActive();
+  await refreshRecords();
+  await refreshHome();
+  await refreshProfile();
+  await refreshTrain();
+}
     // ===== Auto retire (3日未報告) =====
     async function autoRetireIfMissed(){
       const today = nowLocal();
