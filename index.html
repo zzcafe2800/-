@@ -2702,17 +2702,20 @@ navAnalytics.addEventListener("click", ()=> showOnly("analytics"));
 
         const day = Math.max(1, Math.min(7, Number(ch.day||1)));
         const prog = growthPctDynamic(ch);
+const targetDays = Number(ch.targetDays || 3); // 既定は3日
+const remaining = Math.max(0, targetDays - (day-1)); // day=1なら残り3
 
+        
         box.innerHTML = `
           <div class="sideTop">
             <div class="sideHabit">${escapeHtml(ch.habitTitle||"")}</div>
             <div class="sideMeta">${day}/7</div>
           </div>
 
-          <div class="sideTop" style="align-items:center">
-            <div class="sideCare" data-care="1">${care}</div>
-            <div class="sideMeta">${prog.toFixed(0)}%</div>
-          </div>
+        <div class="sideTop" style="align-items:center">
+  <div class="sideCare" data-care="1">${care}</div>
+  <div class="sideMeta">${prog.toFixed(0)}% / 残り${remaining}日 / クリアまで${targetDays}日</div>
+</div>
 
           <div class="sideBtns">
             <button class="btnMini" data-act="done" ${can ? "" : "disabled"}>やった</button>
