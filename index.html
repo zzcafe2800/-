@@ -2873,12 +2873,6 @@ let activeCardEl = null; // スマホ用：最後に選択されたカード
         e.stopPropagation();
         alert("編集は次段階で。今は自分の投稿は参加が出ない状態です。");
       });
-
-      return card;
-
-
-
-
       // ===== スマホ用：カードタップでボタン表示を固定（他をタップするまで維持） =====
       const isTouchUI = window.matchMedia("(hover: none)").matches;
 
@@ -2895,11 +2889,9 @@ let activeCardEl = null; // スマホ用：最後に選択されたカード
         });
       }
 
+      return card;
 
-
-
-
-      
+    
     }
 
     // ===== Fav/Bookmark =====
