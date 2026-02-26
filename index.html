@@ -2961,21 +2961,30 @@ navAnalytics.addEventListener("click", ()=> showOnly("analytics"));
       sideActiveList.innerHTML = "";
 
       if(countdownTimer) clearInterval(countdownTimer);
-      countdownTimer = setInterval(()=>{
-        document.querySelectorAll("[data-care]").forEach(el=>{
-          el.textContent = `次のお世話まで ${fmtCountdown(msToMidnight())}`;
-        });
-        if(trainCare) trainCare.textContent = `次のお世話まで ${fmtCountdown(msToMidnight())}`;
+// 1秒ごと：UIのカウントダウン表示だけ更新（DBは読まない）
+countdownTimer = setInterval(()=>{
+  const txt = `次のお世話まで ${fmtCountdown(msToMidnight())}`;
+  document.querySelectorAll("[data-care]").forEach(el=> el.textContent = txt);
+  if(trainCare) trainCare.textContent = txt;
 
-        if(msToMidnight() < 900){
-          refreshDailyDoneCount();
-          refreshSideActive();
-          refreshHome();
-          refreshTrain();
-        }else{
-          refreshTrain();
-        }
-      }, 1000);
+  // 日付切り替わり直前だけ、まとめて再取得（1回だけ）
+  if(msToMidnight() < 900){
+    if(!window.__midnightRefreshed){
+      window.__midnightRefreshed = true;
+      Promise.resolve().then(async ()=>{
+        await refreshDailyDoneCount();
+        await refreshActiveHabitIds();
+        await refreshSideActive();
+        await refreshHome();
+        await refreshTrain();
+        await refreshCalendar();
+        await refreshAnalytics();
+        // 少し待ってフラグ解除（深夜に何度も走らないように）
+        setTimeout(()=>{ window.__midnightRefreshed = false; }, 20000);
+      });
+    }
+  }
+}, 1000);
 
       for(const ch of actives){
         const box = document.createElement("div");
@@ -3218,13 +3227,14 @@ async function applyReport(ch, payload){
       for(const ch of items){
         const row = document.createElement("div");
         row.className = "review";
-        const day = Math.max(1, Math.min(7, Number(ch.day||1)));
+       const td = Number(ch.targetDays||3);
+const day = Math.max(1, Math.min(td, Number(ch.day||1)));
         row.innerHTML = `
           <div class="reviewTop">
             <div class="reviewName">${escapeHtml(ch.habitTitle||"")}</div>
             <div class="reviewMeta">${escapeHtml(String(ch.status||""))}</div>
           </div>
-          <div class="reviewText">${day}/7 / 成功 ${Number(ch.successDays||0)} / 休 ${Number(ch.restDays||0)} / 未報告 ${Number(ch.streakMiss||0)} / 育成 ${growthPctDynamic(ch).toFixed(0)}%</div>
+          <div class="reviewText">${day}/${td} / 成功 ${Number(ch.successDays||0)} / 休 ${Number(ch.restDays||0)} / 未報告 ${Number(ch.streakMiss||0)} / 育成 ${growthPctDynamic(ch).toFixed(0)}%</div>
         `;
         recordList.appendChild(row);
       }
@@ -3696,9 +3706,10 @@ async function openRatingsViewer(habitId){
       const pct = growthPctDynamic(ch);
       const info = growthStageInfo(pct);
 
-      const day = Math.max(1, Math.min(7, Number(ch.day||1)));
+      const td = Number(ch.targetDays||3);
+const day = Math.max(1, Math.min(td, Number(ch.day||1)));
       trainSlot.textContent = slot;
-      trainHabitTitle.textContent = `${ch.habitTitle || "—"}（${day}/7）`;
+     trainHabitTitle.textContent = `${ch.habitTitle || "—"}（${day}/${td}）`;
       trainPctText.textContent = `${pct.toFixed(0)}%`;
       trainPct.textContent = `${pct.toFixed(0)}%`;
       trainFill.style.width = `${pct}%`;
@@ -3739,7 +3750,7 @@ async function openRatingsViewer(habitId){
       if(!currentUser) return;
       refreshDailyDoneCount();
       refreshHome(); // 1時間おき卵変化にも追従
-    }, 60000);
+    }, 3600000);
 
     showOnly("home");
     updatePostCounter();
