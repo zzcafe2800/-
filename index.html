@@ -2989,31 +2989,23 @@ navAnalytics.addEventListener("click", ()=> showOnly("analytics"));
 const targetDays = Number(ch.targetDays || 3); // 既定は3日
 const remaining = Math.max(0, targetDays - (day-1)); // day=1なら残り3
 
-        
-        box.innerHTML = `
-          <div class="sideTop">
-          
-            <div class="sideHabit">${escapeHtml(ch.habitTitle||"")}</div>
-             <div class="sideMeta">${day}/7日目</div>
-          </div>
-<div class="sideTop" style="align-items:center">
-  <div class="sideCare" data-care="1">${care}</div>
+box.innerHTML = `
+  <div class="sideTop">
+    <div class="sideHabit">${escapeHtml(ch.habitTitle||"")}</div>
+    <div class="sideMeta">${day}/7日目</div>
+  </div>
 
-</div>
-  
-</div>
+  <div class="sideTop" style="align-items:center">
+    <div class="sideCare" data-care="1">${care}</div>
+  </div>
 
-          <div class="sideBtns">
-            <button class="btnMini" data-act="done" ${can ? "" : "disabled"}>やった</button>
-            <button class="btnMini" data-act="rest" ${can ? "" : "disabled"}>休む</button>
-            <button class="btnMini" data-act="retire">リタイア</button>
-            <button class="btnMini" data-act="rate" ${ch.ratingSubmitted ? "disabled" : ""}>感想</button>
-          </div>
-
-
-
-          
-        `;
+  <div class="sideBtns">
+    <button class="btnMini" data-act="done" ${can ? "" : "disabled"}>やった</button>
+    <button class="btnMini" data-act="rest" ${can ? "" : "disabled"}>休む</button>
+    <button class="btnMini" data-act="retire">リタイア</button>
+    <button class="btnMini" data-act="rate" ${ch.ratingSubmitted ? "disabled" : ""}>感想</button>
+  </div>
+`;
 
         box.querySelector('[data-act="done"]').addEventListener("click", (e)=> {
   flyToBadge(e.currentTarget);
