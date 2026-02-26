@@ -2488,17 +2488,7 @@ navAnalytics.addEventListener("click", ()=> showOnly("analytics"));
             }
           </div>
 
-          <div class="overlay">
-            <div class="overlayInner">
-              <div class="ovTitle">継続</div>
-              <div class="ovRow"><span>平均日数</span><span>${avgDays ? avgDays.toFixed(1) : "—"}日</span></div>
-              <div class="bar"><div class="barFill" style="width:${daysPct}%"></div></div>
-
-              <div class="ovTitle" style="margin-top:6px">成功</div>
-              <div class="ovRow"><span>成功率</span><span>${Number.isFinite(successRate) ? successRate.toFixed(0) : "—"}%</span></div>
-              <div class="bar"><div class="barFill" style="width:${successRate}%"></div></div>
-            </div>
-          </div>
+      
         </div>
 
         <div class="metaBar">
