@@ -2510,6 +2510,8 @@ clearKeepBtn.addEventListener("click", async ()=>{
       await refreshBookmarksView();
       await refreshProfile();
       await refreshTrain();
+      await refreshCalendar();
+await refreshAnalytics();
     }
 
     // ===== Active set for cards =====
@@ -3751,6 +3753,416 @@ async function openRatingsViewer(habitId){
     updatePostCounter();
     openPost.classList.add("show");
 
+
+
+
+
+
+    let calCursor = new Date(); // 表示中の月
+let calChallengesCache = [];
+
+function jpDowLabel(i){ return ["日","月","火","水","木","金","土"][i]; }
+
+function renderCalendarGrid(year, month0, dailyEmojis){
+  calGrid.innerHTML = "";
+
+  // 曜日ヘッダ
+  for(let i=0;i<7;i++){
+    const h = document.createElement("div");
+    h.style.textAlign="center";
+    h.style.fontWeight="1100";
+    h.style.color="var(--muted)";
+    h.style.padding="6px 0";
+    h.textContent = jpDowLabel(i);
+    calGrid.appendChild(h);
+  }
+
+  const first = new Date(year, month0, 1);
+  const last  = new Date(year, month0+1, 0);
+  const startPad = first.getDay();
+  const days = last.getDate();
+
+  // 空白
+  for(let i=0;i<startPad;i++){
+    const d = document.createElement("div");
+    d.style.border="1px solid var(--line)";
+    d.style.borderRadius="10px";
+    d.style.height="56px";
+    d.style.opacity="0.35";
+    calGrid.appendChild(d);
+  }
+
+  const todayYMD = fmtYMD(nowLocal());
+
+  for(let day=1; day<=days; day++){
+    const dt = new Date(year, month0, day);
+    const ymd = fmtYMD(dt);
+    const cell = document.createElement("div");
+    cell.style.border="1px solid var(--line)";
+    cell.style.borderRadius="12px";
+    cell.style.height="56px";
+    cell.style.display="flex";
+    cell.style.flexDirection="column";
+    cell.style.justifyContent="space-between";
+    cell.style.padding="6px 8px";
+    cell.style.background = (ymd===todayYMD) ? "#f6f6f6" : "#fff";
+
+    const top = document.createElement("div");
+    top.style.display="flex";
+    top.style.justifyContent="space-between";
+    top.style.alignItems="center";
+
+    const num = document.createElement("div");
+    num.style.fontFamily="var(--mono)";
+    num.style.fontWeight="1100";
+    num.style.fontSize="12px";
+    num.textContent = String(day);
+
+    const em = document.createElement("div");
+    em.style.fontSize="18px";
+    em.textContent = (dailyEmojis && dailyEmojis[ymd]) ? dailyEmojis[ymd] : "";
+
+    top.appendChild(num);
+    top.appendChild(em);
+
+    const bot = document.createElement("div");
+    bot.style.fontSize="10px";
+    bot.style.color="var(--muted2)";
+    bot.textContent = "";
+
+    cell.appendChild(top);
+    cell.appendChild(bot);
+    calGrid.appendChild(cell);
+  }
+}
+
+async function refreshCalendar(){
+  if(!currentUser) return;
+
+  calChallengesCache = await loadChallenges(200);
+  const activeOrAny = calChallengesCache.filter(x=> ["active","cleared","finished","retired"].includes(String(x.status||"")));
+
+  calChallengeSel.innerHTML = "";
+  for(const ch of activeOrAny){
+    const opt = document.createElement("option");
+    opt.value = ch.habitId;
+    opt.textContent = `${ch.habitTitle || "—"}（${String(ch.status||"")}）`;
+    calChallengeSel.appendChild(opt);
+  }
+  if(activeOrAny.length===0){
+    calTitle.textContent = "育成データがありません";
+    calGrid.innerHTML = "";
+    return;
+  }
+
+  // 既定：一番新しい
+  if(!calChallengeSel.value) calChallengeSel.value = activeOrAny[0].habitId;
+
+  const year = calCursor.getFullYear();
+  const month0 = calCursor.getMonth();
+  calTitle.textContent = `${year}年 ${month0+1}月`;
+
+  const chosen = activeOrAny.find(x=>x.habitId===calChallengeSel.value) || activeOrAny[0];
+  renderCalendarGrid(year, month0, chosen.dailyEmojis || {});
+}
+
+calPrev.addEventListener("click", ()=>{ calCursor = new Date(calCursor.getFullYear(), calCursor.getMonth()-1, 1); refreshCalendar(); });
+calNext.addEventListener("click", ()=>{ calCursor = new Date(calCursor.getFullYear(), calCursor.getMonth()+1, 1); refreshCalendar(); });
+calChallengeSel.addEventListener("change", refreshCalendar);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function drawBarChart(canvas, labels, values){
+  const ctx = canvas.getContext("2d");
+  const W = canvas.width = canvas.clientWidth * devicePixelRatio;
+  const H = canvas.height = canvas.getAttribute("height") * devicePixelRatio;
+  ctx.clearRect(0,0,W,H);
+
+  const padL = 36*devicePixelRatio, padR = 12*devicePixelRatio, padT = 10*devicePixelRatio, padB = 34*devicePixelRatio;
+  const maxV = Math.max(1, ...values);
+  const n = labels.length;
+  const areaW = W - padL - padR;
+  const areaH = H - padT - padB;
+
+  // axis
+  ctx.globalAlpha = 0.25;
+  ctx.strokeStyle = "#111";
+  ctx.beginPath();
+  ctx.moveTo(padL, padT);
+  ctx.lineTo(padL, padT+areaH);
+  ctx.lineTo(padL+areaW, padT+areaH);
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+
+  const bw = areaW / Math.max(1,n) * 0.7;
+  for(let i=0;i<n;i++){
+    const v = values[i];
+    const x = padL + (areaW/n)*i + (areaW/n - bw)/2;
+    const h = (v/maxV) * areaH;
+    const y = padT + areaH - h;
+
+    ctx.fillStyle = "#111";
+    ctx.globalAlpha = 0.12;
+    ctx.fillRect(x, y, bw, h);
+    ctx.globalAlpha = 1;
+
+    // value
+    ctx.fillStyle = "#111";
+    ctx.font = `${11*devicePixelRatio}px sans-serif`;
+    ctx.fillText(`${Math.round(v)}%`, x, y-6*devicePixelRatio);
+
+    // label
+    ctx.globalAlpha = 0.7;
+    ctx.font = `${10*devicePixelRatio}px sans-serif`;
+    ctx.fillText(labels[i], x, padT+areaH+18*devicePixelRatio);
+    ctx.globalAlpha = 1;
+  }
+}
+
+function drawLineMulti(canvas, series){
+  const ctx = canvas.getContext("2d");
+  const W = canvas.width = canvas.clientWidth * devicePixelRatio;
+  const H = canvas.height = canvas.getAttribute("height") * devicePixelRatio;
+  ctx.clearRect(0,0,W,H);
+
+  const padL = 46*devicePixelRatio, padR = 12*devicePixelRatio, padT = 12*devicePixelRatio, padB = 30*devicePixelRatio;
+
+  // collect x labels
+  const labels = series[0]?.labels || [];
+  const n = labels.length;
+  const areaW = W - padL - padR;
+  const areaH = H - padT - padB;
+
+  // y range fixed 0-100
+  const yTo = (v)=> padT + areaH - (Math.max(0,Math.min(100,v))/100)*areaH;
+
+  // grid
+  ctx.globalAlpha = 0.12;
+  ctx.strokeStyle = "#111";
+  for(let t=0;t<=4;t++){
+    const y = yTo(t*25);
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+areaW,y); ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+
+  // axes labels
+  ctx.fillStyle="#111";
+  ctx.globalAlpha=0.6;
+  ctx.font = `${10*devicePixelRatio}px sans-serif`;
+  for(let t=0;t<=4;t++){
+    const v=t*25;
+    ctx.fillText(String(v), 10*devicePixelRatio, yTo(v)+4*devicePixelRatio);
+  }
+  ctx.globalAlpha=1;
+
+  // x labels
+  ctx.globalAlpha=0.6;
+  for(let i=0;i<n;i++){
+    const x = padL + (areaW/(Math.max(1,n-1)))*i;
+    ctx.fillText(labels[i], x-6*devicePixelRatio, padT+areaH+18*devicePixelRatio);
+  }
+  ctx.globalAlpha=1;
+
+  // lines (auto color by hue)
+  series.forEach((s, idx)=>{
+    const hue = (idx*80) % 360;
+    ctx.strokeStyle = `hsl(${hue} 80% 35%)`;
+    ctx.lineWidth = 2*devicePixelRatio;
+    ctx.beginPath();
+    for(let i=0;i<n;i++){
+      const x = padL + (areaW/(Math.max(1,n-1)))*i;
+      const y = yTo(s.values[i] ?? 0);
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+
+    // legend
+    ctx.fillStyle = `hsl(${hue} 80% 35%)`;
+    ctx.font = `${11*devicePixelRatio}px sans-serif`;
+    ctx.fillText(s.name, padL + idx*140*devicePixelRatio, padT - 2*devicePixelRatio);
+  });
+}
+
+function pct(n,d){ return d? (n/d*100) : 0; }
+
+async function refreshAnalytics(){
+  if(!currentUser) return;
+
+  const challenges = await loadChallenges(250);
+  const habitsSnap = await getDocs(query(collection(db,"habits"), orderBy("createdAt","desc"), limit(400)));
+  const habits = [];
+  habitsSnap.forEach(s=> habits.push({ id:s.id, ...s.data() }));
+  const habitById = new Map(habits.map(h=>[h.id,h]));
+
+  const active = challenges.filter(x=>x.status==="active");
+  const done = challenges.filter(x=>x.status==="cleared" || x.status==="finished");
+  const retired = challenges.filter(x=>x.status==="retired");
+
+  anaHint.textContent = `挑戦中 ${active.length} / 完了 ${done.length} / リタイア ${retired.length}`;
+
+  // 上：3カード（最近3件だけ）
+  function statusCard(title, items, kind){
+    const box = document.createElement("div");
+    box.className="review";
+    box.style.margin="0";
+    const short = items.slice(0,3);
+    box.innerHTML = `
+      <div class="reviewTop">
+        <div class="reviewName">${escapeHtml(title)}</div>
+        <div class="reviewMeta">${kind}</div>
+      </div>
+      <div class="reviewText" style="margin-top:10px">${short.map(ch=>{
+        const t = ch.habitTitle || "—";
+        const td = Number(ch.targetDays||3);
+        return `• ${escapeHtml(t)}  <span style="font-family:var(--mono);opacity:.7">(${td}日)</span>`;
+      }).join("\n") || "—"}</div>
+      <div style="display:flex; justify-content:flex-end; margin-top:8px">
+        <button class="btnMini" data-more="1" style="font-size:11px; opacity:.8">もっと見る</button>
+      </div>
+    `;
+    box.querySelector("[data-more]").addEventListener("click", ()=>{
+      alert(items.map(ch=>`${ch.habitTitle||"—"}（${ch.status} / ${Number(ch.targetDays||3)}日）`).join("\n") || "—");
+    });
+    return box;
+  }
+
+  anaStatusGrid.innerHTML="";
+  anaStatusGrid.appendChild(statusCard("育成中", active, "ACTIVE"));
+  anaStatusGrid.appendChild(statusCard("育成完了", done, "DONE"));
+  anaStatusGrid.appendChild(statusCard("リタイア", retired, "RETIRED"));
+
+  // 集計：カテゴリ/作成者/タグ それぞれ成功率（自分の挑戦結果ベース）
+  const catMap = new Map();
+  const creatorMap = new Map();
+  const tagMap = new Map();
+
+  for(const ch of challenges){
+    const h = habitById.get(ch.habitId);
+    const cat = (h?.category || "その他").trim() || "その他";
+    const creator = (h?.creatorName || "作成者").trim() || "作成者";
+    const tags = (h?.tags || []).map(x=>String(x||"").trim()).filter(Boolean);
+
+    const isSuccess = (ch.status==="cleared");
+    const isEnd = (ch.status==="cleared" || ch.status==="finished" || ch.status==="retired");
+    if(!isEnd) continue;
+
+    const c = catMap.get(cat) || { end:0, ok:0 };
+    c.end++; if(isSuccess) c.ok++;
+    catMap.set(cat,c);
+
+    const cr = creatorMap.get(creator) || { end:0, ok:0 };
+    cr.end++; if(isSuccess) cr.ok++;
+    creatorMap.set(creator,cr);
+
+    for(const t of tags){
+      const tg = tagMap.get(t) || { end:0, ok:0 };
+      tg.end++; if(isSuccess) tg.ok++;
+      tagMap.set(t,tg);
+    }
+  }
+
+  // 棒：カテゴリ上位
+  const catArr = [...catMap.entries()]
+    .map(([k,v])=>({k, r: pct(v.ok,v.end), end:v.end}))
+    .sort((a,b)=> (b.end-a.end) || (b.r-a.r))
+    .slice(0,6);
+  drawBarChart(anaBar, catArr.map(x=>x.k), catArr.map(x=>Math.round(x.r)));
+
+  // 折れ線：カテゴリ/作成者/タグ 上位を同時比較
+  const topCats = catArr.slice(0,3).map(x=>x.k);
+
+  const topCreators = [...creatorMap.entries()]
+    .map(([k,v])=>({k, r:pct(v.ok,v.end), end:v.end}))
+    .sort((a,b)=> (b.r-a.r) || (b.end-a.end))
+    .slice(0,2).map(x=>x.k);
+
+  const topTags = [...tagMap.entries()]
+    .map(([k,v])=>({k, r:pct(v.ok,v.end), end:v.end}))
+    .sort((a,b)=> (b.end-a.end) || (b.r-a.r))
+    .slice(0,2).map(x=>x.k);
+
+  // x軸は「成功率の比較項目」
+  const labels = ["A","B","C","D","E","F"];
+  const s1 = {
+    name:"カテゴリ",
+    labels,
+    values: topCats.concat(["—","—","—"]).slice(0,6).map(k=>{
+      if(k==="—") return 0;
+      const v = catMap.get(k); return Math.round(pct(v.ok,v.end));
+    })
+  };
+  const s2 = {
+    name:"作成者",
+    labels,
+    values: topCreators.concat(["—","—","—","—"]).slice(0,6).map(k=>{
+      if(k==="—") return 0;
+      const v = creatorMap.get(k); return Math.round(pct(v.ok,v.end));
+    })
+  };
+  const s3 = {
+    name:"悩みタグ",
+    labels,
+    values: topTags.concat(["—","—","—","—"]).slice(0,6).map(k=>{
+      if(k==="—") return 0;
+      const v = tagMap.get(k); return Math.round(pct(v.ok,v.end));
+    })
+  };
+  drawLineMulti(anaLines, [s1,s2,s3]);
+
+  // 下：発見カード3つ（ランキング/続けやすい/失敗しやすい）
+  const bestCreators = [...creatorMap.entries()]
+    .map(([k,v])=>({k, r:pct(v.ok,v.end), end:v.end}))
+    .filter(x=>x.end>=2)
+    .sort((a,b)=> b.r-a.r)
+    .slice(0,5);
+
+  const worstCats = [...catMap.entries()]
+    .map(([k,v])=>({k, r:pct(v.ok,v.end), end:v.end}))
+    .filter(x=>x.end>=2)
+    .sort((a,b)=> a.r-b.r)
+    .slice(0,5);
+
+  const keepers = challenges
+    .filter(x=>x.status==="active")
+    .sort((a,b)=> Number(b.day||1)-Number(a.day||1))
+    .slice(0,5);
+
+  function insightCard(title, lines){
+    const box = document.createElement("div");
+    box.className="review";
+    box.style.margin="0";
+    box.innerHTML = `
+      <div class="reviewTop">
+        <div class="reviewName">${escapeHtml(title)}</div>
+        <div class="reviewMeta">発見</div>
+      </div>
+      <div class="reviewText" style="margin-top:10px">${escapeHtml(lines.join("\n") || "—")}</div>
+    `;
+    return box;
+  }
+
+  anaInsights.innerHTML="";
+  anaInsights.appendChild(insightCard("成功率が高めの作成者TOP", bestCreators.map(x=>`• ${x.k}：${Math.round(x.r)}%（n=${x.end}）`)));
+  anaInsights.appendChild(insightCard("比較的に続けているお気に入り育成TOP", keepers.map(x=>`• ${x.habitTitle||"—"}：${Number(x.day||1)}日目 / ${Number(x.targetDays||3)}日`)));
+  anaInsights.appendChild(insightCard("失敗しやすいカテゴリ（要注意）", worstCats.map(x=>`• ${x.k}：${Math.round(x.r)}%（n=${x.end}）`)));
+}
   </script>
 </body>
 </html>
