@@ -2984,15 +2984,15 @@ navAnalytics.addEventListener("click", ()=> showOnly("analytics"));
         const can = canCareToday(ch);
         const care = `次のお世話まで ${fmtCountdown(msToMidnight())}`;
 
-        const day = Math.max(1, Math.min(7, Number(ch.day||1)));
-        const prog = growthPctDynamic(ch);
-const targetDays = Number(ch.targetDays || 3); // 既定は3日
-const remaining = Math.max(0, targetDays - (day-1)); // day=1なら残り3
-
+const targetDays = Number(ch.targetDays || 3);             // 3 or 7
+const dayRaw = Number(ch.day || 1);
+const day = Math.max(1, Math.min(targetDays + 1, dayRaw)); // 1〜targetDays+1(クリア用)
+const prog = growthPctDynamic(ch);
+const remaining = Math.max(0, targetDays - (Math.min(day, targetDays) - 1)); // 表示用
 box.innerHTML = `
   <div class="sideTop">
     <div class="sideHabit">${escapeHtml(ch.habitTitle||"")}</div>
-    <div class="sideMeta">${day}/7日目</div>
+<div class="sideMeta">${Math.min(day, targetDays)}/${targetDays}日目</div>
   </div>
 
   <div class="sideTop" style="align-items:center">
