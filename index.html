@@ -2955,8 +2955,8 @@ const remaining = Math.max(0, targetDays - (day-1)); // day=1なら残り3
           
         `;
 
-        box.querySelector('[data-act="done"]').addEventListener("click", (e)=> {
-  flyToBadge(e.currentTarget);
+     box.querySelector('[data-act="done"]').addEventListener("click", (e)=> {
+  diffBg.__flyFromEl = e.currentTarget; // ★追加：出発点を覚える
   openDiffModal(ch);
 });
         box.querySelector('[data-act="rest"]').addEventListener("click", ()=> applyReport(ch, { type:"rest" }));
@@ -2972,24 +2972,24 @@ const remaining = Math.max(0, targetDays - (day-1)); // day=1なら残り3
       }
     }
 
-    function openDiffModal(ch){
-      diffTargetChallenge = ch;
-      diffTitle.textContent = ch.habitTitle || "難易度";
-      diffBg.classList.add("show");
-    }
-    function closeDiffModal(){
-      diffTargetChallenge = null;
-      diffBg.classList.remove("show");
-    }
-    diffClose.addEventListener("click", closeDiffModal);
-    diffBg.addEventListener("click", (e)=>{ if(e.target===diffBg) closeDiffModal(); });
-    diffBg.querySelectorAll("[data-diff]").forEach(btn=>{
-      btn.addEventListener("click", async ()=>{
-        if(!diffTargetChallenge) return;
-        await applyReport(diffTargetChallenge, { type:"done", diff: btn.dataset.diff });
-        closeDiffModal();
-      });
-    });
+   function openDiffModal(ch){
+  diffTargetChallenge = ch;
+  diffTitle.textContent = ch.habitTitle || "難易度";
+  diffBg.classList.add("show");
+}
+function closeDiffModal(){
+  diffTargetChallenge = null;
+  diffBg.classList.remove("show");
+}
+diffClose.addEventListener("click", closeDiffModal);
+diffBg.addEventListener("click", (e)=>{ if(e.target===diffBg) closeDiffModal(); });
+diffBg.querySelectorAll("[data-diff]").forEach(btn=>{
+  btn.addEventListener("click", async ()=>{
+    if(!diffTargetChallenge) return;
+    await applyReport(diffTargetChallenge, { type:"done", diff: btn.dataset.diff });
+    closeDiffModal();
+  });
+});
 
     // ===== Apply report =====
     async function applyReport(ch, payload){
