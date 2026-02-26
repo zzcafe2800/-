@@ -2710,7 +2710,7 @@ const remaining = Math.max(0, targetDays - (day-1)); // day=1なら残り3
           <div class="sideTop">
           
             <div class="sideHabit">${escapeHtml(ch.habitTitle||"")}</div>
-             <div class="sideMeta">${day}/7</div>
+             <div class="sideMeta">${day}/7日目</div>
           </div>
 <div class="sideTop" style="align-items:center">
   <div class="sideCare" data-care="1">${care}</div>
@@ -2723,13 +2723,9 @@ const remaining = Math.max(0, targetDays - (day-1)); // day=1なら残り3
             <button class="btnMini" data-act="done" ${can ? "" : "disabled"}>やった</button>
             <button class="btnMini" data-act="rest" ${can ? "" : "disabled"}>休む</button>
             <button class="btnMini" data-act="retire">リタイア</button>
-            <button class="btnMini" data-act="rate" ${ch.ratingSubmitted ? "disabled" : ""}>評価</button>
+            <button class="btnMini" data-act="rate" ${ch.ratingSubmitted ? "disabled" : ""}>感想</button>
           </div>
 
-<div class="sideTop" style="align-items:center">
-
-  <div class="sideMeta">${prog.toFixed(0)}% / 残り${remaining}日 / クリアまで${targetDays}日</div>
-</div>
 
 
           
