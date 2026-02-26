@@ -1,5 +1,3 @@
-
-
 <!doctype html>
 <html lang="ja">
 <head>
@@ -589,6 +587,35 @@
       border-bottom:1px solid var(--catLine);
       user-select:none;
     }
+
+
+/* ===== 選択中/ホバー中の“うっすら黒フェイド” ===== */
+/* フェイドは thumb の上に乗せる（でもボタンより下） */
+.habitCard .thumb::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,.10) 0%,
+    rgba(0,0,0,.04) 35%,
+    rgba(0,0,0,0) 80%
+  );
+  opacity:0;
+  pointer-events:none;
+  transition: opacity .12s ease;
+  z-index:2; /* タイトル/文字より上にしたいなら 2、ボタンは3なので被らない */
+}
+
+/* PC：ホバーでフェイド */
+@media (hover:hover) and (pointer:fine){
+  .habitCard:hover .thumb::after{ opacity:1; }
+}
+
+/* スマホ：選択（is-active）でフェイド */
+.habitCard.is-active .thumb::after{ opacity:1; }
+
+    
     .thumbTitle{
       font-size:22px; /* タイトル大きめ */
       font-weight:1100;
@@ -639,6 +666,29 @@
       align-items:center;
       z-index:3;
     }
+    /* ===== カード右上ボタン：普段は非表示 ===== */
+.thumbActions{
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-2px);
+  transition: opacity .12s ease, transform .12s ease;
+}
+
+/* PC：ホバー中は表示（hoverできる端末だけ） */
+@media (hover:hover) and (pointer:fine){
+  .habitCard:hover .thumbActions{
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+}
+
+/* スマホ：JSで付ける .is-active の時だけ表示 */
+.habitCard.is-active .thumbActions{
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
 
     .tipBtn{position:relative}
     .tipBtn[data-tip]::after{
@@ -2594,7 +2644,7 @@ navAnalytics.addEventListener("click", ()=> showOnly("analytics"));
       highlightRankChips();
       await refreshHome();
     });
-
+let activeCardEl = null; // スマホ用：最後に選択されたカード
     // ===== Home =====
     async function refreshHome(){
       if(!currentUser) return;
@@ -2825,6 +2875,31 @@ navAnalytics.addEventListener("click", ()=> showOnly("analytics"));
       });
 
       return card;
+
+
+
+
+      // ===== スマホ用：カードタップでボタン表示を固定（他をタップするまで維持） =====
+      const isTouchUI = window.matchMedia("(hover: none)").matches;
+
+      if(isTouchUI){
+        card.addEventListener("click", (e)=>{
+          // ボタン類を押した時は「選択切り替え」をしない（誤動作防止）
+          if(e.target.closest("button, a, input, textarea, select, [data-act]")) return;
+
+          if(activeCardEl && activeCardEl !== card){
+            activeCardEl.classList.remove("is-active");
+          }
+          card.classList.add("is-active");
+          activeCardEl = card;
+        });
+      }
+
+
+
+
+
+      
     }
 
     // ===== Fav/Bookmark =====
