@@ -2955,8 +2955,8 @@ const remaining = Math.max(0, targetDays - (day-1)); // day=1なら残り3
           
         `;
 
-     box.querySelector('[data-act="done"]').addEventListener("click", (e)=> {
-  diffBg.__flyFromEl = e.currentTarget; // ★追加：出発点を覚える
+ box.querySelector('[data-act="done"]').addEventListener("click", (e)=> {
+  diffBg.__flyFromEl = e.currentTarget; // 保存だけ
   openDiffModal(ch);
 });
         box.querySelector('[data-act="rest"]').addEventListener("click", ()=> applyReport(ch, { type:"rest" }));
