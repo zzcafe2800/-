@@ -2044,6 +2044,39 @@ function flyToBadge(fromEl){
   layer.style.zIndex = "9999";
   document.body.appendChild(layer);
 
+
+
+
+
+
+
+
+function flyToBadgeFromPoint(pt){
+  const toEl = $("todayDoneBadge");
+  if(!pt || !toEl) return;
+
+  // ダミー要素をそこに作って flyToBadge を使い回す
+  const dummy = document.createElement("div");
+  dummy.style.position = "fixed";
+  dummy.style.left = pt.x + "px";
+  dummy.style.top  = pt.y + "px";
+  dummy.style.width = "1px";
+  dummy.style.height = "1px";
+  dummy.style.pointerEvents = "none";
+  dummy.style.opacity = "0";
+  document.body.appendChild(dummy);
+
+  flyToBadge(dummy);
+
+  // flyToBadge 内でgetBoundingClientRect読むので、少し後に消す
+  setTimeout(()=> dummy.remove(), 50);
+}
+
+
+
+
+
+  
   // 小さいスパークを散らす（開始/終了用）
   function burst(x, y, strength=1){
     const count = Math.round(10 + 10*strength);
@@ -2955,8 +2988,10 @@ const remaining = Math.max(0, targetDays - (day-1)); // day=1なら残り3
           
         `;
 
- box.querySelector('[data-act="done"]').addEventListener("click", (e)=> {
-  diffBg.__flyFromEl = e.currentTarget; // 保存だけ
+box.querySelector('[data-act="done"]').addEventListener("click", (e)=> {
+  const r = e.currentTarget.getBoundingClientRect();
+  // 位置だけ保存（DOMが消えてもOK）
+  diffBg.__flyFromPt = { x: r.left + r.width/2, y: r.top + r.height/2 };
   openDiffModal(ch);
 });
         box.querySelector('[data-act="rest"]').addEventListener("click", ()=> applyReport(ch, { type:"rest" }));
@@ -2984,35 +3019,23 @@ function closeDiffModal(){
 diffClose.addEventListener("click", closeDiffModal);
 diffBg.addEventListener("click", (e)=>{ if(e.target===diffBg) closeDiffModal(); });
 diffBg.querySelectorAll("[data-diff]").forEach(btn=>{
-  btn.addEventListener("click", async ()=>{
-    if(!diffTargetChallenge) return;
-    await applyReport(diffTargetChallenge, { type:"done", diff: btn.dataset.diff });
-    closeDiffModal();
+btn.addEventListener("click", async ()=>{
+  if(!diffTargetChallenge) return;
 
+  const pt = diffBg.__flyFromPt; // 位置を取り出す（DOM消えてもOK）
+  closeDiffModal();
 
-
-
-// ★追加：難易度モーダルが「閉じた瞬間」にエフェクト
-(()=>{
-  if(!diffBg) return;
-
-  const obs = new MutationObserver(()=>{
-    // showが外れた＝閉じた
-    if(!diffBg.classList.contains("show")){
-      const fromEl = diffBg.__flyFromEl;
-      if(fromEl){
-        flyToBadge(fromEl);
-        diffBg.__flyFromEl = null; // 連打/残りを防ぐ
-      }
-    }
+  // 「閉じた直後」に発火（次フレームで確実に閉じた後）
+  requestAnimationFrame(()=> {
+    requestAnimationFrame(()=> {
+      flyToBadgeFromPoint(pt);
+      diffBg.__flyFromPt = null;
+    });
   });
 
-  obs.observe(diffBg, { attributes:true, attributeFilter:["class"] });
-})();
-
-
-    
-  });
+  // その後に保存処理（重くてもエフェクトは先に走る）
+  await applyReport(diffTargetChallenge, { type:"done", diff: btn.dataset.diff });
+});
 
 
 
