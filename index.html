@@ -1591,6 +1591,21 @@
     </div>
   </div>
 
+
+<!-- ===== 3日クリア：2択ゲート ===== -->
+<div class="gate" id="clearGate">
+  <div class="gateCard">
+    <p class="gateTitle" id="clearGateTitle">クリアおめでとう！！</p>
+    <div style="margin-top:8px; color:var(--muted); font-size:12px;" id="clearGateSub">—</div>
+    <div class="gateActions" style="justify-content:space-between">
+      <button class="gateBtn" id="clearNewBtn" style="background:#fff;color:#111;border-color:var(--line);">新しい習慣に挑戦</button>
+      <button class="gateBtn" id="clearKeepBtn">最後まで育成（残り4日）</button>
+    </div>
+  </div>
+</div>
+
+
+  
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-analytics.js";
@@ -1718,7 +1733,11 @@ const anaLines = $("anaLines");
 
 
 
-
+const clearGate = $("clearGate");
+const clearGateTitle = $("clearGateTitle");
+const clearGateSub = $("clearGateSub");
+const clearNewBtn = $("clearNewBtn");
+const clearKeepBtn = $("clearKeepBtn");
 
 
 
@@ -2205,12 +2224,44 @@ function flyToBadge(fromEl){
 
 
 
+let clearGateChallengeId = null;
+
+function openClearGate(ch){
+  clearGateChallengeId = ch.habitId;
+  clearGateTitle.textContent = "クリアおめでとう！！";
+  clearGateSub.textContent = `${ch.habitTitle || ""}：3日クリア達成。続けますか？`;
+  clearGate.classList.add("show");
+}
+function closeClearGate(){
+  clearGate.classList.remove("show");
+  clearGateChallengeId = null;
+}
+clearGate.addEventListener("click",(e)=>{ if(e.target===clearGate){} }); // 背景タップで閉じない（強制）
 
 
 
 
+clearNewBtn.addEventListener("click", async ()=>{
+  if(!clearGateChallengeId) return;
+  const ref = doc(db, "userChallenges", currentUser.uid, "items", clearGateChallengeId);
+  await updateDoc(ref, { status:"cleared", phase:"short_cleared", updatedAt: serverTimestamp() });
 
+  // 3日で終了 → 口コミ（強制に近い運用：ここで開く）
+  const snap = await getDoc(ref);
+  const ch = snap.exists() ? snap.data() : null;
+  closeClearGate();
+  if(ch) await openRatingModalByChallenge({ ...ch, habitId: clearGateChallengeId }, "finish");
+  await afterLoginWarm();
+});
 
+clearKeepBtn.addEventListener("click", async ()=>{
+  if(!clearGateChallengeId) return;
+  const ref = doc(db, "userChallenges", currentUser.uid, "items", clearGateChallengeId);
+  // 7日へ延長
+  await updateDoc(ref, { targetDays:7, phase:"long", updatedAt: serverTimestamp() });
+  closeClearGate();
+  await afterLoginWarm();
+});
 
     
  
@@ -2866,6 +2917,9 @@ navAnalytics.addEventListener("click", ()=> showOnly("analytics"));
         difficulty: { easy:0, mid:0, hard:0 },
         ratingSubmitted: false,
         updatedAt: serverTimestamp()
+        targetDays: 3,
+phase: "short",
+dailyEmojis: {}, // カレンダー用（YYYY-MM-DD -> 絵文字）
       });
 
       await runTransaction(db, async (tx)=>{
@@ -3008,6 +3062,13 @@ const remaining = Math.max(0, targetDays - (day-1)); // day=1なら残り3
       const update = {};
 
       if(payload.type==="done"){
+
+
+        const diffEmoji = payload.diff==="easy" ? "😊" : payload.diff==="mid" ? "🙂" : "😅";
+const daily = Object.assign({}, cur.dailyEmojis || {});
+daily[today] = diffEmoji;
+update.dailyEmojis = daily;
+        
         update.successDays = Number(cur.successDays||0)+1;
         update.day = Math.min(8, Number(cur.day||1)+1);
         update.lastActionYMD = today;
@@ -3049,24 +3110,43 @@ const remaining = Math.max(0, targetDays - (day-1)); // day=1なら残り3
       if(payload.type==="done" || payload.type==="rest"){
         const afterDay = Math.min(8, Number(cur.day||1)+1);
         if(afterDay === 8){
-          const afterSuccess = Number(cur.successDays||0) + (payload.type==="done" ? 1 : 0);
-          if(afterSuccess >= 5){
-            await updateDoc(ref, { status:"cleared", updatedAt: serverTimestamp() });
-            await runTransaction(db, async (tx)=>{
-              const uref = doc(db, "users", currentUser.uid);
-              const us = await tx.get(uref);
-              if(!us.exists()) return;
-              const u = us.data();
-              tx.update(uref, { clearCount: Number(u.clearCount||0)+1, updatedAt: serverTimestamp() });
-            });
-          }else{
-            await updateDoc(ref, { status:"finished", updatedAt: serverTimestamp() });
-          }
+        const afterDay = Math.max(1, Number(cur.day||1)+1);
+const targetDays = Number(cur.targetDays || 3);
 
-          const finalSnap = await getDoc(ref);
-          const finalCh = finalSnap.exists() ? finalSnap.data() : cur;
-          await maybePromptRating(ch.habitId, { ...finalCh, habitId: ch.habitId }, "finish");
-        }
+// dayは targetDays まで進める（最大8では固定しない）
+update.day = Math.min(targetDays+1, afterDay);
+
+if(afterDay === targetDays+1){
+  // 3日クリア到達時：強制2択（新しい習慣 or 7日延長）
+  if(targetDays === 3){
+    // “クリア扱い”にして2択を出す（戻れない）
+    await updateDoc(ref, { phase:"short_cleared_wait", updatedAt: serverTimestamp() });
+    const finalSnap = await getDoc(ref);
+    const finalCh = finalSnap.exists() ? finalSnap.data() : cur;
+    openClearGate({ ...finalCh, habitId: ch.habitId });
+    await refreshActiveHabitIds();
+    await refreshSideActive();
+    await refreshRecords();
+    await refreshHome();
+    await refreshProfile();
+    await refreshTrain();
+    return;
+  }
+
+  // 7日終了：強制口コミ（今の仕様に合わせて開く）
+  await updateDoc(ref, { status:"cleared", updatedAt: serverTimestamp() });
+  await runTransaction(db, async (tx)=>{
+    const uref = doc(db, "users", currentUser.uid);
+    const us = await tx.get(uref);
+    if(!us.exists()) return;
+    const u = us.data();
+    tx.update(uref, { clearCount: Number(u.clearCount||0)+1, updatedAt: serverTimestamp() });
+  });
+
+  const finalSnap = await getDoc(ref);
+  const finalCh = finalSnap.exists() ? finalSnap.data() : cur;
+  await openRatingModalByChallenge({ ...finalCh, habitId: ch.habitId }, "finish");
+} }
       }
 
       await refreshActiveHabitIds();
