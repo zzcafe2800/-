@@ -2988,7 +2988,39 @@ diffBg.querySelectorAll("[data-diff]").forEach(btn=>{
     if(!diffTargetChallenge) return;
     await applyReport(diffTargetChallenge, { type:"done", diff: btn.dataset.diff });
     closeDiffModal();
+
+
+
+
+// ★追加：難易度モーダルが「閉じた瞬間」にエフェクト
+(()=>{
+  if(!diffBg) return;
+
+  const obs = new MutationObserver(()=>{
+    // showが外れた＝閉じた
+    if(!diffBg.classList.contains("show")){
+      const fromEl = diffBg.__flyFromEl;
+      if(fromEl){
+        flyToBadge(fromEl);
+        diffBg.__flyFromEl = null; // 連打/残りを防ぐ
+      }
+    }
   });
+
+  obs.observe(diffBg, { attributes:true, attributeFilter:["class"] });
+})();
+
+
+    
+  });
+
+
+
+
+
+
+
+  
 });
 
     // ===== Apply report =====
