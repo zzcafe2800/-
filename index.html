@@ -1989,145 +1989,229 @@ function showOnly(section){
 }
 
 
- function flyToBadge(fromEl){
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function flyToBadge(fromEl){
   const toEl = $("todayDoneBadge");
   if(!fromEl || !toEl) return;
 
   const a = fromEl.getBoundingClientRect();
   const b = toEl.getBoundingClientRect();
 
-  const sx = a.left + a.width * 0.5;
-  const sy = a.top  + a.height * 0.5;
-  const ex = b.left + b.width * 0.5;
-  const ey = b.top  + b.height * 0.5;
+  const ax = a.left + a.width * 0.5;
+  const ay = a.top  + a.height * 0.5;
+  const bx = b.left + b.width * 0.5;
+  const by = b.top  + b.height * 0.5;
 
-  // ===== helpers =====
-  const rand = (min,max)=> Math.random()*(max-min)+min;
+  const dx = bx - ax;
+  const dy = by - ay;
 
-  // ふわっと弾ける粒を作る（開始/到着 共通）
-  function burst(x,y, n=10, color="#111", size=6){
-    for(let i=0;i<n;i++){
+  // ---- utilities ----
+  const clamp = (v,min,max)=> Math.max(min, Math.min(max, v));
+  const rand  = (min,max)=> min + Math.random()*(max-min);
+
+  // 速度に応じて少し時間変える（遠いほど少し長め）
+  const dist = Math.hypot(dx, dy);
+  const travelMs = clamp(850 + dist * 0.35, 900, 1400); // 最初/最後ゆっくり体感
+
+  // 画面上に固定するレイヤー（スクロールしてもズレない）
+  const layer = document.createElement("div");
+  layer.style.position = "fixed";
+  layer.style.left = "0";
+  layer.style.top  = "0";
+  layer.style.width = "100vw";
+  layer.style.height = "100vh";
+  layer.style.pointerEvents = "none";
+  layer.style.zIndex = "9999";
+  document.body.appendChild(layer);
+
+  // 小さいスパークを散らす（開始/終了用）
+  function burst(x, y, strength=1){
+    const count = Math.round(10 + 10*strength);
+    for(let i=0;i<count;i++){
       const p = document.createElement("div");
-      p.style.position = "fixed";
+      const size = rand(2, 5) * (0.9 + strength*0.25);
+
+      p.style.position = "absolute";
       p.style.left = x + "px";
       p.style.top  = y + "px";
       p.style.width = size + "px";
       p.style.height = size + "px";
       p.style.borderRadius = "999px";
-      p.style.background = color;
-      p.style.zIndex = "9999";
-      p.style.pointerEvents = "none";
-      p.style.transform = "translate(-50%,-50%) scale(0.2)";
-      p.style.opacity = "0.95";
-      p.style.filter = "blur(0px)";
-      document.body.appendChild(p);
+
+      // 黒丸じゃなく“発光粒子”っぽく（白〜金のグラデ）
+      const hue = rand(35, 55); // 金色寄り
+      p.style.background = `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.95) 0%, hsla(${hue}, 95%, 70%, 0.9) 35%, rgba(255,255,255,0) 70%)`;
+      p.style.boxShadow  = `0 0 ${Math.round(10+10*strength)}px rgba(255,220,140,0.6)`;
+
+      p.style.transform = "translate(-50%,-50%) scale(0.6)";
+      p.style.opacity = "0.0";
+
+      layer.appendChild(p);
 
       const ang = rand(0, Math.PI*2);
-      const dist = rand(14, 34);
-      const dx = Math.cos(ang) * dist;
-      const dy = Math.sin(ang) * dist;
+      const spd = rand(18, 60) * (0.8 + strength*0.35);
+      const ox  = Math.cos(ang) * spd;
+      const oy  = Math.sin(ang) * spd;
 
-      // ちょい遅延で「パッ」感
-      const delay = rand(0, 60);
-
+      // 1) ふわっと出る 2) 飛ぶ 3) 消える（最初と最後がゆっくり寄り）
       p.animate([
-        { transform:"translate(-50%,-50%) scale(0.2)", opacity:0.95, filter:"blur(0px)" },
-        { transform:`translate(${dx-50}px, ${dy-50}px) scale(1)`, opacity:0.9, filter:"blur(0px)" },
-        { transform:`translate(${dx-50}px, ${dy-50}px) scale(0.6)`, opacity:0, filter:"blur(1px)" }
+        { transform: "translate(-50%,-50%) scale(0.6)", opacity: 0.0, filter: "blur(0px)" },
+        { transform: "translate(-50%,-50%) scale(1.15)", opacity: 1.0, filter: "blur(0px)", offset: 0.18 },
+        { transform: `translate(calc(-50% + ${ox}px), calc(-50% + ${oy}px)) scale(0.9)`, opacity: 0.0, filter: "blur(0.6px)" }
       ],{
-        duration: 420,
-        delay,
-        easing: "cubic-bezier(.2,.9,.2,1)",
+        duration: 520 + rand(-60, 120),
+        easing: "cubic-bezier(.18,.9,.2,1)", // 立ち上がりゆっくり→弾む
         fill: "forwards"
       });
 
-      setTimeout(()=>p.remove(), 520 + delay);
+      setTimeout(()=> p.remove(), 800);
     }
   }
 
-  // ===== start burst =====
-  burst(sx, sy, 10, "#111", 6);
+  // “飛んでいく本体”＝小さな彗星(コメット)っぽい粒子
+  const comet = document.createElement("div");
+  comet.style.position = "absolute";
+  comet.style.left = ax + "px";
+  comet.style.top  = ay + "px";
+  comet.style.width = "18px";
+  comet.style.height = "18px";
+  comet.style.borderRadius = "999px";
+  comet.style.transform = "translate(-50%,-50%)";
+  comet.style.background = "radial-gradient(circle at 30% 30%, rgba(255,255,255,0.98) 0%, rgba(255,235,170,0.95) 35%, rgba(255,255,255,0) 70%)";
+  comet.style.boxShadow = "0 0 18px rgba(255,220,140,0.65)";
+  layer.appendChild(comet);
 
-  // ===== flying core =====
-  const core = document.createElement("div");
-  core.style.position = "fixed";
-  core.style.left = sx + "px";
-  core.style.top  = sy + "px";
-  core.style.width = "12px";
-  core.style.height = "12px";
-  core.style.borderRadius = "999px";
-  core.style.background = "#111";
-  core.style.zIndex = "9999";
-  core.style.pointerEvents = "none";
-  core.style.transform = "translate(-50%,-50%) scale(0.6)";
-  core.style.boxShadow = "0 0 0 rgba(0,0,0,0)";
-  document.body.appendChild(core);
+  // 尾（トレイル）をCSSで表現
+  const tail = document.createElement("div");
+  tail.style.position = "absolute";
+  tail.style.left = "50%";
+  tail.style.top  = "50%";
+  tail.style.width = "46px";
+  tail.style.height = "10px";
+  tail.style.transformOrigin = "0 50%";
+  tail.style.transform = "translate(2px,-50%)";
+  tail.style.borderRadius = "999px";
+  tail.style.background = "linear-gradient(90deg, rgba(255,230,160,0.85) 0%, rgba(255,230,160,0.35) 45%, rgba(255,230,160,0) 100%)";
+  tail.style.filter = "blur(0.3px)";
+  comet.appendChild(tail);
 
-  const dx = ex - sx;
-  const dy = ey - sy;
+  // 方向に合わせて尾を回転
+  const angleDeg = Math.atan2(dy, dx) * 180 / Math.PI;
+  tail.style.rotate = angleDeg + "deg";
 
-  // 飛んでる最中に薄い尾（trail）
-  const trail = document.createElement("div");
-  trail.style.position = "fixed";
-  trail.style.left = sx + "px";
-  trail.style.top  = sy + "px";
-  trail.style.width = "30px";
-  trail.style.height = "6px";
-  trail.style.borderRadius = "999px";
-  trail.style.background = "rgba(17,17,17,.22)";
-  trail.style.zIndex = "9998";
-  trail.style.pointerEvents = "none";
-  trail.style.transformOrigin = "0% 50%";
-  trail.style.transform = "translate(0px,0px) rotate(0deg) translateY(-50%)";
-  trail.style.filter = "blur(2px)";
-  document.body.appendChild(trail);
+  // 開始バースト（はじける）
+  burst(ax, ay, 1.0);
 
-  const angle = Math.atan2(dy, dx) * 180 / Math.PI;
-
-  // Core：開始でポン、到着でポン（弾ける感じ）
-  core.animate([
-    { transform:"translate(-50%,-50%) scale(0.45)", opacity:0.0 },
-    { transform:"translate(-50%,-50%) scale(1.15)", opacity:1.0, offset:0.10 },
-    { transform:"translate(-50%,-50%) scale(0.90)", opacity:1.0, offset:0.18 },
-    { transform:`translate(${dx-50}px, ${dy-50}px) scale(0.85)`, opacity:1.0, offset:0.86 },
-    { transform:`translate(${dx-50}px, ${dy-50}px) scale(1.25)`, opacity:1.0, offset:0.93 },
-    { transform:`translate(${dx-50}px, ${dy-50}px) scale(0.90)`, opacity:1.0 }
+  // 移動アニメ（最初と最後がゆっくり）
+  const move = comet.animate([
+    { transform: "translate(-50%,-50%) scale(0.75)", left: ax+"px", top: ay+"px", opacity: 1 },
+    { transform: "translate(-50%,-50%) scale(1.05)", left: (ax + dx*0.18)+"px", top: (ay + dy*0.18)+"px", opacity: 1, offset: 0.22 },
+    { transform: "translate(-50%,-50%) scale(0.95)", left: (ax + dx*0.78)+"px", top: (ay + dy*0.78)+"px", opacity: 1, offset: 0.86 },
+    { transform: "translate(-50%,-50%) scale(0.70)", left: bx+"px", top: by+"px", opacity: 0.0 }
   ],{
-    duration: 760,
-    easing: "cubic-bezier(.22,.9,.18,1)",
+    duration: travelMs,
+    easing: "cubic-bezier(.35,0,.15,1)", // いちばん「最初と最後ゆっくり」感が出る
     fill: "forwards"
   });
 
-  // Trail：向き固定＋移動して、最後は消える
-  trail.animate([
-    { transform:`translate(${0}px, ${0}px) rotate(${angle}deg) translateY(-50%) scaleX(0.2)`, opacity:0.0 },
-    { transform:`translate(${0}px, ${0}px) rotate(${angle}deg) translateY(-50%) scaleX(1)`, opacity:1.0, offset:0.12 },
-    { transform:`translate(${dx}px, ${dy}px) rotate(${angle}deg) translateY(-50%) scaleX(0.6)`, opacity:0.55, offset:0.86 },
-    { transform:`translate(${dx}px, ${dy}px) rotate(${angle}deg) translateY(-50%) scaleX(0.2)`, opacity:0.0 }
-  ],{
-    duration: 760,
-    easing: "cubic-bezier(.22,.9,.18,1)",
-    fill: "forwards"
-  });
+  // 飛行中に小粒子を少しずつ落とす（尾が“エフェクトっぽい”）
+  const start = performance.now();
+  let rafId = 0;
+  function drip(t){
+    const p = move.effect.getComputedTiming();
+    const prog = (p && typeof p.progress === "number") ? p.progress : clamp((t - start)/travelMs, 0, 1);
 
-  // 到着でバースト（弾ける）
-  setTimeout(()=>{
-    burst(ex, ey, 14, "#111", 6);
-    // バッジ自体も「ぽよん」させたい場合（要素があれば）
-    if(toEl && toEl.animate){
-      toEl.animate([
-        { transform:"scale(1)" },
-        { transform:"scale(1.12)" },
-        { transform:"scale(1)" }
-      ],{ duration: 240, easing:"cubic-bezier(.2,.9,.2,1)" });
+    // 現在座標（ほぼ線形でOK。見た目はeasingが効いてる）
+    const x = ax + dx * prog;
+    const y = ay + dy * prog;
+
+    // 1フレームで0〜2粒くらい落とす
+    const drops = Math.random() < 0.6 ? 1 : 0;
+    for(let i=0;i<drops;i++){
+      const d = document.createElement("div");
+      const s = rand(2, 4.5);
+      d.style.position = "absolute";
+      d.style.left = (x + rand(-4,4)) + "px";
+      d.style.top  = (y + rand(-4,4)) + "px";
+      d.style.width = s + "px";
+      d.style.height = s + "px";
+      d.style.borderRadius = "999px";
+      const hue = rand(35, 60);
+      d.style.background = `radial-gradient(circle, rgba(255,255,255,0.9) 0%, hsla(${hue}, 95%, 70%, 0.8) 45%, rgba(255,255,255,0) 72%)`;
+      d.style.boxShadow  = "0 0 10px rgba(255,220,140,0.45)";
+      d.style.transform = "translate(-50%,-50%)";
+      layer.appendChild(d);
+
+      const ox = rand(-18, 18);
+      const oy = rand(-8, 22);
+      d.animate([
+        { transform: "translate(-50%,-50%) scale(1)", opacity: 0.9 },
+        { transform: `translate(calc(-50% + ${ox}px), calc(-50% + ${oy}px)) scale(0.6)`, opacity: 0.0 }
+      ],{
+        duration: 420 + rand(-80, 140),
+        easing: "cubic-bezier(.2,.8,.2,1)",
+        fill: "forwards"
+      });
+      setTimeout(()=> d.remove(), 700);
     }
-  }, 700);
 
-  setTimeout(()=>{
-    core.remove();
-    trail.remove();
-  }, 900);
+    if(prog < 1){
+      rafId = requestAnimationFrame(drip);
+    }
+  }
+  rafId = requestAnimationFrame(drip);
+
+  move.onfinish = ()=>{
+    // 終点バースト（はじける）
+    burst(bx, by, 1.15);
+
+    // 片付け
+    cancelAnimationFrame(rafId);
+    comet.remove();
+    setTimeout(()=> layer.remove(), 900);
+  };
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+ 
     // ===== Auth =====
     async function login(){
       const provider = new GoogleAuthProvider();
