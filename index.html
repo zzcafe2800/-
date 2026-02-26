@@ -3359,29 +3359,24 @@ setRatingUIMode("writer");   // ★ここ追加：投稿モード（他人口コ
 
 async function loadRatingsList(habitId, opts={}){
   const onlyOthers = !!opts.onlyOthers;
-  const limitView = Number.isFinite(opts.limitView) ? opts.limitView : 5; // ★初期表示5件
   const sort = String(opts.sort || "stars"); // "stars" or "new"
 
   reviewList.innerHTML = "";
 
-  // Firestore側で stars で orderBy するにはインデックス等が必要になりがちなので
-  // ここでは取得 → JSで並び替え にします（シンプルで確実）
   const qs = await getDocs(query(
     collection(db, "habits", habitId, "ratings"),
     orderBy("updatedAt","desc"),
-    limit(120)
+    limit(200)
   ));
 
   let arr = [];
   qs.forEach(s=> arr.push(s.data()));
 
-  // 他人だけ
   if(onlyOthers){
     const myUid = String(currentUser?.uid || "");
     arr = arr.filter(r => String(r.uid||"") !== myUid);
   }
 
-  // 並び替え（基本：★高い順 → 同点は新しい順）
   if(sort === "stars"){
     arr.sort((a,b)=>{
       const sa = Number(a.stars||0), sb = Number(b.stars||0);
@@ -3390,7 +3385,6 @@ async function loadRatingsList(habitId, opts={}){
       return (sb - sa) || (tb - ta);
     });
   }else{
-    // 新しい順
     arr.sort((a,b)=>{
       const ta = a.updatedAt?.seconds ? a.updatedAt.seconds : 0;
       const tb = b.updatedAt?.seconds ? b.updatedAt.seconds : 0;
@@ -3406,17 +3400,12 @@ async function loadRatingsList(habitId, opts={}){
     return;
   }
 
-  // ★初期表示は最大5件だけ（それ以上はスクロールで見える）
-  // ※スクロールで「続き」が見えるようにするため、実は“全部描画”してOK。
-  //   ただし要望が「最大5個まで表示」なので、初期表示は5件だけにして、
-  //   下に「もっと見る（全表示）」を置く方式にします。
-  const showing = arr.slice(0, Math.max(0, limitView));
-
-  for(const r of showing){
+  // ★ここがポイント：5件で切らず「全部描画」→ CSSの max-height でスクロール
+  for(const r of arr){
     const box = document.createElement("div");
     box.className = "review";
-    const stars = "★".repeat(Math.max(0, Math.min(5, Number(r.stars||0))))
-                + "☆".repeat(Math.max(0, 5-Number(r.stars||0)));
+    const starsN = Math.max(0, Math.min(5, Number(r.stars||0)));
+    const stars = "★".repeat(starsN) + "☆".repeat(5 - starsN);
     box.innerHTML = `
       <div class="reviewTop">
         <div class="reviewName">${escapeHtml(r.displayName||"ユーザー")}</div>
@@ -3426,33 +3415,8 @@ async function loadRatingsList(habitId, opts={}){
     `;
     reviewList.appendChild(box);
   }
-
-  // 5件より多い場合は「もっと見る」ボタン（押したら全件描画してスクロール）
-  if(arr.length > limitView){
-    const more = document.createElement("button");
-    more.className = "btn";
-    more.style.width = "100%";
-    more.textContent = `もっと見る（残り ${arr.length - limitView}）`;
-    more.addEventListener("click", ()=>{
-      reviewList.innerHTML = "";
-      for(const r of arr){
-        const box = document.createElement("div");
-        box.className = "review";
-        const stars = "★".repeat(Math.max(0, Math.min(5, Number(r.stars||0))))
-                    + "☆".repeat(Math.max(0, 5-Number(r.stars||0)));
-        box.innerHTML = `
-          <div class="reviewTop">
-            <div class="reviewName">${escapeHtml(r.displayName||"ユーザー")}</div>
-            <div class="reviewMeta">${stars}</div>
-          </div>
-          <div class="reviewText">${escapeHtml(r.comment||"")}</div>
-        `;
-        reviewList.appendChild(box);
-      }
-    });
-    reviewList.appendChild(more);
-  }
 }
+  
 
     async function recomputeRatingAgg(habitId){
       const rs = await getDocs(query(collection(db, "habits", habitId, "ratings"), limit(500)));
