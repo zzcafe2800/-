@@ -3042,9 +3042,8 @@ async function refreshDeckDock(){
       };
 
       // PC hover で濃く
-      plus.addEventListener?.("mouseenter", ()=> setDeckDockOn(true), { once:false });
-      plus.addEventListener?.("mouseleave", ()=> setDeckDockOn(false), { once:false });
-
+    plus.onmouseenter = ()=> setDeckDockOn(true);
+plus.onmouseleave = ()=> setDeckDockOn(false);
       continue;
     }
 
