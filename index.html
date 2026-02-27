@@ -4463,11 +4463,7 @@ async function refreshAnalytics(){
 
 // ===== Quick Deck storage =====
 
-function starsText(avg){
-  const v = Math.max(0, Math.min(5, Number(avg || 0)));
-  const full = Math.round(v);
-  return "★".repeat(full) + "☆".repeat(5 - full);
-}
+
 
 function updateDeckVisibility(){
   // Home表示中だけ出す（ログイン中のみ）
