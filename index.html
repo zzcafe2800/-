@@ -1184,6 +1184,168 @@
 @media (max-width: 520px){
   #anaStatusGrid, #anaInsights{ grid-template-columns: 1fr !important; }
 }
+
+
+
+
+/* ===== Home 左下：3デッキ ===== */
+.homeDeckDock{
+  position: fixed;
+  left: 12px;
+  bottom: 12px;
+  z-index: 95; /* FABより下でも上でも好み。FABは90 */
+  pointer-events: auto;
+}
+
+/* 3枚横並び */
+.homeDeckRow{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+/* デッキカード：縦長 */
+.homeDeckCard{
+  position: relative;
+  height: 160px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  min-width: 0;
+}
+
+/* うっすら背景キャラ */
+.homeDeckBg{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  font-size: 86px;
+  opacity: .08;
+  pointer-events:none;
+  user-select:none;
+}
+
+/* 星（左上） */
+.homeDeckStars{
+  position:absolute;
+  left:10px;
+  top:10px;
+  font-family: var(--mono);
+  font-weight:1100;
+  font-size:12px;
+  opacity:.85;
+  background: rgba(255,255,255,.85);
+  border:1px solid var(--line);
+  padding:4px 8px;
+  border-radius:999px;
+}
+
+/* 内容（中央） */
+.homeDeckBody{
+  position:absolute;
+  inset: 0;
+  padding: 36px 12px 12px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:6px;
+  text-align:center;
+}
+.homeDeckTitle{
+  font-weight:1100;
+  font-size:13px;
+  line-height:1.2;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.homeDeckAction{
+  font-size:12px;
+  color: var(--muted);
+  line-height:1.25;
+  display:-webkit-box;
+  -webkit-line-clamp:3;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+
+/* 空スロット：中央＋ */
+.homeDeckPlus{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  font-size:28px;
+  font-weight:1100;
+  color:#111;
+  cursor:pointer;
+  user-select:none;
+}
+.homeDeckPlusInner{
+  width:46px;height:46px;
+  border-radius: 14px;
+  border:1px dashed var(--line);
+  display:grid; place-items:center;
+  background:#fff;
+}
+
+/* ×ボタン：操作時のみ出す（依頼が入ってる時だけDOMに置く） */
+.homeDeckX{
+  position:absolute;
+  right:8px;
+  top:8px;
+  width:34px;
+  height:34px;
+  border-radius: 12px;
+  border:1px solid var(--line);
+  background:#fff;
+  cursor:pointer;
+  font-weight:1100;
+  display:grid;
+  place-items:center;
+
+  opacity:0;
+  pointer-events:none;
+  transform: translateY(-2px);
+  transition: opacity .12s ease, transform .12s ease;
+}
+
+/* PC hoverで×表示 */
+@media (hover:hover) and (pointer:fine){
+  .homeDeckCard.hasData:hover .homeDeckX{
+    opacity:1;
+    pointer-events:auto;
+    transform: translateY(0);
+  }
+}
+/* スマホ：is-activeの時だけ */
+.homeDeckCard.is-active .homeDeckX{
+  opacity:1;
+  pointer-events:auto;
+  transform: translateY(0);
+}
+
+/* たたみ用：小さい「＞」 */
+.homeDeckReopen{
+  position: fixed;
+  left: 6px;
+  bottom: 18px;
+  z-index: 96;
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius: 999px;
+  padding: 8px 10px;
+  font-weight:1100;
+  cursor:pointer;
+  box-shadow: var(--shadow);
+}
+.homeDeckReopen:hover{ background:#fafafa; }
+
+
     
   </style>
 </head>
@@ -1349,6 +1511,29 @@
             <option>生活</option><option>勉強</option><option>英語</option><option>仕事</option><option>その他</option>
           </select>
 
+
+
+
+
+
+<!-- ===== Home 左下：3デッキ（ホーム時のみ表示）===== -->
+<div id="homeDeckDock" class="homeDeckDock" style="display:none">
+  <div class="homeDeckRow" id="homeDeckRow"></div>
+</div>
+
+<!-- たたんだ時の「＞」 -->
+<button id="homeDeckReopen" class="homeDeckReopen" style="display:none" aria-label="デッキを開く">＞</button>
+
+
+
+
+
+
+
+
+
+
+          
           <button class="ctrlBtn" id="btnClearTag" title="タグ解除">タグ解除</button>
         </div>
 
@@ -1914,6 +2099,245 @@ const clearKeepBtn = $("clearKeepBtn");
     const trainCare = $("trainCare");
 
     // ===== State =====
+
+
+
+// ===== Home 左下 3デッキ（追加）=====
+
+// habits キャッシュ（refreshHomeで詰める）
+let __habitCache = new Map(); // habitId -> habit data
+
+// デッキの割当（slot0/1/2）。ユーザーごとにlocalStorageで保持
+function deckKey(){
+  const uid = String(currentUser?.uid||"guest");
+  return `growme_homeDeckSlots_v1:${uid}`;
+}
+function deckCollapsedKey(){
+  const uid = String(currentUser?.uid||"guest");
+  return `growme_homeDeckCollapsed_v1:${uid}`;
+}
+
+function loadDeckSlots(){
+  try{
+    const raw = localStorage.getItem(deckKey());
+    const obj = raw ? JSON.parse(raw) : null;
+    // { "0": habitId, "1": habitId, "2": habitId }
+    return obj && typeof obj==="object" ? obj : {};
+  }catch(e){
+    return {};
+  }
+}
+function saveDeckSlots(slots){
+  try{ localStorage.setItem(deckKey(), JSON.stringify(slots||{})); }catch(e){}
+}
+
+function getDeckCollapsed(){
+  try{ return localStorage.getItem(deckCollapsedKey()) === "1"; }catch(e){ return false; }
+}
+function setDeckCollapsed(v){
+  try{ localStorage.setItem(deckCollapsedKey(), v ? "1" : "0"); }catch(e){}
+}
+
+function starsText(avg){
+  const a = Math.max(0, Math.min(5, Number(avg||0)));
+  const full = Math.floor(a + 1e-9);
+  const half = (a - full) >= 0.5 ? 1 : 0;
+  const empty = Math.max(0, 5 - full - half);
+  return "★".repeat(full) + (half ? "☆" : "") + "☆".repeat(empty);
+}
+
+// 表示幅：一覧カード(=habitCard)の横幅*1.4
+function applyDeckDockWidth(){
+  const dock = document.getElementById("homeDeckDock");
+  if(!dock) return;
+
+  const sample = document.querySelector("#feed .habitCard");
+  if(!sample){
+    // ない時は適当（でも崩れない）
+    dock.style.width = "min(520px, 92vw)";
+    return;
+  }
+  const w = sample.getBoundingClientRect().width || 280;
+  const target = w * 1.4;
+  dock.style.width = `min(${Math.round(target)}px, 92vw)`;
+}
+
+// active挑戦を「真ん中→左→右」で埋める
+function assignChallengesToSlots(actives){
+  // 中→左→右
+  const fillOrder = [1,0,2];
+
+  const slots = loadDeckSlots();
+
+  // いまactiveにいないものは外す
+  const activeIds = new Set(actives.map(ch=>ch.habitId));
+  for(const k of ["0","1","2"]){
+    if(slots[k] && !activeIds.has(slots[k])) delete slots[k];
+  }
+
+  // すでに割当済みのhabitId
+  const used = new Set(Object.values(slots).filter(Boolean));
+
+  // activesを新しい順に（updatedAt desc）→ 空きに入れる
+  const sorted = (actives||[]).slice().sort((a,b)=>{
+    const ta = a.updatedAt?.seconds ? a.updatedAt.seconds : 0;
+    const tb = b.updatedAt?.seconds ? b.updatedAt.seconds : 0;
+    return tb - ta;
+  });
+
+  for(const ch of sorted){
+    if(used.has(ch.habitId)) continue;
+
+    // 空きを探す（fillOrder優先）
+    let placed = false;
+    for(const idx of fillOrder){
+      const key = String(idx);
+      if(!slots[key]){
+        slots[key] = ch.habitId;
+        used.add(ch.habitId);
+        placed = true;
+        break;
+      }
+    }
+    if(!placed) break; // 3枠埋まった
+  }
+
+  saveDeckSlots(slots);
+  return slots;
+}
+
+let activeDeckCardEl = null; // スマホ用
+
+async function renderHomeDeckDock(){
+  const dock = document.getElementById("homeDeckDock");
+  const row  = document.getElementById("homeDeckRow");
+  const reopen = document.getElementById("homeDeckReopen");
+  if(!dock || !row || !reopen) return;
+
+  // ホーム以外は非表示
+  const isHomeVisible = (viewHome.style.display !== "none");
+  if(!isHomeVisible){
+    dock.style.display = "none";
+    reopen.style.display = "none";
+    return;
+  }
+
+  const collapsed = getDeckCollapsed();
+  if(collapsed){
+    dock.style.display = "none";
+    reopen.style.display = "";
+    return;
+  }else{
+    reopen.style.display = "none";
+    dock.style.display = "";
+  }
+
+  applyDeckDockWidth();
+
+  // active challenges 読む（既存関数）
+  const actives = await loadActiveChallenges();
+  const slots = assignChallengesToSlots(actives);
+
+  // habitId -> challenge
+  const chById = new Map(actives.map(ch=>[ch.habitId, ch]));
+
+  row.innerHTML = "";
+
+  for(let i=0;i<3;i++){
+    const slotHabitId = slots[String(i)] || "";
+    const ch = slotHabitId ? chById.get(slotHabitId) : null;
+    const h  = slotHabitId ? __habitCache.get(slotHabitId) : null;
+
+    const card = document.createElement("div");
+    card.className = "homeDeckCard" + (ch ? " hasData" : "");
+
+    if(!ch){
+      // 空：中央＋（押したら折りたたみ）
+      card.innerHTML = `
+        <div class="homeDeckPlus" data-act="collapse">
+          <div class="homeDeckPlusInner">＋</div>
+        </div>
+      `;
+      card.querySelector('[data-act="collapse"]').addEventListener("click", ()=>{
+        setDeckCollapsed(true);
+        renderHomeDeckDock();
+      });
+      row.appendChild(card);
+      continue;
+    }
+
+    // 背景キャラ：育成進捗から推定（既存関数を利用）
+    const pct = growthPctDynamic(ch);
+    const info = growthStageInfo(pct);
+    const bgEmoji = (pct>=100) ? "👑" : (pct<15 ? mascotEmojiFromHabitId(ch.habitId) : info.emoji);
+
+    const avg = Number(h?.avgRating || 0);
+    const title = ch.habitTitle || (h?.title||"");
+    const action = h?.action || "";
+
+    card.innerHTML = `
+      <div class="homeDeckBg">${escapeHtml(bgEmoji)}</div>
+
+      <div class="homeDeckStars">${escapeHtml(starsText(avg))}</div>
+
+      <button class="homeDeckX" data-act="retire" title="リタイア">×</button>
+
+      <div class="homeDeckBody">
+        <div class="homeDeckTitle">${escapeHtml(title)}</div>
+        <div class="homeDeckAction">${escapeHtml(action)}</div>
+      </div>
+    `;
+
+    // リタイア（×）
+    card.querySelector('[data-act="retire"]').addEventListener("click", async (e)=>{
+      e.stopPropagation();
+      if(!confirm("リタイア？")) return;
+
+      await applyReport(ch, { type:"retire" });
+
+      // スロットからも外す（即プラスに戻る）
+      const curSlots = loadDeckSlots();
+      for(const k of ["0","1","2"]){
+        if(curSlots[k] === ch.habitId) delete curSlots[k];
+      }
+      saveDeckSlots(curSlots);
+
+      await renderHomeDeckDock();
+    });
+
+    // スマホ：タップで×を出す（既存のcard is-active方式）
+    const isTouchUI = window.matchMedia("(hover: none)").matches;
+    if(isTouchUI){
+      card.addEventListener("click", (e)=>{
+        if(e.target.closest("button")) return;
+        if(activeDeckCardEl && activeDeckCardEl !== card){
+          activeDeckCardEl.classList.remove("is-active");
+        }
+        card.classList.add("is-active");
+        activeDeckCardEl = card;
+      });
+    }
+
+    row.appendChild(card);
+  }
+}
+
+// たたみ解除（＞）
+document.getElementById("homeDeckReopen")?.addEventListener("click", ()=>{
+  setDeckCollapsed(false);
+  renderHomeDeckDock();
+});
+
+// リサイズで幅再計算
+window.addEventListener("resize", ()=>{
+  applyDeckDockWidth();
+});
+
+
+
+
+
+    
     const CATS = ["メンタル","睡眠","運動","健康","生活","勉強","英語","仕事","その他"];
 
     let currentUser = null;
@@ -2057,6 +2481,18 @@ function showOnly(section){
   if(section==="train") refreshTrain();
   if(section==="calendar") refreshCalendar();
   if(section==="analytics") refreshAnalytics();
+
+
+
+  // Homeデッキ表示切替
+if(section==="home"){
+  renderHomeDeckDock();
+}else{
+  const dock = document.getElementById("homeDeckDock");
+  const reopen = document.getElementById("homeDeckReopen");
+  if(dock) dock.style.display = "none";
+  if(reopen) reopen.style.display = "none";
+}
 }
 
 
@@ -2720,6 +3156,14 @@ let activeCardEl = null; // スマホ用：最後に選択されたカード
       for(const h of filtered){
         feed.appendChild(renderHabitCard(h));
       }
+
+
+// habitsキャッシュ更新（デッキの平均評価に使う）
+__habitCache = new Map(habits.map(x=>[x.id, x]));
+
+// Homeデッキ再描画
+await renderHomeDeckDock();
+      
     }
 
     function renderRank(container, tags){
