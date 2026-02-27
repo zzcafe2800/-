@@ -4604,84 +4604,170 @@ async function retireByDeck(habitId){
   await afterLoginWarm();
 }
 
-function renderQuickDeck(){
-  // ログイン前/非Homeでも、DOMは安全に空に
-  if(!quickDeckInner) return;
+// actives と localStorage を突き合わせて整合を取る
+function reconcileDeckSlotsWithActives(actives){
+  const activeIds = new Set((actives || []).map(a => String(a.habitId || "")));
 
-  // Home以外は描画しなくてOK
+  const slots = loadDeckSlots();
+  let changed = false;
+
+  for(const k of ["L","M","R"]){
+    const id = String(slots[k] || "");
+    if(id && !activeIds.has(id)){
+      slots[k] = "";
+      changed = true;
+    }
+  }
+  if(changed) saveDeckSlots(slots);
+  return slots;
+}
+
+// 空きスロットを「M→R→L」で探す（埋める順）
+function findEmptySlot(slots){
+  for(const k of FILL_ORDER){
+    if(!slots[k]) return k;
+  }
+  return "";
+}
+
+// スロットに入ってる habitId を配列で取得（重複防止）
+function slotIds(slots){
+  return [slots.L, slots.M, slots.R].filter(Boolean);
+}
+
+// Homeのときだけ表示 + ログイン中だけ
+function updateDeckVisibility(){
   const isHome = (viewHome.style.display !== "none");
-  if(!isHome){
-    quickDeckInner.innerHTML = "";
+  const ok = !!currentUser && isHome;
+  quickDeck.classList.toggle("show", ok);
+  if(ok){
+    // 畳み状態の復元
+    quickDeck.classList.toggle("is-collapsed", isDeckCollapsed());
+  }
+}
+
+// QuickDeckを畳む（＋）
+function collapseDeck(){
+  setDeckCollapsed(true);
+  renderQuickDeck();
+}
+// QuickDeckを復帰（＞）
+function restoreDeck(){
+  setDeckCollapsed(false);
+  renderQuickDeck();
+}
+deckRestoreBtn.onclick = restoreDeck;
+
+// カードを削除（×）
+function removeFromDeck(slotKey){
+  const slots = loadDeckSlots();
+  slots[slotKey] = "";
+  saveDeckSlots(slots);
+  renderQuickDeck();
+}
+
+// カードを追加（指定のhabitId）
+function addToDeck(habitId){
+  const id = String(habitId || "");
+  if(!id) return;
+
+  // まず整合
+  const slots0 = reconcileDeckSlotsWithActives(__activeChallengesCache || []);
+  const already = new Set(slotIds(slots0));
+  if(already.has(id)){
+    // 既に入ってるなら “選択” 扱いだけ（スマホで×表示）
+    __pickedSlotKey = Object.entries(slots0).find(([k,v]) => v === id)?.[0] || "";
+    renderQuickDeck();
     return;
   }
+
+  const empty = findEmptySlot(slots0);
+  if(!empty){
+    alert("デッキは3つまでです");
+    return;
+  }
+
+  slots0[empty] = id;
+  saveDeckSlots(slots0);
+  renderQuickDeck();
+}
+
+// QuickDeck表示
+function renderQuickDeck(){
+  if(!quickDeckInner) return;
+
+  // 表示条件
+  updateDeckVisibility();
+  if(!currentUser) { quickDeckInner.innerHTML = ""; return; }
 
   // 畳み状態
   quickDeck.classList.toggle("is-collapsed", isDeckCollapsed());
 
+  // actives と同期して slots をクリーンに
   const actives = __activeChallengesCache || [];
   const slots = reconcileDeckSlotsWithActives(actives);
 
+  // 表示（L,M,Rの3枚）
   quickDeckInner.innerHTML = "";
 
+  // スマホ判定
+  const isTouchUI = window.matchMedia("(hover: none)").matches;
+
   for(const slotKey of DISPLAY_SLOTS){
-    const habitId = slots[slotKey];
-    const h = habitId ? (__habitsMapForDeck.get(habitId) || null) : null;
+    const habitId = String(slots[slotKey] || "");
+    const h = habitId ? __habitsMapForDeck.get(habitId) : null;
+    const ch = habitId ? actives.find(x => x.habitId === habitId) : null;
 
     const card = document.createElement("div");
-    card.className = "qCard" + (h ? " hasItem" : "");
+    card.className = "qCard" + (habitId ? " hasItem" : "");
+    if(isTouchUI && __pickedSlotKey === slotKey) card.classList.add("is-picked");
 
-    // 薄いキャラ（丸なし）
-    const mascot = h ? mascotEmojiFromHabitId(habitId) : "—";
-
-    // テキスト
-    const title = h ? (h.title || "") : "デッキ";
-    const action = h ? (h.action || "") : "（空）";
-
-    // ★
-    const st = h ? starsText(h.avgRating||0) : "";
+    // 中身表示用（空ならプレースホルダ）
+    const title = h?.title || (habitId ? (ch?.habitTitle || "—") : "デッキ");
+    const action = h?.action || (habitId ? "この習慣をまとめる" : "ここに追加");
+    const stars = habitId ? `★ ${Number(h?.avgRating||0) ? Number(h.avgRating).toFixed(1) : "—"}` : "—";
+    const mascot = habitId ? mascotEmojiFromHabitId(habitId) : "＋";
 
     card.innerHTML = `
       <div class="qMascotBg">${escapeHtml(mascot)}</div>
-      <div class="qStars">${escapeHtml(st)}</div>
+      <div class="qStars">${escapeHtml(stars)}</div>
 
       <div class="qMain">
         <div class="qTitle">${escapeHtml(title)}</div>
         <div class="qAction">${escapeHtml(action)}</div>
       </div>
 
-      <!-- ＋：押したらQuickDeckを畳む -->
-      <button class="qPlusBtn" type="button" aria-label="畳む" title="畳む">
+      <button class="qPlusBtn" type="button" aria-label="toggle">
         <div class="qPlus">＋</div>
       </button>
 
-      <!-- ×：中身がある時だけ -->
-      ${h ? `<button class="qCloseBtn" type="button" aria-label="リタイア" title="リタイア">×</button>` : ``}
+      <button class="qCloseBtn" type="button" aria-label="remove">×</button>
     `;
 
-    // ＋で畳む（スマホ/PC共通）
+    // ＋：畳む/復帰（空カードでも押せる）
     card.querySelector(".qPlusBtn").addEventListener("click", (e)=>{
       e.stopPropagation();
-      setDeckCollapsed(true);
-      unpickDeckCard();
+      if(isDeckCollapsed()) restoreDeck();
+      else collapseDeck();
     });
 
-    // ×でリタイア（中身がある時だけ）
+    // ×：中身ある時だけ削除（スマホは“選択中”だけ表示されるCSS）
     const closeBtn = card.querySelector(".qCloseBtn");
-    if(closeBtn){
-      closeBtn.addEventListener("click", async (e)=>{
+    if(!habitId){
+      closeBtn.style.display = "none";
+    }else{
+      closeBtn.addEventListener("click", (e)=>{
         e.stopPropagation();
-        if(!confirm("この依頼をリタイアにしますか？")) return;
-        await retireByDeck(habitId);
+        removeFromDeck(slotKey);
       });
     }
 
-    // スマホ：カードタップで「×」表示（is-picked）
-    const isTouchUI = window.matchMedia("(hover: none)").matches;
-    if(isTouchUI && h){
-      card.addEventListener("click", (e)=>{
-        // ボタン押下は除外
-        if(e.target.closest("button")) return;
-        pickDeckCard(card);
+    // カード本体タップ：スマホは“選択状態”にして×出せるように
+    if(isTouchUI){
+      card.addEventListener("click", ()=>{
+        if(!habitId) return;
+        __pickedSlotKey = (__pickedSlotKey === slotKey) ? "" : slotKey;
+        renderQuickDeck();
       });
     }
 
@@ -4689,7 +4775,11 @@ function renderQuickDeck(){
   }
 }
 
-// 初期反映（既存の showOnly("home") の後でもOK）
+// どの習慣をデッキへ追加するか：
+// 「挑戦中（サイドのやつ）」をデッキに入れる想定なら、例えば startChallenge 後にここ呼ぶなどでOK。
+// いまは外部から addToDeck(habitId) を呼べるようにしてあります。
+
+// 画面初期化時にも描画（ログイン前でも崩れない）
 updateDeckVisibility();
 renderQuickDeck();
 
