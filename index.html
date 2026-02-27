@@ -1184,212 +1184,6 @@
 @media (max-width: 520px){
   #anaStatusGrid, #anaInsights{ grid-template-columns: 1fr !important; }
 }
-
-
-
-
-
-
-/* ===== Home Deck Dock ===== */
-/* “一覧カードを触りやすく”するため：枠は pointer-events:none、＋/✕だけ pointer-events:auto */
-.deckDock{
-  position: fixed;
-  left: calc(310px + 16px); /* 左ナビ(310px) + 余白 */
-  bottom: 16px;
-  z-index: 80; /* FABより下にしたいなら 80（FABは90） */
-  display: none; /* showOnly() で home の時だけ表示 */
-  pointer-events: none;
-}
-
-@media (max-width: 980px){
-  .deckDock{
-    left: calc(92px + 12px); /* 左ナビ(92px) + 余白 */
-    bottom: 14px;
-  }
-}
-
-/* 3枚 横並び */
-.deckDock{
-  display: none;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  width: min(520px, calc(100vw - (310px + 32px)));
-}
-@media (max-width: 980px){
-  .deckDock{
-    width: min(520px, calc(100vw - (92px + 24px)));
-  }
-}
-.deckDock.show{
-  display: grid;
-}
-
-.deckSlot{ pointer-events:none; } /* ここも当たり判定なし */
-
-.deckCard{
-  pointer-events:none; /* カード本体は当たり判定なし */
-  position: relative;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: #fff;
-  box-shadow: var(--shadow);
-  height: 132px; /* 縦長寄り */
-  overflow: hidden;
-  opacity: .22; /* “基本薄め” */
-  transition: opacity .12s ease, transform .12s ease;
-}
-
-/* どれかの＋/中央を触ってる間は全体を濃く */
-.deckDock.is-on .deckCard{ opacity: .62; }
-
-/* 埋まってるカードも、触ってない時は薄い（裏の一覧が見える） */
-.deckCard.has-item{ opacity: .18; }
-.deckDock.is-on .deckCard.has-item{ opacity: .62; }
-
-/* ＋（当たり判定あり・少し小さめ・カードより濃い） */
-.deckPlus{
-  pointer-events: auto;
-  position: absolute;
-  inset: 0;
-  margin: auto;
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
-  border: 1px solid var(--line);
-  background: #fff;
-  color: #111;
-  font-weight: 1100;
-  font-size: 26px;
-  line-height: 1;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  opacity: .85;
-  transition: opacity .12s ease, transform .12s ease, background .12s ease;
-}
-.deckPlus:hover{ transform: translateY(-1px); background:#fafafa; opacity:1; }
-
-/* 中身 */
-.deckBody{
-  position: absolute;
-  inset: 0;
-  padding: 12px 12px;
-  display: none; /* 空スロットは非表示 */
-}
-
-/* タイトル：中央に大きめ、1行固定（必ず横一列に収まる） */
-.deckTitle{
-  font-weight: 1100;
-  font-size: 16px;
-  letter-spacing: .02em;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding: 2px 50px 0 50px; /* 右(星)と右下(キャラ)の余白を確保 */
-}
-
-/* やること：薄く下 */
-.deckAction{
-  margin-top: 6px;
-  font-size: 12px;
-  color: var(--muted2);
-  text-align: center;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  padding: 0 10px;
-}
-
-/* 右側：評価（★☆☆☆） */
-.deckRight{
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  display: grid;
-  place-items: center;
-}
-.deckStars{
-  font-family: var(--mono);
-  font-weight: 1100;
-  font-size: 12px;
-  letter-spacing: .08em;
-  opacity: .9;
-}
-
-/* 右下：キャラ（丸の中に表示） */
-.deckChar{
-  position: absolute;
-  right: 10px;
-  bottom: 10px;
-  pointer-events: none;
-}
-.deckCharCircle{
-  width: 34px;
-  height: 34px;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  background: #fff;
-  display: grid;
-  place-items: center;
-  font-size: 16px;
-}
-
-/* ✕：普段は非表示。条件(埋まってる + 選択中)の時だけ表示 */
-.deckClose{
-  pointer-events: auto;
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 30px;
-  height: 30px;
-  border-radius: 10px;
-  border: 1px solid var(--line);
-  background: #fff;
-  color: #111;
-  cursor: pointer;
-  display: none;
-  opacity: .95;
-}
-.deckClose:hover{ background:#fafafa; }
-
-/* JSで .showClose を付けたスロットだけ✕表示 */
-.deckSlot.showClose .deckClose{ display: grid; place-items:center; }
-
-/* 埋まってる時は ＋を隠す／中身を出す */
-.deckCard.has-item .deckPlus{ display:none; }
-.deckCard.has-item .deckBody{ display:block; }
-
-/* “中央付近を触った”判定用に、見えない当たり判定を作る（カード本体は pointer-events:none なので、ここだけ auto） */
-.deckHit{
-  pointer-events: auto;
-  position: absolute;
-  left: 14px;
-  right: 14px;
-  top: 18px;
-  bottom: 18px;
-  border-radius: 12px;
-  background: transparent;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     
   </style>
 </head>
@@ -1553,93 +1347,7 @@
             <option value="">カテゴリ（すべて）</option>
             <option>メンタル</option><option>睡眠</option><option>運動</option><option>健康</option>
             <option>生活</option><option>勉強</option><option>英語</option><option>仕事</option><option>その他</option>
-          
-          
-          
-          
-            </select>
-          
-          
-          
-          
-          
-          <!-- ===== Home Deck Dock (3 slots) ===== -->
-<div class="deckDock" id="deckDock" aria-label="デッキ（挑戦中）">
-  <div class="deckSlot" data-slot="0">
-    <div class="deckCard">
-      <button class="deckPlus" type="button" data-act="deckPlus" aria-label="追加">＋</button>
-      <button class="deckClose" type="button" data-act="deckClose" aria-label="リタイア" title="リタイア">✕</button>
-
-      <div class="deckBody">
-        <div class="deckTitle">—</div>
-        <div class="deckAction">—</div>
-
-        <div class="deckRight">
-          <div class="deckStars">☆☆☆☆</div>
-        </div>
-
-        <div class="deckChar">
-          <div class="deckCharCircle">🥚</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="deckSlot" data-slot="1">
-    <div class="deckCard">
-      <button class="deckPlus" type="button" data-act="deckPlus" aria-label="追加">＋</button>
-      <button class="deckClose" type="button" data-act="deckClose" aria-label="リタイア" title="リタイア">✕</button>
-
-      <div class="deckBody">
-        <div class="deckTitle">—</div>
-        <div class="deckAction">—</div>
-
-        <div class="deckRight">
-          <div class="deckStars">☆☆☆☆</div>
-        </div>
-
-        <div class="deckChar">
-          <div class="deckCharCircle">🥚</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="deckSlot" data-slot="2">
-    <div class="deckCard">
-      <button class="deckPlus" type="button" data-act="deckPlus" aria-label="追加">＋</button>
-      <button class="deckClose" type="button" data-act="deckClose" aria-label="リタイア" title="リタイア">✕</button>
-
-      <div class="deckBody">
-        <div class="deckTitle">—</div>
-        <div class="deckAction">—</div>
-
-        <div class="deckRight">
-          <div class="deckStars">☆☆☆☆</div>
-        </div>
-
-        <div class="deckChar">
-          <div class="deckCharCircle">🥚</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-        
+          </select>
 
           <button class="ctrlBtn" id="btnClearTag" title="タグ解除">タグ解除</button>
         </div>
@@ -2053,17 +1761,7 @@
 
     // ===== Elements =====
 
-    
-// ===== Home Deck Dock =====
-const deckDock = $("deckDock");
-let deckDockOn = false;            // どれか触って濃くしてる状態
-let deckSelectedSlot = null;       // ✕を出すスロット（0/1/2 or null）
 
-const SLOT_FILL_ORDER = [1, 2, 0]; // 真ん中→右→左
-
-
-
-    
 const navCalendar = $("navCalendar");
 const navAnalytics = $("navAnalytics");
 
@@ -2353,12 +2051,6 @@ function showOnly(section){
 
   openPost.classList.toggle("show", section==="home");
 
-
-
-  
-if(deckDock) deckDock.classList.toggle("show", section==="home");
-
-  
   if(section==="records") refreshRecords();
   if(section==="bookmarks") refreshBookmarksView();
   if(section==="profile") refreshProfile();
@@ -2864,13 +2556,11 @@ clearKeepBtn.addEventListener("click", async ()=>{
       await refreshActiveHabitIds();
       await refreshSideActive();
       await refreshHome();
-      await refreshDeckDock();   // ★
       await refreshRecords();
       await refreshBookmarksView();
       await refreshProfile();
       await refreshTrain();
       await refreshCalendar();
-      
 await refreshAnalytics();
     }
 
@@ -2955,182 +2645,6 @@ navAnalytics.addEventListener("click", ()=> showOnly("analytics"));
       await refreshHome();
     });
 let activeCardEl = null; // スマホ用：最後に選択されたカード
-
-
-
-
-
-
-
-
-
-
-
-function stars4FromAvg(avg){
-  const a = Math.max(0, Math.min(5, Number(avg||0)));
-  const n = Math.max(0, Math.min(4, Math.round((a/5)*4))); // 0..4
-  return "★".repeat(n) + "☆".repeat(4-n);
-}
-
-function setDeckDockOn(on){
-  deckDockOn = !!on;
-  if(deckDock) deckDock.classList.toggle("is-on", deckDockOn);
-}
-
-// 画面のどこか触ったら（デッキ以外）解除：スマホ用
-document.addEventListener("click", (e)=>{
-  if(!deckDock) return;
-  if(deckDock.contains(e.target)) return; // デッキ内クリックは無視
-  deckSelectedSlot = null;
-  document.querySelectorAll(".deckSlot").forEach(s=> s.classList.remove("showClose"));
-  setDeckDockOn(false);
-});
-
-async function refreshDeckDock(){
-  if(!currentUser || !deckDock) return;
-
-  // active を取得し、slotIndex で 0/1/2 に配置
-  const actives = await loadActiveChallenges();
-
-  const slotMap = new Map(); // slotIndex -> challenge
-  for(const ch of actives){
-    const si = Number(ch.slotIndex);
-    if(Number.isFinite(si) && si>=0 && si<=2){
-      if(!slotMap.has(si)) slotMap.set(si, ch);
-    }
-  }
-
-  // 3スロット描画
-  for(const slotEl of deckDock.querySelectorAll(".deckSlot")){
-    const slot = Number(slotEl.dataset.slot);
-    const card = slotEl.querySelector(".deckCard");
-    const plus = slotEl.querySelector('.deckPlus[data-act="deckPlus"]');
-    const close = slotEl.querySelector('.deckClose[data-act="deckClose"]');
-
-    // “中央付近を触った”判定（透明ボタン）
-    // 既に無ければ作る
-    let hit = slotEl.querySelector(".deckHit");
-    if(!hit){
-      hit = document.createElement("button");
-      hit.type = "button";
-      hit.className = "deckHit";
-      hit.setAttribute("aria-label","選択");
-      slotEl.querySelector(".deckCard").appendChild(hit);
-    }
-
-    // 毎回イベントを安全に張り直す（重複防止）
-    plus.onclick = null;
-    close.onclick = null;
-    hit.onclick = null;
-
-    const ch = slotMap.get(slot);
-
-    if(!ch){
-      // 空スロット
-      card.classList.remove("has-item");
-      slotEl.classList.remove("showClose");
-
-      // ＋ hover/click で “3枚とも濃く”
-      plus.onclick = async (e)=>{
-        e.preventDefault();
-        e.stopPropagation();
-        setDeckDockOn(true);
-
-        // ここでは「空デッキを押したら何する？」が未指定なので
-        // いったん “濃くするだけ” にしてあります。
-        // 「参加中一覧を開く」等にしたいならここへ。
-      };
-
-      // PC hover で濃く
-    plus.onmouseenter = ()=> setDeckDockOn(true);
-plus.onmouseleave = ()=> setDeckDockOn(false);
-      continue;
-    }
-
-    // 埋まってるスロット
-    card.classList.add("has-item");
-
-    // 表示内容
-    const titleEl = slotEl.querySelector(".deckTitle");
-    const actionEl = slotEl.querySelector(".deckAction");
-    const starsEl = slotEl.querySelector(".deckStars");
-    const charEl  = slotEl.querySelector(".deckCharCircle");
-
-    titleEl.textContent = ch.habitTitle || "—";
-    actionEl.textContent = ""; // 下で habits から取れたら入れる
-
-    // キャラ＝育成段階から推定
-    const pct = growthPctDynamic(ch);
-    const info = growthStageInfo(pct);
-    charEl.textContent = (pct>=100) ? "👑" : (pct<15 ? mascotEmojiFromHabitId(ch.habitId) : info.emoji);
-
-    // 評価と“やること”は habits から取る（最大3件なので getDoc でOK）
-    try{
-      const hs = await getDoc(doc(db,"habits", ch.habitId));
-      if(hs.exists()){
-        const h = hs.data();
-        actionEl.textContent = String(h.action||"").trim();
-        starsEl.textContent = stars4FromAvg(h.avgRating||0);
-      }else{
-        starsEl.textContent = "☆☆☆☆";
-      }
-    }catch(e){
-      starsEl.textContent = "☆☆☆☆";
-    }
-
-    // 中央クリック（スマホはクリックしてから別場所をクリックするまで）で✕表示
-    hit.onclick = (e)=>{
-      e.preventDefault();
-      e.stopPropagation();
-
-      setDeckDockOn(true);
-
-      // このスロットだけ✕を表示
-      deckSelectedSlot = slot;
-      document.querySelectorAll(".deckSlot").forEach(s=> s.classList.remove("showClose"));
-      slotEl.classList.add("showClose");
-    };
-
-    // PC：ホバー中は濃く（✕表示は「hover相当」扱いで出したいならここで showClose してもOK）
-    if(window.matchMedia("(hover:hover) and (pointer:fine)").matches){
-      hit.addEventListener("mouseenter", ()=>{
-        setDeckDockOn(true);
-        deckSelectedSlot = slot;
-        document.querySelectorAll(".deckSlot").forEach(s=> s.classList.remove("showClose"));
-        slotEl.classList.add("showClose");
-      });
-      hit.addEventListener("mouseleave", ()=>{
-        // hover解除で✕も消す（仕様：カーソル外れると消える）
-        slotEl.classList.remove("showClose");
-        deckSelectedSlot = null;
-        setDeckDockOn(false);
-      });
-    }
-
-    // ✕押下＝リタイア判定 → 空欄へ
-    close.onclick = async (e)=>{
-      e.preventDefault();
-      e.stopPropagation();
-      if(!confirm("リタイアにしますか？")) return;
-      await applyReport(ch, { type:"retire" });
-
-      // 選択解除
-      slotEl.classList.remove("showClose");
-      deckSelectedSlot = null;
-      setDeckDockOn(false);
-
-      // 再描画（applyReport 内でも refresh されるけど確実に）
-      await refreshDeckDock();
-    };
-  }
-}
-
-
-
-
-
-
-    
     // ===== Home =====
     async function refreshHome(){
       if(!currentUser) return;
@@ -3206,10 +2720,6 @@ plus.onmouseleave = ()=> setDeckDockOn(false);
       for(const h of filtered){
         feed.appendChild(renderHabitCard(h));
       }
-
-
-      await refreshDeckDock();
-      // ★
     }
 
     function renderRank(container, tags){
@@ -3453,14 +2963,6 @@ plus.onmouseleave = ()=> setDeckDockOn(false);
     }
 
     async function startChallenge(h){
-
-      
-      const used = new Set(actives.map(x => Number(x.slotIndex)).filter(n => Number.isFinite(n)));
-const slotIndex = SLOT_FILL_ORDER.find(i => !used.has(i));
-if(slotIndex == null){ alert("デッキが埋まっています"); return; }
-
-
-      
       const actives = await loadActiveChallenges();
       if(actives.length >= 3){ alert("依頼は最大3"); return; }
       if(h.creatorUid === currentUser.uid){ return; }
@@ -3487,7 +2989,7 @@ if(slotIndex == null){ alert("デッキが埋まっています"); return; }
   targetDays: 3,
   phase: "short",
   dailyEmojis: {}, // YYYY-MM-DD -> 絵文字
-  slotIndex, // ★追加：0/1/2
+
   updatedAt: serverTimestamp(),
 });
 
@@ -3640,7 +3142,6 @@ async function applyReport(ch, payload){
     await refreshSideActive();
     await refreshRecords();
     await refreshHome();
-    await refreshDeckDock();
     await refreshProfile();
     await refreshTrain();
     return;
