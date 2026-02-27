@@ -2685,7 +2685,11 @@ clearNewBtn.addEventListener("click", async ()=>{
   if(!clearGateChallengeId) return;
   const ref = doc(db, "userChallenges", currentUser.uid, "items", clearGateChallengeId);
   await updateDoc(ref, { status:"cleared", phase:"short_cleared", updatedAt: serverTimestamp() });
-
+  // ★ここに追加
+  loadDeckState();
+  clearSlotByHabitId(clearGateChallengeId);
+  renderHomeDeck();
+  
   // 3日で終了 → 口コミ（強制に近い運用：ここで開く）
   const snap = await getDoc(ref);
   const ch = snap.exists() ? snap.data() : null;
@@ -3540,18 +3544,23 @@ async function applyReport(ch, payload){
   }
 
   // まず retire は即処理して終わる（既存仕様を維持）
-  if(payload.type==="retire"){
-    await updateDoc(ref, { status:"retired", updatedAt: serverTimestamp() });
+ if(payload.type==="retire"){
+  await updateDoc(ref, { status:"retired", updatedAt: serverTimestamp() });
 
-    await maybePromptRating(ch.habitId, { ...cur, habitId: ch.habitId }, "retire");
-    await refreshActiveHabitIds();
-    await refreshSideActive();
-    await refreshRecords();
-    await refreshHome();
-    await refreshProfile();
-    await refreshTrain();
-    return;
-  }
+  // ★ここに追加
+  loadDeckState();
+  clearSlotByHabitId(ch.habitId);
+  renderHomeDeck();
+
+  await maybePromptRating(ch.habitId, { ...cur, habitId: ch.habitId }, "retire");
+  await refreshActiveHabitIds();
+  await refreshSideActive();
+  await refreshRecords();
+  await refreshHome();
+  await refreshProfile();
+  await refreshTrain();
+  return;
+}
 
   // done/rest の更新を組み立て
   const update = {};
@@ -3600,6 +3609,7 @@ async function applyReport(ch, payload){
     // 3日クリア：強制2択ゲート
     if(targetDays === 3){
       await updateDoc(ref, { phase:"short_cleared_wait", updatedAt: serverTimestamp() });
+
 
       const finalSnap = await getDoc(ref);
       const finalCh = finalSnap.exists() ? finalSnap.data() : cur;
