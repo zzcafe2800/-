@@ -2772,11 +2772,14 @@ await refreshAnalytics();
     }
 
     // ===== Active set for cards =====
-    async function refreshActiveHabitIds(){
-      activeHabitIds = new Set();
-      const actives = await loadActiveChallenges();
-      for(const ch of actives) activeHabitIds.add(ch.habitId);
-    }
+async function refreshActiveHabitIds(){
+  activeHabitIds = new Set();
+  const actives = await loadActiveChallenges();
+
+  __activeChallengesCache = actives;   // ★追加：QuickDeck用キャッシュ更新
+
+  for(const ch of actives) activeHabitIds.add(ch.habitId);
+}
 
     // ===== Auth state =====
     onAuthStateChanged(auth, async (user)=>{
