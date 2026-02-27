@@ -3454,6 +3454,14 @@ async function refreshDeckDock(){
     }
 
     async function startChallenge(h){
+
+      
+      const used = new Set(actives.map(x => Number(x.slotIndex)).filter(n => Number.isFinite(n)));
+const slotIndex = SLOT_FILL_ORDER.find(i => !used.has(i));
+if(slotIndex == null){ alert("デッキが埋まっています"); return; }
+
+
+      
       const actives = await loadActiveChallenges();
       if(actives.length >= 3){ alert("依頼は最大3"); return; }
       if(h.creatorUid === currentUser.uid){ return; }
@@ -3480,7 +3488,7 @@ async function refreshDeckDock(){
   targetDays: 3,
   phase: "short",
   dailyEmojis: {}, // YYYY-MM-DD -> 絵文字
-　slotIndex, // ★追加：0/1/2
+  slotIndex, // ★追加：0/1/2
   updatedAt: serverTimestamp(),
 });
 
