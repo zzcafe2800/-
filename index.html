@@ -2262,6 +2262,8 @@ function showOnly(section){
   if(section==="train") refreshTrain();
   if(section==="calendar") refreshCalendar();
   if(section==="analytics") refreshAnalytics();
+    // QuickDeck：Homeだけ表示
+  updateDeckVisibility();
 }
 
 
@@ -2803,6 +2805,8 @@ await refreshAnalytics();
         activeHabitIds = new Set();
 
         showOnly("home");
+            updateDeckVisibility();
+    renderQuickDeck();
         return;
       }
 
@@ -2864,6 +2868,11 @@ let activeCardEl = null; // スマホ用：最後に選択されたカード
       const qs = await getDocs(query(collection(db,"habits"), orderBy("createdAt","desc"), limit(300)));
       qs.forEach(s=> habits.push({ id:s.id, ...s.data() }));
 
+      
+      // QuickDeck用：habits を map 化（表示用）
+      __habitsMapForDeck = new Map(habits.map(h=>[h.id, h]));
+
+      
       // tag ranking
       const tagCounts = new Map();
       for(const h of habits){
@@ -2925,6 +2934,9 @@ let activeCardEl = null; // スマホ用：最後に選択されたカード
       for(const h of filtered){
         feed.appendChild(renderHabitCard(h));
       }
+
+            // QuickDeck：一覧更新に合わせて再描画
+      renderQuickDeck();
     }
 
     function renderRank(container, tags){
