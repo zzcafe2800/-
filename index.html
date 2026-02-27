@@ -1184,7 +1184,7 @@
 @media (max-width: 520px){
   #anaStatusGrid, #anaInsights{ grid-template-columns: 1fr !important; }
 }
-    /* ===== Home 左下：3つのデッキカード（Quick Deck） ===== */
+/* ===== Home 左下：Quick Deck（3カード） ===== */
 :root{
   --navW: 310px; /* PC */
 }
@@ -1192,6 +1192,7 @@
   :root{ --navW: 92px; } /* スマホ */
 }
 
+/* Homeだけ表示する枠（常に見える） */
 .quickDeck{
   position: fixed;
   left: calc(var(--navW) + 16px);
@@ -1199,7 +1200,7 @@
   z-index: 60;
   width: min(520px, 48vw);
   display: none; /* Home以外は非表示 */
-  pointer-events: none; /* 背面（一覧）を操作できる */
+  pointer-events: none; /* ここは透過。中身だけ当たり判定 */
 }
 .quickDeck.show{ display:block; }
 
@@ -1210,6 +1211,7 @@
   align-items: stretch;
 }
 
+/* カード本体：常に表示（半透明やめ） */
 .qCard{
   position: relative;
   height: 140px;
@@ -1219,31 +1221,23 @@
   box-shadow: var(--shadow);
   overflow: hidden;
 
-  opacity: .22;            /* かなり薄め */
-  transition: opacity .12s ease, transform .12s ease;
-  pointer-events: none;    /* カード本体は当たり判定なし */
+  opacity: 1;               /* 常に表示 */
+  transition: transform .12s ease;
+  pointer-events: auto;     /* カードだけ操作可能 */
 }
-
-.quickDeck.is-focus .qCard{
-  opacity: .78;            /* どれかに触れたら3つとも濃く */
-}
-
-/* 中身があるカードも、基本は薄め（裏が見える感じ） */
-.qCard.hasItem{
-  opacity: .22;
-}
-.quickDeck.is-focus .qCard.hasItem{
-  opacity: .78;
+@media (hover:hover) and (pointer:fine){
+  .qCard:hover{ transform: translateY(-1px); }
 }
 
 /* 中央：見出し＋やること */
 .qMain{
   position: absolute;
-  inset: 12px 12px 12px 12px;
+  inset: 12px;
   display: grid;
   grid-template-rows: 1fr auto;
   gap: 6px;
   pointer-events: none;
+  z-index: 2;
 }
 .qTitle{
   align-self: center;
@@ -1252,7 +1246,7 @@
   letter-spacing: .02em;
   font-size: clamp(14px, 2.0vw, 20px);
   line-height: 1.12;
-  white-space: nowrap;     /* 横1列で収める */
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
@@ -1268,16 +1262,44 @@
   max-width: 100%;
 }
 
-/* ＋（小さめ・カードより濃い） */
+/* キャラ：丸を消して、カード全体に薄く表示（一覧カードみたいに） */
+.qMascotBg{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  font-size: 86px;
+  opacity: .09;
+  pointer-events:none;
+  transform: translateY(10px);
+  user-select:none;
+  z-index:1;
+}
+
+/* 星：カード左上（「ひらり上」＝左上想定） */
+.qStars{
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 1100;
+  color: rgba(17,17,17,.85);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* ＋：押すとQuickDeckを畳む（スマホ/PC共通） */
 .qPlusBtn{
   position: absolute;
   inset: 0;
   display: grid;
   place-items: center;
-  pointer-events: auto; /* ここだけ当たり判定あり */
+  pointer-events: auto;
   background: transparent;
   border: none;
   cursor: pointer;
+  z-index: 4;
 }
 .qPlus{
   width: 32px; height: 32px;
@@ -1292,21 +1314,7 @@
   user-select: none;
 }
 
-/* 「中央らへん」だけのフォーカス当たり判定（誤タップ防止で小さめ） */
-.qFocusZone{
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 56px;
-  height: 56px;
-  transform: translate(-50%, -55%);
-  pointer-events: auto;   /* ここだけ当たり判定あり */
-  background: transparent;
-  border: none;
-  cursor: default;
-}
-
-/* 右上：×（中身がある時だけ & フォーカス中だけ） */
+/* 右上：×（中身がある時だけ） */
 .qCloseBtn{
   position: absolute;
   top: 8px;
@@ -1326,53 +1334,50 @@
   pointer-events: none;
   transform: translateY(-2px);
   transition: opacity .12s ease, transform .12s ease;
+  z-index: 5;
 }
 
-/* PC：フォーカスゾーン hover 中だけ出す */
+/* PC：カードにカーソルで×表示 */
 @media (hover:hover) and (pointer:fine){
-  .quickDeck.is-focus .qCard.hasItem .qFocusZone:hover ~ .qCloseBtn{
+  .qCard.hasItem:hover .qCloseBtn{
     opacity: 1;
     pointer-events: auto;
     transform: translateY(0);
   }
 }
-
-/* スマホ：選択中のカードだけ出す */
-.qCard.is-picked .qCloseBtn{
+/* スマホ：選択中のカードだけ×表示 */
+.qCard.is-picked.hasItem .qCloseBtn{
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0);
 }
 
-/* 右下：キャラ丸 */
-.qChar{
-  position: absolute;
-  right: 10px;
+/* 畳んだ時：中身を隠す */
+.quickDeck.is-collapsed .quickDeckInner{
+  display:none;
+}
+
+/* 畳んだ時に出る「＞」復帰ボタン（左端カードの左側に小さく） */
+.deckRestoreBtn{
+  position:absolute;
+  left: -10px;
   bottom: 10px;
-  width: 34px;
-  height: 34px;
+  width: 22px;
+  height: 22px;
   border-radius: 999px;
   border: 1px solid var(--line);
-  background: #fff;
-  display: grid;
-  place-items: center;
-  font-size: 18px;
-  pointer-events: none;
+  background:#fff;
+  color:#111;
+  font-weight:1100;
+  display:none;
+  place-items:center;
+  cursor:pointer;
+  pointer-events:auto;
+  box-shadow: var(--shadow);
 }
-
-/* 右側：評価 ★☆☆☆☆ */
-.qStars{
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-family: var(--mono);
-  font-size: 12px;
-  font-weight: 1100;
-  color: rgba(17,17,17,.8);
-  pointer-events: none;
+.quickDeck.is-collapsed .deckRestoreBtn{
+  display:grid;
 }
-
 
     
   </style>
@@ -4456,14 +4461,25 @@ async function refreshAnalytics(){
 
 
 
-
-
-
-    // ===== Quick Deck storage =====
+// ===== Quick Deck storage =====
 const DECK_KEY = "growme_quick_slots_v1";
+const DECK_COLLAPSE_KEY = "growme_quickdeck_collapsed_v1";
 // 表示は [左, 中, 右] だが、埋める順番は「真ん中 → 右 → 左」
 const DISPLAY_SLOTS = ["L","M","R"];
 const FILL_ORDER = ["M","R","L"];
+
+// 復帰ボタン（HTMLに無くてもJSで作る）
+let deckRestoreBtn = document.querySelector(".deckRestoreBtn");
+if(!deckRestoreBtn){
+  deckRestoreBtn = document.createElement("button");
+  deckRestoreBtn.className = "deckRestoreBtn";
+  deckRestoreBtn.type = "button";
+  deckRestoreBtn.textContent = "＞";
+  quickDeck.appendChild(deckRestoreBtn);
+}
+deckRestoreBtn.addEventListener("click", ()=>{
+  setDeckCollapsed(false);
+});
 
 function loadDeckSlots(){
   try{
@@ -4485,13 +4501,22 @@ function saveDeckSlots(slots){
   }));
 }
 
+// 畳み状態
+function isDeckCollapsed(){
+  return localStorage.getItem(DECK_COLLAPSE_KEY) === "1";
+}
+function setDeckCollapsed(v){
+  localStorage.setItem(DECK_COLLAPSE_KEY, v ? "1" : "0");
+  quickDeck.classList.toggle("is-collapsed", !!v);
+}
+
 // actives と localStorage を突き合わせて整合を取る
 function reconcileDeckSlotsWithActives(actives){
   const activeIds = new Set((actives||[]).map(x=>x.habitId));
 
   let slots = loadDeckSlots();
 
-  // すでに入ってるが、activeでなくなったら空にする（リタイア/終了）
+  // 入ってるが active でなくなったら空にする（リタイア/終了）
   for(const k of DISPLAY_SLOTS){
     if(slots[k] && !activeIds.has(slots[k])) slots[k] = "";
   }
@@ -4517,157 +4542,155 @@ function starsText(avg){
 }
 
 function getChallengeByHabitId(habitId){
-  return (__activeChallengesCache||[]).find(x=>x.habitId === habitId) || null;
+  const id = String(habitId||"");
+  return (__activeChallengesCache || []).find(x => String(x.habitId||"") === id) || null;
 }
 
-// “キャラ画像”は今は絵文字で代用（あなたの育成段階と連動）
-function deckCreatureEmoji(habitId){
-  const ch = getChallengeByHabitId(habitId);
-  if(!ch) return mascotEmojiFromHabitId(habitId);
-  const pct = growthPctDynamic(ch);
-  const info = growthStageInfo(pct);
-  return (pct>=100) ? "👑" : (pct<15 ? mascotEmojiFromHabitId(habitId) : info.emoji);
-}
-
-function setDeckFocus(on){
-  quickDeck.classList.toggle("is-focus", !!on);
-}
-
-// Homeだけ表示したいので showOnly() から呼ぶ
 function updateDeckVisibility(){
+  // Homeだけ表示（既存の showOnly() が呼ぶ）
   const isHome = (viewHome.style.display !== "none");
   quickDeck.classList.toggle("show", isHome);
+
+  // 初期の畳み状態反映
+  quickDeck.classList.toggle("is-collapsed", isDeckCollapsed());
 }
 
-// デッキ再描画
+// PCで軽くフォーカス感（is-focus）は維持してOK：でも薄くしないのでclassだけ残す
+(function bindDeckFocus(){
+  quickDeck.addEventListener("mouseenter", ()=>{
+    if(isDeckCollapsed()) return;
+    quickDeck.classList.add("is-focus");
+  });
+  quickDeck.addEventListener("mouseleave", ()=>{
+    quickDeck.classList.remove("is-focus");
+  });
+})();
+
+// スマホ：カード選択（×表示用）
+let pickedDeckCard = null;
+function pickDeckCard(card){
+  if(pickedDeckCard && pickedDeckCard !== card){
+    pickedDeckCard.classList.remove("is-picked");
+  }
+  card.classList.add("is-picked");
+  pickedDeckCard = card;
+}
+function unpickDeckCard(){
+  if(pickedDeckCard){
+    pickedDeckCard.classList.remove("is-picked");
+    pickedDeckCard = null;
+  }
+}
+
+async function retireByDeck(habitId){
+  const ch = getChallengeByHabitId(habitId);
+  if(!ch) return;
+
+  // ここは「×を押したら即リタイア判定」
+  const ref = doc(db, "userChallenges", currentUser.uid, "items", ch.habitId);
+  await updateDoc(ref, { status:"retired", updatedAt: serverTimestamp() });
+
+  // 既存の流れ（必要なら感想へ）
+  try{
+    const snap = await getDoc(ref);
+    const cur = snap.exists() ? snap.data() : ch;
+    await maybePromptRating(ch.habitId, { ...cur, habitId: ch.habitId }, "retire");
+  }catch(e){}
+
+  await afterLoginWarm();
+}
+
 function renderQuickDeck(){
+  // ログイン前/非Homeでも、DOMは安全に空に
   if(!quickDeckInner) return;
 
-  // active（挑戦中）を基準に slots を確定
-  const slots = reconcileDeckSlotsWithActives(__activeChallengesCache);
+  // Home以外は描画しなくてOK
+  const isHome = (viewHome.style.display !== "none");
+  if(!isHome){
+    quickDeckInner.innerHTML = "";
+    return;
+  }
+
+  // 畳み状態
+  quickDeck.classList.toggle("is-collapsed", isDeckCollapsed());
+
+  const actives = __activeChallengesCache || [];
+  const slots = reconcileDeckSlotsWithActives(actives);
 
   quickDeckInner.innerHTML = "";
 
   for(const slotKey of DISPLAY_SLOTS){
     const habitId = slots[slotKey];
-    const h = habitId ? __habitsMapForDeck.get(habitId) : null;
+    const h = habitId ? (__habitsMapForDeck.get(habitId) || null) : null;
 
     const card = document.createElement("div");
-    card.className = "qCard" + (habitId ? " hasItem" : "");
+    card.className = "qCard" + (h ? " hasItem" : "");
 
-    // ----- 中身 -----
-    if(!habitId){
-      // 空（＋）
-      card.innerHTML = `
-        <button class="qPlusBtn" data-act="plus" data-slot="${slotKey}" aria-label="追加">
-          <div class="qPlus">＋</div>
-        </button>
-      `;
-    }else{
-      const title = (h?.title || getChallengeByHabitId(habitId)?.habitTitle || "—").trim();
-      const action = (h?.action || "").trim();
-      const avgRating = Number(h?.avgRating || 0);
+    // 薄いキャラ（丸なし）
+    const mascot = h ? mascotEmojiFromHabitId(habitId) : "—";
 
-      card.innerHTML = `
-        <div class="qMain">
-          <div class="qTitle">${escapeHtml(title)}</div>
-          <div class="qAction">${escapeHtml(action)}</div>
-        </div>
+    // テキスト
+    const title = h ? (h.title || "") : "デッキ";
+    const action = h ? (h.action || "") : "（空）";
 
-        <div class="qStars">${escapeHtml(starsText(avgRating))}</div>
-        <div class="qChar">${escapeHtml(deckCreatureEmoji(habitId))}</div>
+    // ★
+    const st = h ? starsText(h.avgRating||0) : "";
 
-        <!-- 中央らへんだけ当たり判定（誤タップ防止のため小さめ） -->
-        <button class="qFocusZone" data-act="focus" data-slot="${slotKey}" aria-label="操作"></button>
+    card.innerHTML = `
+      <div class="qMascotBg">${escapeHtml(mascot)}</div>
+      <div class="qStars">${escapeHtml(st)}</div>
 
-        <button class="qCloseBtn" data-act="close" data-slot="${slotKey}" aria-label="リタイア">✕</button>
-      `;
-    }
+      <div class="qMain">
+        <div class="qTitle">${escapeHtml(title)}</div>
+        <div class="qAction">${escapeHtml(action)}</div>
+      </div>
 
-    quickDeckInner.appendChild(card);
+      <!-- ＋：押したらQuickDeckを畳む -->
+      <button class="qPlusBtn" type="button" aria-label="畳む" title="畳む">
+        <div class="qPlus">＋</div>
+      </button>
 
-    // ----- イベント（カード本体は pointer-events:none なので、ボタンだけ反応） -----
-    const plusBtn = card.querySelector('[data-act="plus"]');
-    if(plusBtn){
-      // hover/clickで3枚とも濃く（＋が押せる）
-      plusBtn.addEventListener("mouseenter", ()=> setDeckFocus(true));
-      plusBtn.addEventListener("mouseleave", ()=>{
-        if(!__deckFocusedByTouch) setDeckFocus(false);
-      });
-      plusBtn.addEventListener("click", (e)=>{
-        e.stopPropagation();
-        __deckFocusedByTouch = true; // スマホ想定：一度押したら他タップまで濃い
-        setDeckFocus(true);
-        // ここは “追加操作” の入口。今は誤動作防止で何もしない（必要ならモーダル等に繋ぐ）
-        // 例：alert("一覧から「参加」を押すとここに入ります");
-      });
-    }
+      <!-- ×：中身がある時だけ -->
+      ${h ? `<button class="qCloseBtn" type="button" aria-label="リタイア" title="リタイア">×</button>` : ``}
+    `;
 
-    const focusZone = card.querySelector('[data-act="focus"]');
-    if(focusZone){
-      // PC：hover中に×が出る（CSSで制御） + 濃さUP
-      focusZone.addEventListener("mouseenter", ()=> setDeckFocus(true));
-      focusZone.addEventListener("mouseleave", ()=>{
-        if(!__deckFocusedByTouch) setDeckFocus(false);
-      });
+    // ＋で畳む（スマホ/PC共通）
+    card.querySelector(".qPlusBtn").addEventListener("click", (e)=>{
+      e.stopPropagation();
+      setDeckCollapsed(true);
+      unpickDeckCard();
+    });
 
-      // スマホ：タップで “選択状態” を維持 → × を出す
-      focusZone.addEventListener("click", (e)=>{
-        e.stopPropagation();
-        __deckFocusedByTouch = true;
-        setDeckFocus(true);
-
-        // picked を付け替え
-        [...quickDeckInner.children].forEach(el=> el.classList.remove("is-picked"));
-        card.classList.add("is-picked");
-        __pickedSlotKey = slotKey;
-      });
-    }
-
-    const closeBtn = card.querySelector('[data-act="close"]');
+    // ×でリタイア（中身がある時だけ）
+    const closeBtn = card.querySelector(".qCloseBtn");
     if(closeBtn){
       closeBtn.addEventListener("click", async (e)=>{
         e.stopPropagation();
-
-        // localStorage上は即空にする（Firestore失敗してもUIは戻る）
-        let slotsNow = loadDeckSlots();
-        const hid = slotsNow[slotKey];
-        slotsNow[slotKey] = "";
-        saveDeckSlots(slotsNow);
-
-        // もし挑戦中データが取れていれば、既存のリタイア処理も呼ぶ（※新機能としてFirestoreは書かないが、既存機能の退避）
-        try{
-          const ch = getChallengeByHabitId(hid);
-          if(ch && typeof applyReport === "function"){
-            // confirmは要件に書いてないので省略（必要なら戻す）
-            await applyReport(ch, { type:"retire" });
-          }else{
-            renderQuickDeck(); // Firestore無しでもUI復帰
-          }
-        }catch{
-          renderQuickDeck();
-        }
-
-        // 選択解除
-        card.classList.remove("is-picked");
-        __pickedSlotKey = "";
+        if(!confirm("この依頼をリタイアにしますか？")) return;
+        await retireByDeck(habitId);
       });
     }
+
+    // スマホ：カードタップで「×」表示（is-picked）
+    const isTouchUI = window.matchMedia("(hover: none)").matches;
+    if(isTouchUI && h){
+      card.addEventListener("click", (e)=>{
+        // ボタン押下は除外
+        if(e.target.closest("button")) return;
+        pickDeckCard(card);
+      });
+    }
+
+    quickDeckInner.appendChild(card);
   }
 }
 
-// “外を押したら戻る”（スマホ想定）
-document.addEventListener("click", (e)=>{
-  if(!quickDeck.classList.contains("show")) return;
-  if(e.target.closest("#quickDeck")) return;
+// 初期反映（既存の showOnly("home") の後でもOK）
+updateDeckVisibility();
+renderQuickDeck();
 
-  __deckFocusedByTouch = false;
-  setDeckFocus(false);
-  __pickedSlotKey = "";
-  if(quickDeckInner){
-    [...quickDeckInner.children].forEach(el=> el.classList.remove("is-picked"));
-  }
-});
+
+
     
   </script>
 </body>
